@@ -3,22 +3,21 @@ package provider
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
+	"net/http"
+	"net/url"
+	"os"
+	"strconv"
+	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
+
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"net/http"
-	"os"
-	"strconv"
-	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
 )
 
 var _ provider.Provider = &SemaphoreUIProvider{}
@@ -34,12 +33,9 @@ type SemaphoreUIProvider struct {
 
 // SemaphoreUIProviderModel describes the provider data model.
 type SemaphoreUIProviderModel struct {
-	Hostname      types.String `tfsdk:"hostname"`
-	Port          types.Int32  `tfsdk:"port"`
-	Path          types.String `tfsdk:"path"`
-	Protocol      types.String `tfsdk:"protocol"`
 	ApiToken      types.String `tfsdk:"api_token"`
 	TlsSkipVerify types.Bool   `tfsdk:"tls_skip_verify"`
+	ApiBaseUrl    types.String `tfsdk:"api_base_url"`
 }
 
 func (p *SemaphoreUIProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -64,28 +60,13 @@ fetch("/api/user/tokens", {
 The token will be printed in the console. This token will grant the same level of access as the logged in user. Copy the token value and use it to configure the provider. The token is sensitive and should be treated as a secret. It is recommended to use the ` + "`SEMAPHOREUI_API_TOKEN`" + ` environment variable to configure the provider.
 `,
 		Attributes: map[string]schema.Attribute{
-			"hostname": schema.StringAttribute{
-				MarkdownDescription: "SemaphoreUI API hostname. This can also be defined by the `SEMAPHOREUI_HOSTNAME` environment variable. Example: `example.com`.",
-				Optional:            true,
-			},
-			"port": schema.Int32Attribute{
-				MarkdownDescription: "SemaphoreUI API port. This can also be defined by the `SEMAPHOREUI_PORT` environment variable. Default: `3000`.",
-				Optional:            true,
-			},
-			"path": schema.StringAttribute{
-				MarkdownDescription: "SemaphoreUI API base path. This can also be defined by the `SEMAPHOREUI_PATH` environment variable. Default: `/api`.",
-				Optional:            true,
-			},
-			"protocol": schema.StringAttribute{
-				MarkdownDescription: "SemaphoreUI API protocol. This can also be defined by the `SEMAPHOREUI_PROTOCOL` environment variable. Must be one of `http` or `https`. Default: `https`.",
-				Optional:            true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("http", "https"),
-				},
-			},
 			"api_token": schema.StringAttribute{
 				MarkdownDescription: "SemaphoreUI API token. This can also be defined by the `SEMAPHOREUI_API_TOKEN` environment variable.",
 				Sensitive:           true,
+				Optional:            true,
+			},
+			"api_base_url": schema.StringAttribute{
+				MarkdownDescription: "SemaphoreUI API base URL. This can also be defined by the `SEMAPHOREUI_API_BASE_URL` environment variable. Default: `http://localhost:3000/api`.",
 				Optional:            true,
 			},
 			"tls_skip_verify": schema.BoolAttribute{
@@ -105,39 +86,12 @@ func (p *SemaphoreUIProvider) Configure(ctx context.Context, req provider.Config
 		return
 	}
 
-	if config.Hostname.IsUnknown() {
+	if config.ApiToken.IsUnknown() {
 		resp.Diagnostics.AddAttributeError(
-			path.Root("hostname"),
-			"Unknown SemaphoreUI API Hostname",
-			"The provider cannot create the SemaphoreUI API client as there is an unknown configuration value for the SemaphoreUI API hostname. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_HOSTNAME environment variable.",
-		)
-	}
-
-	if config.Port.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("port"),
-			"Unknown SemaphoreUI API Port",
-			"The provider cannot create the SemaphoreUI API client as there is an unknown configuration value for the SemaphoreUI API port. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_PORT environment variable.",
-		)
-	}
-
-	if config.Path.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("path"),
-			"Unknown SemaphoreUI API Path",
-			"The provider cannot create the SemaphoreUI API client as there is an unknown configuration value for the SemaphoreUI API path. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_PATH environment variable.",
-		)
-	}
-
-	if config.Protocol.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("protocol"),
-			"Unknown SemaphoreUI API Protocol",
-			"The provider cannot create the SemaphoreUI API client as there is an unknown configuration value for the SemaphoreUI API protocol. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_PROTOCOL environment variable.",
+			path.Root("api_token"),
+			"Unknown SemaphoreUI API Token",
+			"The provider cannot create the SemaphoreUI API client as there is an unknown configuration value for the SemaphoreUI API token. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_API_TOKEN environment variable.",
 		)
 	}
 
@@ -165,24 +119,12 @@ func (p *SemaphoreUIProvider) Configure(ctx context.Context, req provider.Config
 
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
-	hostname := os.Getenv("SEMAPHOREUI_HOSTNAME")
-	port := os.Getenv("SEMAPHOREUI_PORT")
-	basePath := os.Getenv("SEMAPHOREUI_PATH")
-	protocol := os.Getenv("SEMAPHOREUI_PROTOCOL")
 	apiToken := os.Getenv("SEMAPHOREUI_API_TOKEN")
+	apiBaseUrl := os.Getenv("SEMAPHOREUI_API_BASE_URL")
 	tlsSkipVerify := os.Getenv("SEMAPHOREUI_TLS_SKIP_VERIFY")
 
-	if !config.Hostname.IsNull() {
-		hostname = config.Hostname.ValueString()
-	}
-	if !config.Port.IsNull() {
-		port = strconv.Itoa(int(config.Port.ValueInt32()))
-	}
-	if !config.Path.IsNull() {
-		basePath = config.Path.ValueString()
-	}
-	if !config.Protocol.IsNull() {
-		protocol = config.Protocol.ValueString()
+	if !config.ApiBaseUrl.IsNull() {
+		apiBaseUrl = config.ApiBaseUrl.ValueString()
 	}
 	if !config.ApiToken.IsNull() {
 		apiToken = config.ApiToken.ValueString()
@@ -193,11 +135,11 @@ func (p *SemaphoreUIProvider) Configure(ctx context.Context, req provider.Config
 
 	// If any of the expected configurations are missing, use defaults or return
 	// errors with provider-specific guidance.
-	if hostname == "" {
+	if apiBaseUrl == "" {
 		resp.Diagnostics.AddAttributeError(
-			path.Root("hostname"),
-			"Missing SemaphoreUI API Hostname",
-			"Set the host value in the configuration or use the SEMAPHOREUI_HOSTNAME environment variable. "+
+			path.Root("api_base_url"),
+			"Missing SemaphoreUI API base URL",
+			"Set the host value in the configuration or use the SEMAPHOREUI_API_BASE_URL environment variable. "+
 				"If either is already set, ensure the value is not empty.",
 		)
 	}
@@ -211,15 +153,10 @@ func (p *SemaphoreUIProvider) Configure(ctx context.Context, req provider.Config
 		)
 	}
 
-	if port == "" {
-		port = "3000" // Default
+	if apiBaseUrl == "" {
+		apiBaseUrl = "http://localhost:3000/api" // Default
 	}
-	if protocol == "" {
-		protocol = "https" // Default
-	}
-	if basePath == "" {
-		basePath = "/api" // Default
-	}
+
 	if tlsSkipVerify == "" {
 		tlsSkipVerify = "false" // Default
 	}
@@ -227,13 +164,25 @@ func (p *SemaphoreUIProvider) Configure(ctx context.Context, req provider.Config
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	u, err := url.Parse(apiBaseUrl)
+	if err != nil {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("api_base_url"),
+			"Invalid SemaphoreUI API base URL",
+			"The provider cannot create the SemaphoreUI API client as the API base URL is invalid. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the SEMAPHOREUI_API_BASE_URL environment variable.",
+		)
+		return
+	}
+
 	var rt *httptransport.Runtime
 	if tlsSkipVerify == "true" {
 		transport := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 		httpClient := &http.Client{Transport: transport}
-		rt = httptransport.NewWithClient(fmt.Sprintf("%s:%s", hostname, port), basePath, []string{protocol}, httpClient)
+		rt = httptransport.NewWithClient(u.Host, u.Path, []string{u.Scheme}, httpClient)
 	} else {
-		rt = httptransport.New(fmt.Sprintf("%s:%s", hostname, port), basePath, []string{protocol})
+		rt = httptransport.New(u.Host, u.Path, []string{u.Scheme})
 	}
 	rt.DefaultAuthentication = httptransport.BearerToken(apiToken)
 

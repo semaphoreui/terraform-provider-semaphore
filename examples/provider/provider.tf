@@ -9,9 +9,6 @@ terraform {
 }
 
 provider "semaphoreui" {
-  hostname  = "example.com"
-  port      = 3000   # Default: 3000
-  path      = "/api" # Default: "/api"
-  protocol  = "http" # Default: "https"
+  api_base_url = "http://localhost:3000/api" # Default: "http://localhost:3000/api"
   api_token = "your token"
 }

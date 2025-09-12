@@ -45,10 +45,7 @@ terraform {
 }
 
 provider "semaphoreui" {
-  hostname  = "example.com"
-  port      = 3000   # Default: 3000
-  path      = "/api" # Default: "/api"
-  protocol  = "http" # Default: "https"
+  api_base_url = "http://localhost:3000/api"
   api_token = "your token"
 }
 ```
@@ -58,9 +55,6 @@ provider "semaphoreui" {
 
 ### Optional
 
+- `api_base_url` (String) 
 - `api_token` (String, Sensitive) SemaphoreUI API token. This can also be defined by the `SEMAPHOREUI_API_TOKEN` environment variable.
-- `hostname` (String) SemaphoreUI API hostname. This can also be defined by the `SEMAPHOREUI_HOSTNAME` environment variable. Example: `example.com`.
-- `path` (String) SemaphoreUI API base path. This can also be defined by the `SEMAPHOREUI_PATH` environment variable. Default: `/api`.
-- `port` (Number) SemaphoreUI API port. This can also be defined by the `SEMAPHOREUI_PORT` environment variable. Default: `3000`.
-- `protocol` (String) SemaphoreUI API protocol. This can also be defined by the `SEMAPHOREUI_PROTOCOL` environment variable. Must be one of `http` or `https`. Default: `https`.
 - `tls_skip_verify` (Boolean) Skip TLS verification for the SemaphoreUI API when using https. This can also be defined by the `SEMAPHOREUI_TLS_SKIP_VERIFY` environment variable.  Default: `false`.
