@@ -3,7 +3,7 @@ terraform {
   required_providers {
     semaphore = {
       source  = "semaphoreui/semaphore"
-      version = "~> 1.0"
+      version = "~> 0.1"
     }
   }
 }
