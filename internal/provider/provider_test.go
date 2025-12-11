@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"fmt"
 	"os"
 	"terraform-provider-semaphoreui/semaphoreui/client"
 	"testing"
@@ -34,7 +33,8 @@ var tc *client.SemaphoreUI
 
 func testClient() *client.SemaphoreUI {
 	if tc == nil {
-		r := httptransport.New(fmt.Sprintf("%s:%s", testHostname(), testPort()), "/api", []string{testProtocol()})
+
+		r := httptransport.New("localhost:13000", "/api", []string{"http"})
 		r.DefaultAuthentication = httptransport.BearerToken(testApiToken())
 
 		tc = client.New(r, strfmt.Default)
@@ -42,17 +42,9 @@ func testClient() *client.SemaphoreUI {
 	return tc
 }
 
-func testHostname() string {
-	return os.Getenv("SEMAPHOREUI_HOSTNAME")
-}
-
-func testPort() string {
-	return os.Getenv("SEMAPHOREUI_PORT")
-}
-
-func testProtocol() string {
-	return os.Getenv("SEMAPHOREUI_PROTOCOL")
-}
+// func testApiURL() string {
+// 	return os.Getenv("SEMAPHOREUI_API_BASE_URL")
+// }
 
 func testApiToken() string {
 	return os.Getenv("SEMAPHOREUI_API_TOKEN")
