@@ -2,11 +2,12 @@ package provider
 
 import (
 	"fmt"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"os"
 	"terraform-provider-semaphoreui/semaphoreui/client"
 	"testing"
+
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
@@ -25,9 +26,7 @@ func mustHaveEnv(t *testing.T, name string) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	mustHaveEnv(t, "SEMAPHOREUI_HOSTNAME")
-	mustHaveEnv(t, "SEMAPHOREUI_PORT")
-	mustHaveEnv(t, "SEMAPHOREUI_PROTOCOL")
+	mustHaveEnv(t, "SEMAPHOREUI_API_BASE_URL")
 	mustHaveEnv(t, "SEMAPHOREUI_API_TOKEN")
 }
 
