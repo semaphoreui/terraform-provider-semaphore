@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.2.3](https://github.com/CruGlobal/terraform-provider-semaphoreui/compare/v0.2.1...v0.2.3) (2025-12-11)
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
