@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.2](https://github.com/semaphoreui/terraform-provider-semaphore/compare/v0.2.1...v0.2.2) (2025-12-11)
+
+
+### Bug Fixes
+
+* Fix project environment secret updates ([772f5c5](https://github.com/semaphoreui/terraform-provider-semaphore/commit/772f5c5a102d06ad21e71109ba7aa531dbfb76ce))
+* Fix project environment secret updates ([47f7bab](https://github.com/semaphoreui/terraform-provider-semaphore/commit/47f7bab1bf95327f0986fb217cfed7a51b262609))
+* test port to 1300 ([5ce8330](https://github.com/semaphoreui/terraform-provider-semaphore/commit/5ce833000e599bbcca7159bd78ba5d5e51b85e26))
+* tests ([a608754](https://github.com/semaphoreui/terraform-provider-semaphore/commit/a608754a4b0385235e0bba6e4f253e4a6399bfef))
+
 ## [0.2.3](https://github.com/CruGlobal/terraform-provider-semaphoreui/compare/v0.2.1...v0.2.3) (2025-12-11)
 
 
