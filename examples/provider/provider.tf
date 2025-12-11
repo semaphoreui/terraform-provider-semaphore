@@ -10,5 +10,5 @@ terraform {
 
 provider "semaphore" {
   api_base_url = "http://localhost:3000/api" # Default: "http://localhost:3000/api"
-  api_token = "your token"
+  api_token    = "your token"
 }
