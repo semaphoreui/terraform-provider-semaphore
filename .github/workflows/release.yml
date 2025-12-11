@@ -16,4 +16,4 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           release-type: go
-          token: ${{ secrets.CRU_DEVOPS_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
