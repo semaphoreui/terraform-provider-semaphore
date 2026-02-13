@@ -212,6 +212,9 @@ func ProjectKeySchema() superschema.Schema {
 						Common: &schemaR.Int64Attribute{
 							Optional:    true,
 							Description: "Version tracker to trigger updates for the write-only attribute.",
+							PlanModifiers: []planmodifier.Int64{
+								int64planmodifier.RequiresReplace(),
+							},
 						},
 					},
 				},
