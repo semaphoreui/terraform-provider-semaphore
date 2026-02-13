@@ -194,6 +194,26 @@ func ProjectKeySchema() superschema.Schema {
 							Computed: true,
 						},
 					},
+					"private_key_wo": superschema.StringAttribute{
+						Common: &schemaR.StringAttribute{
+							MarkdownDescription: "The SSH private key.",
+							Sensitive:           true,
+							WriteOnly:           true,
+							Description:         "Write-only version of the private key for ephemeral compatibility.",
+						},
+						Resource: &schemaR.StringAttribute{
+							Optional: true,
+						},
+						DataSource: &schemaD.StringAttribute{
+							Computed: true,
+						},
+					},
+					"private_key_wo_version": superschema.Int64Attribute{
+						Common: &schemaR.Int64Attribute{
+							Optional:    true,
+							Description: "Version tracker to trigger updates for the write-only attribute.",
+						},
+					},
 				},
 			},
 			ProjectKeyTypeNone: superschema.SingleNestedAttribute{
