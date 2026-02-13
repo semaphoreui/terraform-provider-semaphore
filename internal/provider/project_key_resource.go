@@ -81,10 +81,19 @@ func convertProjectKeyModelToAccessKeyRequest(key ProjectKeyModel) *models.Acces
 		}
 	} else if key.SSH != nil {
 		model.Type = ProjectKeyTypeSSH
+
+		// Determine which private key to use
+		var privateKey string
+		if !key.SSH.PrivateKeyWO.IsNull() && !key.SSH.PrivateKeyWO.IsUnknown() {
+			privateKey = key.SSH.PrivateKeyWO.ValueString()
+		} else {
+			privateKey = key.SSH.PrivateKey.ValueString()
+		}
+
 		model.SSH = &models.AccessKeyRequestSSH{
 			Login:      key.SSH.Login.ValueString(),
 			Passphrase: key.SSH.Passphrase.ValueString(),
-			PrivateKey: key.SSH.PrivateKey.ValueString(),
+			PrivateKey: privateKey,
 		}
 	}
 
@@ -226,11 +235,15 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 				key.LoginPassword = &models.AccessKeyRequestLoginPassword{}
 			}
 		case ProjectKeyTypeSSH:
+			versionChanged := !plan.SSH.PrivateKeyWOVersion.Equal(state.SSH.PrivateKeyWOVersion)
+
 			if !plan.SSH.Login.Equal(state.SSH.Login) ||
 				!plan.SSH.Passphrase.Equal(state.SSH.Passphrase) ||
 				!plan.SSH.PrivateKey.Equal(state.SSH.PrivateKey) ||
-				!plan.Name.Equal(state.Name) {
+				!plan.Name.Equal(state.Name) ||
+				versionChanged {
 				key.OverrideSecret = true
+
 			} else {
 				// Use empty struct when secrets haven't changed
 				key.SSH = &models.AccessKeyRequestSSH{}
