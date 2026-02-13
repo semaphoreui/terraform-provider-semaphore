@@ -29,9 +29,11 @@ type (
 	}
 
 	ProjectKeySSH struct {
-		Login      types.String `tfsdk:"login"`
-		Passphrase types.String `tfsdk:"passphrase"`
-		PrivateKey types.String `tfsdk:"private_key"`
+		Login               types.String `tfsdk:"login"`
+		Passphrase          types.String `tfsdk:"passphrase"`
+		PrivateKey          types.String `tfsdk:"private_key"`
+		PrivateKeyWO        types.String `tfsdk:"private_key_wo"`
+		PrivateKeyWOVersion types.Int64  `tfsdk:"private_key_wo_version"`
 	}
 
 	ProjectKeyNone struct{}
