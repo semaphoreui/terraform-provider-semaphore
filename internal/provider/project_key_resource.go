@@ -3,13 +3,14 @@ package provider
 import (
 	"context"
 	"fmt"
+	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
+	"terraform-provider-semaphoreui/semaphoreui/client/project"
+	"terraform-provider-semaphoreui/semaphoreui/models"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/resourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
-	"terraform-provider-semaphoreui/semaphoreui/client/project"
-	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -63,7 +64,7 @@ func (r *projectKeyResource) ConfigValidators(ctx context.Context) []resource.Co
 	}
 }
 
-func convertProjectKeyModelToAccessKeyRequest(key ProjectKeyModel) *models.AccessKeyRequest {
+func convertProjectKeyModelToAccessKeyRequest(key, config ProjectKeyModel) *models.AccessKeyRequest {
 	model := models.AccessKeyRequest{
 		ProjectID: key.ProjectID.ValueInt64(),
 		Name:      key.Name.ValueString(),
@@ -84,8 +85,8 @@ func convertProjectKeyModelToAccessKeyRequest(key ProjectKeyModel) *models.Acces
 
 		// Determine which private key to use
 		var privateKey string
-		if !key.SSH.PrivateKeyWO.IsNull() && !key.SSH.PrivateKeyWO.IsUnknown() {
-			privateKey = key.SSH.PrivateKeyWO.ValueString()
+		if !config.SSH.PrivateKeyWO.IsNull() && !config.SSH.PrivateKeyWO.IsUnknown() {
+			privateKey = config.SSH.PrivateKeyWO.ValueString()
 		} else {
 			privateKey = key.SSH.PrivateKey.ValueString()
 		}
@@ -151,16 +152,16 @@ func (r *projectKeyResource) getProjectKeyModelFromClient(projectId types.Int64,
 
 func (r *projectKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	// Retrieve values from plan
-	var plan ProjectKeyModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	var plan, config ProjectKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	response, err := r.client.Project.PostProjectProjectIDKeys(&project.PostProjectProjectIDKeysParams{
 		ProjectID: plan.ProjectID.ValueInt64(),
-		AccessKey: convertProjectKeyModelToAccessKeyRequest(plan),
+		AccessKey: convertProjectKeyModelToAccessKeyRequest(plan, config),
 	}, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -172,7 +173,7 @@ func (r *projectKeyResource) Create(ctx context.Context, req resource.CreateRequ
 	plan = convertAccessKeyResponseToProjectKeyModel(response.Payload, &plan)
 
 	// Set state to fully populated data
-	diags = resp.State.Set(ctx, &plan)
+	diags := resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -209,15 +210,16 @@ func (r *projectKeyResource) Read(ctx context.Context, req resource.ReadRequest,
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	// Retrieve values from plan and state
-	var plan, state ProjectKeyModel
+	var plan, config, state ProjectKeyModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	// Create an access key based on the plan
-	key := convertProjectKeyModelToAccessKeyRequest(plan)
+	key := convertProjectKeyModelToAccessKeyRequest(plan, config)
 	// Check if type of key has changed
 	if !plan.Type().Equal(state.Type()) {
 		// If key type has changed, we must update the secrets
