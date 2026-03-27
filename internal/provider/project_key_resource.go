@@ -85,7 +85,7 @@ func convertProjectKeyModelToAccessKeyRequest(key, config ProjectKeyModel) *mode
 
 		// Determine which private key to use
 		var privateKey string
-		if !config.SSH.PrivateKeyWO.IsNull() && !config.SSH.PrivateKeyWO.IsUnknown() {
+		if !config.SSH.PrivateKeyWO.IsNull() {
 			privateKey = config.SSH.PrivateKeyWO.ValueString()
 		} else {
 			privateKey = key.SSH.PrivateKey.ValueString()
