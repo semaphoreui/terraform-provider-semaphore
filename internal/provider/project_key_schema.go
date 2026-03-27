@@ -191,6 +191,9 @@ func ProjectKeySchema() superschema.Schema {
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("private_key_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
@@ -205,6 +208,10 @@ func ProjectKeySchema() superschema.Schema {
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("private_key")),
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("private_key_wo_version")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
@@ -214,9 +221,15 @@ func ProjectKeySchema() superschema.Schema {
 						Common: &schemaR.Int64Attribute{
 							Optional:    true,
 							Description: "Version tracker to trigger updates for the write-only attribute.",
-							PlanModifiers: []planmodifier.Int64{
-								int64planmodifier.RequiresReplace(),
+						},
+						Resource: &schemaR.Int64Attribute{
+							Optional: true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("private_key_wo")),
 							},
+						},
+						DataSource: &schemaD.Int64Attribute{
+							Computed: true,
 						},
 					},
 				},
