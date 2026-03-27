@@ -6,8 +6,10 @@ import (
 	"terraform-provider-semaphoreui/semaphoreui/client/project"
 	"testing"
 
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -340,9 +342,13 @@ func TestAcc_ProjectKeyResource_changeType(t *testing.T) {
 func TestAcc_ProjectKeyResource_privateKeyWo(t *testing.T) {
 	nameSuffix := acctest.RandString(8)
 	_, privateKey, _ := acctest.RandSSHKeyPair("")
+	_, updatedKey, _ := acctest.RandSSHKeyPair("")
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.11.0"))),
+		},
 		Steps: []resource.TestStep{
 			// Create and Read testing
 			{
@@ -359,7 +365,7 @@ func TestAcc_ProjectKeyResource_privateKeyWo(t *testing.T) {
 			},
 			// Update and Read testing
 			{
-				Config: testAccProjectKeySSHConfigWo(nameSuffix, "username", privateKey, "", 2),
+				Config: testAccProjectKeySSHConfigWo(nameSuffix, "username", updatedKey, "", 2),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeSSH),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
