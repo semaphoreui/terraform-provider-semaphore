@@ -100,9 +100,17 @@ func convertProjectKeyModelToAccessKeyRequest(key, config ProjectKeyModel) *mode
 			privateKey = key.SSH.PrivateKey.ValueString()
 		}
 
+		// Determine which passphrase to use
+		var passphrase string
+		if !config.SSH.PassphraseWO.IsNull() {
+			passphrase = config.SSH.PassphraseWO.ValueString()
+		} else {
+			passphrase = key.SSH.Passphrase.ValueString()
+		}
+
 		model.SSH = &models.AccessKeyRequestSSH{
 			Login:      key.SSH.Login.ValueString(),
-			Passphrase: key.SSH.Passphrase.ValueString(),
+			Passphrase: passphrase,
 			PrivateKey: privateKey,
 		}
 	}
@@ -249,13 +257,15 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 				key.LoginPassword = &models.AccessKeyRequestLoginPassword{}
 			}
 		case ProjectKeyTypeSSH:
-			versionChanged := !plan.SSH.PrivateKeyWOVersion.Equal(state.SSH.PrivateKeyWOVersion)
+			privateKeyVersionChanged := !plan.SSH.PrivateKeyWOVersion.Equal(state.SSH.PrivateKeyWOVersion)
+			passphraseVersionChanged := !plan.SSH.PassphraseWOVersion.Equal(state.SSH.PassphraseWOVersion)
 
 			if !plan.SSH.Login.Equal(state.SSH.Login) ||
 				!plan.SSH.Passphrase.Equal(state.SSH.Passphrase) ||
 				!plan.SSH.PrivateKey.Equal(state.SSH.PrivateKey) ||
 				!plan.Name.Equal(state.Name) ||
-				versionChanged {
+				privateKeyVersionChanged ||
+				passphraseVersionChanged {
 				key.OverrideSecret = true
 
 			} else {

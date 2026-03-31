@@ -33,6 +33,8 @@ type (
 	ProjectKeySSH struct {
 		Login               types.String `tfsdk:"login"`
 		Passphrase          types.String `tfsdk:"passphrase"`
+		PassphraseWO        types.String `tfsdk:"passphrase_wo"`
+		PassphraseWOVersion types.Int64  `tfsdk:"passphrase_wo_version"`
 		PrivateKey          types.String `tfsdk:"private_key"`
 		PrivateKeyWO        types.String `tfsdk:"private_key_wo"`
 		PrivateKeyWOVersion types.Int64  `tfsdk:"private_key_wo_version"`
@@ -221,8 +223,44 @@ func ProjectKeySchema() superschema.Schema {
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("passphrase_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
+							Computed: true,
+						},
+					},
+					"passphrase_wo": superschema.StringAttribute{
+						Common: &schemaR.StringAttribute{
+							MarkdownDescription: "The SSH Key passphrase.",
+							Sensitive:           true,
+							WriteOnly:           true,
+							Description:         "Write-only version of the passphrase for ephemeral compatibility.",
+						},
+						Resource: &schemaR.StringAttribute{
+							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("passphrase")),
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("passphrase_wo_version")),
+							},
+						},
+						DataSource: &schemaD.StringAttribute{
+							Computed: true,
+						},
+					},
+					"passphrase_wo_version": superschema.Int64Attribute{
+						Common: &schemaR.Int64Attribute{
+							Optional:    true,
+							Description: "Version tracker to trigger updates for the write-only attribute.",
+						},
+						Resource: &schemaR.Int64Attribute{
+							Optional: true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("passphrase_wo")),
+							},
+						},
+						DataSource: &schemaD.Int64Attribute{
 							Computed: true,
 						},
 					},
