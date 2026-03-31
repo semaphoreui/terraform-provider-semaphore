@@ -17,15 +17,17 @@ import (
 )
 
 type UserModel struct {
-	ID       types.Int64  `tfsdk:"id"`
-	Created  types.String `tfsdk:"created"`
-	Username types.String `tfsdk:"username"`
-	Name     types.String `tfsdk:"name"`
-	Email    types.String `tfsdk:"email"`
-	Admin    types.Bool   `tfsdk:"admin"`
-	External types.Bool   `tfsdk:"external"`
-	Alert    types.Bool   `tfsdk:"alert"`
-	Password types.String `tfsdk:"password"`
+	ID                types.Int64  `tfsdk:"id"`
+	Created           types.String `tfsdk:"created"`
+	Username          types.String `tfsdk:"username"`
+	Name              types.String `tfsdk:"name"`
+	Email             types.String `tfsdk:"email"`
+	Admin             types.Bool   `tfsdk:"admin"`
+	External          types.Bool   `tfsdk:"external"`
+	Alert             types.Bool   `tfsdk:"alert"`
+	Password          types.String `tfsdk:"password"`
+	PasswordWO        types.String `tfsdk:"password_wo"`
+	PasswordWOVersion types.Int64  `tfsdk:"password_wo_version"`
 }
 
 func userSchema() superschema.Schema {
@@ -133,10 +135,46 @@ func userSchema() superschema.Schema {
 					PlanModifiers: []planmodifier.String{
 						stringplanmodifier.UseStateForUnknown(),
 					},
+					Validators: []validator.String{
+						stringvalidator.ConflictsWith(path.MatchRoot("password_wo")),
+					},
 				},
 				DataSource: &schemaD.StringAttribute{
 					MarkdownDescription: "This value is never returned by the API and will be an empty string.",
 					Computed:            true,
+				},
+			},
+			"password_wo": superschema.StringAttribute{
+				Common: &schemaR.StringAttribute{
+					Sensitive: true,
+					WriteOnly: true,
+				},
+				Resource: &schemaR.StringAttribute{
+					MarkdownDescription: "Login Password. Write-only version for ephemeral compatibility.",
+					Optional:            true,
+					Validators: []validator.String{
+						stringvalidator.ConflictsWith(path.MatchRoot("password")),
+						stringvalidator.AlsoRequires(path.MatchRoot("password_wo_version")),
+					},
+				},
+				DataSource: &schemaD.StringAttribute{
+					MarkdownDescription: "This value is never returned by the API and will be an empty string.",
+					Computed:            true,
+				},
+			},
+			"password_wo_version": superschema.Int64Attribute{
+				Common: &schemaR.Int64Attribute{
+					Optional:    true,
+					Description: "Version tracker to trigger updates for the password write-only attribute.",
+				},
+				Resource: &schemaR.Int64Attribute{
+					Optional: true,
+					Validators: []validator.Int64{
+						int64validator.AlsoRequires(path.MatchRoot("password_wo")),
+					},
+				},
+				DataSource: &schemaD.Int64Attribute{
+					Computed: true,
 				},
 			},
 			"admin": superschema.BoolAttribute{
