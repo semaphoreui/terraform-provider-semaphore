@@ -24,8 +24,10 @@ type (
 	}
 
 	ProjectKeyLoginPassword struct {
-		Login    types.String `tfsdk:"login"`
-		Password types.String `tfsdk:"password"`
+		Login             types.String `tfsdk:"login"`
+		Password          types.String `tfsdk:"password"`
+		PasswordWO        types.String `tfsdk:"password_wo"`
+		PasswordWOVersion types.Int64  `tfsdk:"password_wo_version"`
 	}
 
 	ProjectKeySSH struct {
@@ -142,9 +144,49 @@ func ProjectKeySchema() superschema.Schema {
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
-							Required: true,
+							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ExactlyOneOf(
+									path.MatchRelative().AtParent().AtName("password"),
+									path.MatchRelative().AtParent().AtName("password_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
+							Computed: true,
+						},
+					},
+					"password_wo": superschema.StringAttribute{
+						Common: &schemaR.StringAttribute{
+							MarkdownDescription: "The login password.",
+							Sensitive:           true,
+							WriteOnly:           true,
+							Description:         "Write-only version of the password for ephemeral compatibility.",
+						},
+						Resource: &schemaR.StringAttribute{
+							Optional: true,
+							Validators: []validator.String{
+								stringvalidator.ExactlyOneOf(
+									path.MatchRelative().AtParent().AtName("password"),
+									path.MatchRelative().AtParent().AtName("password_wo")),
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("password_wo_version")),
+							},
+						},
+						DataSource: &schemaD.StringAttribute{
+							Computed: true,
+						},
+					},
+					"password_wo_version": superschema.Int64Attribute{
+						Common: &schemaR.Int64Attribute{
+							Optional:    true,
+							Description: "Version tracker to trigger updates for the write-only attribute.",
+						},
+						Resource: &schemaR.Int64Attribute{
+							Optional: true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("password_wo")),
+							},
+						},
+						DataSource: &schemaD.Int64Attribute{
 							Computed: true,
 						},
 					},

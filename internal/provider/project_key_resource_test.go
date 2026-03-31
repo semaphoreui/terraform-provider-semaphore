@@ -79,6 +79,14 @@ func testAccProjectKeyLoginPasswordConfig(nameSuffix string, login string, passw
 }`, login, password))
 }
 
+func testAccProjectKeyLoginPasswordConfigWo(nameSuffix string, login string, password string, version int) string {
+	return testAccProjectKeyConfig(nameSuffix, fmt.Sprintf(`login_password = {
+  login              = "%[1]s"
+  password_wo        = "%[2]s"
+  password_wo_version = %[3]d
+}`, login, password, version))
+}
+
 func testAccProjectKeySSHConfig(nameSuffix string, login string, privateKey string, passphrase string) string {
 	return testAccProjectKeyConfig(nameSuffix, fmt.Sprintf(`ssh = {
   login       = "%[1]s"
@@ -158,7 +166,7 @@ func TestAcc_ProjectKeyResource_basicLoginPassword(t *testing.T) {
 					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeLoginPassword),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "none"),
-					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "2"),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "4"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.login", "username"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.password", "password"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "ssh"),
@@ -185,7 +193,7 @@ func TestAcc_ProjectKeyResource_basicLoginPassword(t *testing.T) {
 					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeLoginPassword),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "none"),
-					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "2"),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "4"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.login", "foo"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.password", "bar"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "ssh"),
@@ -313,7 +321,7 @@ func TestAcc_ProjectKeyResource_changeType(t *testing.T) {
 					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeLoginPassword),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "none"),
-					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "2"),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.%", "4"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.login", "username"),
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.password", "password"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "ssh"),
@@ -373,6 +381,45 @@ func TestAcc_ProjectKeyResource_privateKeyWo(t *testing.T) {
 					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "ssh.private_key_wo_version", "2"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "ssh.private_key_wo"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "ssh.private_key"),
+					resource.TestCheckResourceAttrSet("semaphoreui_project_key.test", "id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAcc_ProjectKeyResource_passwordWo(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.11.0"))),
+		},
+		Steps: []resource.TestStep{
+			// Create and Read testing
+			{
+				Config: testAccProjectKeyLoginPasswordConfigWo(nameSuffix, "username", "secret", 1),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeLoginPassword),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "none"),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.password_wo_version", "1"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "login_password.password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "login_password.password"),
+					resource.TestCheckResourceAttrSet("semaphoreui_project_key.test", "id"),
+				),
+			},
+			// Update and Read testing
+			{
+				Config: testAccProjectKeyLoginPasswordConfigWo(nameSuffix, "username", "updated", 2),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectKeyExists("semaphoreui_project_key.test", ProjectKeyTypeLoginPassword),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "none"),
+					resource.TestCheckResourceAttr("semaphoreui_project_key.test", "login_password.password_wo_version", "2"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "login_password.password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_key.test", "login_password.password"),
 					resource.TestCheckResourceAttrSet("semaphoreui_project_key.test", "id"),
 				),
 			},

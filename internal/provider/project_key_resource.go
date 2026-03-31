@@ -76,9 +76,18 @@ func convertProjectKeyModelToAccessKeyRequest(key, config ProjectKeyModel) *mode
 		model.Type = ProjectKeyTypeNone
 	} else if key.LoginPassword != nil {
 		model.Type = ProjectKeyTypeLoginPassword
+
+		// Determine which password to use
+		var password string
+		if !config.LoginPassword.PasswordWO.IsNull() {
+			password = config.LoginPassword.PasswordWO.ValueString()
+		} else {
+			password = key.LoginPassword.Password.ValueString()
+		}
+
 		model.LoginPassword = &models.AccessKeyRequestLoginPassword{
 			Login:    key.LoginPassword.Login.ValueString(),
-			Password: key.LoginPassword.Password.ValueString(),
+			Password: password,
 		}
 	} else if key.SSH != nil {
 		model.Type = ProjectKeyTypeSSH
@@ -228,9 +237,12 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 		// Key type has not changed, so we need to check if individual fields have changed
 		switch plan.Type().ValueString() {
 		case ProjectKeyTypeLoginPassword:
+			versionChanged := !plan.LoginPassword.PasswordWOVersion.Equal(state.LoginPassword.PasswordWOVersion)
+
 			if !plan.LoginPassword.Login.Equal(state.LoginPassword.Login) ||
 				!plan.LoginPassword.Password.Equal(state.LoginPassword.Password) ||
-				!plan.Name.Equal(state.Name) {
+				!plan.Name.Equal(state.Name) ||
+				versionChanged {
 				key.OverrideSecret = true
 			} else {
 				// Use empty struct when secrets haven't changed
