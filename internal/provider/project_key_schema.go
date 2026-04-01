@@ -180,7 +180,7 @@ func ProjectKeySchema() superschema.Schema {
 					"password_wo_version": superschema.Int64Attribute{
 						Common: &schemaR.Int64Attribute{
 							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only attribute.",
+							Description: "Version tracker to trigger updates for the write-only password attribute.",
 						},
 						Resource: &schemaR.Int64Attribute{
 							Optional: true,
@@ -252,7 +252,7 @@ func ProjectKeySchema() superschema.Schema {
 					"passphrase_wo_version": superschema.Int64Attribute{
 						Common: &schemaR.Int64Attribute{
 							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only attribute.",
+							Description: "Version tracker to trigger updates for the write-only passphrase attribute.",
 						},
 						Resource: &schemaR.Int64Attribute{
 							Optional: true,
@@ -300,7 +300,7 @@ func ProjectKeySchema() superschema.Schema {
 					"private_key_wo_version": superschema.Int64Attribute{
 						Common: &schemaR.Int64Attribute{
 							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only attribute.",
+							Description: "Version tracker to trigger updates for the write-only private key attribute.",
 						},
 						Resource: &schemaR.Int64Attribute{
 							Optional: true,

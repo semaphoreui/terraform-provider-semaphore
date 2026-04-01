@@ -165,7 +165,7 @@ func userSchema() superschema.Schema {
 			"password_wo_version": superschema.Int64Attribute{
 				Common: &schemaR.Int64Attribute{
 					Optional:    true,
-					Description: "Version tracker to trigger updates for the password write-only attribute.",
+					Description: "Version tracker to trigger updates for the write-only password attribute.",
 				},
 				Resource: &schemaR.Int64Attribute{
 					Optional: true,
