@@ -399,3 +399,121 @@ func TestAcc_ProjectEnvironmentResource_basicSecrets(t *testing.T) {
 		},
 	})
 }
+
+type testAccProjectEnvironmentSecretWriteOnly struct {
+	Name           string
+	ValueWo        string
+	ValueWoVersion int
+	Type           string
+}
+
+func testAccProjectEnvironmentWriteOnlyConfig(nameSuffix string, secrets []testAccProjectEnvironmentSecretWriteOnly) string {
+	var secs string
+	for _, s := range secrets {
+		secs += fmt.Sprintf(`{
+      name             = "%s"
+      value_wo         = "%s"
+      value_wo_version = %d
+      type             = "%s"
+    },`, s.Name, s.ValueWo, s.ValueWoVersion, s.Type)
+	}
+	return fmt.Sprintf(`
+%[1]s
+resource "semaphoreui_project_environment" "test" {
+  project_id = semaphoreui_project.test.id
+  name       = "Test %[2]s"
+  secrets = [
+    %[3]s
+  ]
+}`, testAccProjectEnvironmentEmptyConfig(nameSuffix), nameSuffix, secs)
+}
+
+func testAccProjectEnvironmentMixedConfig(nameSuffix string) string {
+	return fmt.Sprintf(`
+%[1]s
+resource "semaphoreui_project_environment" "test" {
+  project_id = semaphoreui_project.test.id
+  name       = "Test %[2]s"
+  secrets = [
+    {
+      name  = "PLAIN"
+      value = "plain-value"
+      type  = "env"
+    },
+    {
+      name             = "WO"
+      value_wo         = "write-only-value"
+      value_wo_version = 1
+      type             = "var"
+    },
+  ]
+}`, testAccProjectEnvironmentEmptyConfig(nameSuffix), nameSuffix)
+}
+
+func TestAcc_ProjectEnvironmentResource_secretsWriteOnly(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectEnvironmentWriteOnlyConfig(nameSuffix, []testAccProjectEnvironmentSecretWriteOnly{
+					{Name: "TOKEN", ValueWo: "first-secret", ValueWoVersion: 1, Type: "env"},
+				}),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectEnvironmentExists("semaphoreui_project_environment.test"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.#", "1"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.name", "TOKEN"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.type", "env"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo_version", "1"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value", ""),
+				),
+			},
+			{
+				Config: testAccProjectEnvironmentWriteOnlyConfig(nameSuffix, []testAccProjectEnvironmentSecretWriteOnly{
+					{Name: "TOKEN", ValueWo: "second-secret", ValueWoVersion: 2, Type: "env"},
+				}),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectEnvironmentExists("semaphoreui_project_environment.test"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo_version", "2"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo"),
+				),
+			},
+			{
+				Config: testAccProjectEnvironmentEmptyConfig(nameSuffix),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccResourceNotExists("semaphoreui_project_environment.test"),
+				),
+			},
+		},
+	})
+}
+
+func TestAcc_ProjectEnvironmentResource_secretsMixed(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectEnvironmentMixedConfig(nameSuffix),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectEnvironmentExists("semaphoreui_project_environment.test"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.#", "2"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.name", "PLAIN"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value", "plain-value"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.1.name", "WO"),
+					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.1.value_wo_version", "1"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_environment.test", "secrets.1.value_wo"),
+				),
+			},
+			{
+				Config: testAccProjectEnvironmentEmptyConfig(nameSuffix),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccResourceNotExists("semaphoreui_project_environment.test"),
+				),
+			},
+		},
+	})
+}

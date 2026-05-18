@@ -66,6 +66,40 @@ func (model ProjectEnvironmentModel) SecretValue(ctx context.Context, name strin
 	return types.StringValue("")
 }
 
+func (model ProjectEnvironmentModel) SecretValueWo(ctx context.Context, name string, varType string) types.String {
+	if model.Secrets.IsNull() || model.Secrets.IsUnknown() {
+		return types.StringNull()
+	}
+	var secrets []ProjectEnvironmentSecretModel
+	diags := model.Secrets.ElementsAs(ctx, &secrets, false)
+	if diags.HasError() {
+		return types.StringNull()
+	}
+	for _, secret := range secrets {
+		if secret.Name.Equal(types.StringValue(name)) && secret.Type.Equal(types.StringValue(varType)) {
+			return secret.ValueWo
+		}
+	}
+	return types.StringNull()
+}
+
+func (model ProjectEnvironmentModel) SecretValueWoVersion(ctx context.Context, name string, varType string) types.Int64 {
+	if model.Secrets.IsNull() || model.Secrets.IsUnknown() {
+		return types.Int64Null()
+	}
+	var secrets []ProjectEnvironmentSecretModel
+	diags := model.Secrets.ElementsAs(ctx, &secrets, false)
+	if diags.HasError() {
+		return types.Int64Null()
+	}
+	for _, secret := range secrets {
+		if secret.Name.Equal(types.StringValue(name)) && secret.Type.Equal(types.StringValue(varType)) {
+			return secret.ValueWoVersion
+		}
+	}
+	return types.Int64Null()
+}
+
 func (model ProjectEnvironmentModel) Secret(ctx context.Context, id types.Int64) *ProjectEnvironmentSecretModel {
 	if model.Secrets.IsNull() || model.Secrets.IsUnknown() {
 		return nil
@@ -89,7 +123,7 @@ func (r *projectEnvironmentResource) Schema(ctx context.Context, _ resource.Sche
 	resp.Schema = ProjectEnvironmentSchema().GetResource(ctx)
 }
 
-func convertProjectEnvironmentModelToEnvironmentRequest(ctx context.Context, env ProjectEnvironmentModel, prev *ProjectEnvironmentModel) *models.EnvironmentRequest {
+func convertProjectEnvironmentModelToEnvironmentRequest(ctx context.Context, env ProjectEnvironmentModel, prev *ProjectEnvironmentModel, envSecrets []ProjectEnvironmentSecretModel) *models.EnvironmentRequest {
 	model := models.EnvironmentRequest{
 		ProjectID: env.ProjectID.ValueInt64(),
 		Name:      env.Name.ValueString(),
@@ -113,12 +147,7 @@ func convertProjectEnvironmentModelToEnvironmentRequest(ctx context.Context, env
 	}
 
 	var secrets []*models.EnvironmentSecretRequest
-	var envSecrets, prevSecrets []ProjectEnvironmentSecretModel
-	if env.Secrets.IsNull() || env.Secrets.IsUnknown() {
-		envSecrets = []ProjectEnvironmentSecretModel{}
-	} else {
-		env.Secrets.ElementsAs(ctx, &envSecrets, false)
-	}
+	var prevSecrets []ProjectEnvironmentSecretModel
 	if prev.Secrets.IsUnknown() || prev.Secrets.IsNull() {
 		prevSecrets = []ProjectEnvironmentSecretModel{}
 	} else {
@@ -133,20 +162,21 @@ func convertProjectEnvironmentModelToEnvironmentRequest(ctx context.Context, env
 		// Create all secrets from env missing an ID
 		if secret.ID.IsUnknown() || secret.ID.IsNull() {
 			modelSecret.Operation = "create"
-			modelSecret.Secret = secret.Value.ValueString()
+			modelSecret.Secret = resolveSecretValue(secret)
 		} else {
 			modelSecret.ID = secret.ID.ValueInt64()
 			// Find the previous secret
 			prevSecret := prev.Secret(ctx, secret.ID)
 			if prevSecret != nil {
-				// Update if any field has changed
-				if !secret.Name.Equal(prevSecret.Name) || !secret.Value.Equal(prevSecret.Value) || !secret.Type.Equal(prevSecret.Type) {
+				secretValueChanged := !secret.Value.Equal(prevSecret.Value) ||
+					!secret.ValueWoVersion.Equal(prevSecret.ValueWoVersion)
+				if !secret.Name.Equal(prevSecret.Name) || secretValueChanged || !secret.Type.Equal(prevSecret.Type) {
 					modelSecret.Operation = "update"
 					if !secret.Name.Equal(prevSecret.Name) {
 						modelSecret.Name = secret.Name.ValueString()
 					}
-					if !secret.Value.Equal(prevSecret.Value) {
-						modelSecret.Secret = secret.Value.ValueString()
+					if secretValueChanged {
+						modelSecret.Secret = resolveSecretValue(secret)
 					}
 					if !secret.Type.Equal(prevSecret.Type) {
 						modelSecret.Type = secret.Type.ValueString()
@@ -173,6 +203,18 @@ func convertProjectEnvironmentModelToEnvironmentRequest(ctx context.Context, env
 	model.Secrets = secrets
 
 	return &model
+}
+
+// resolveSecretValue returns the write-only cleartext when the secret is using
+// the value_wo pattern, otherwise the regular value.
+func resolveSecretValue(secret ProjectEnvironmentSecretModel) string {
+	if !secret.ValueWo.IsNull() && !secret.ValueWo.IsUnknown() {
+		return secret.ValueWo.ValueString()
+	}
+	if secret.Value.IsNull() || secret.Value.IsUnknown() {
+		return ""
+	}
+	return secret.Value.ValueString()
 }
 
 var _ sort.Interface = ByEnvironmentID{}
@@ -217,8 +259,12 @@ func convertEnvironmentResponseToProjectEnvironmentModel(ctx context.Context, en
 		prevSecret := prev.Secret(ctx, modelSecret.ID)
 		if prevSecret != nil {
 			modelSecret.Value = prevSecret.Value
+			modelSecret.ValueWo = prevSecret.ValueWo
+			modelSecret.ValueWoVersion = prevSecret.ValueWoVersion
 		} else {
 			modelSecret.Value = prev.SecretValue(ctx, secret.Name, secret.Type)
+			modelSecret.ValueWo = prev.SecretValueWo(ctx, secret.Name, secret.Type)
+			modelSecret.ValueWoVersion = prev.SecretValueWoVersion(ctx, secret.Name, secret.Type)
 		}
 		secrets = append(secrets, modelSecret)
 	}
@@ -228,10 +274,12 @@ func convertEnvironmentResponseToProjectEnvironmentModel(ctx context.Context, en
 
 	envSecrets, _ := types.ListValueFrom(ctx, types.ObjectType{
 		AttrTypes: map[string]attr.Type{
-			"id":    types.Int64Type,
-			"type":  types.StringType,
-			"name":  types.StringType,
-			"value": types.StringType,
+			"id":               types.Int64Type,
+			"type":             types.StringType,
+			"name":             types.StringType,
+			"value":            types.StringType,
+			"value_wo":         types.StringType,
+			"value_wo_version": types.Int64Type,
 		},
 	}, secrets)
 
@@ -248,10 +296,26 @@ func (r *projectEnvironmentResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
+	planSecrets := extractEnvironmentSecrets(ctx, plan.Secrets, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	planSecrets = mergeEnvironmentSecretsWriteOnly(ctx, req.Config, planSecrets, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if hasEnvironmentSecretWithoutValue(planSecrets) {
+		resp.Diagnostics.AddError(
+			"Missing environment secret value",
+			"Each `secrets` item must set either `value` or `value_wo`.",
+		)
+		return
+	}
+
 	//Create new projectEnvironment
 	response, err := r.client.Project.PostProjectProjectIDEnvironment(&project.PostProjectProjectIDEnvironmentParams{
 		ProjectID:   plan.ProjectID.ValueInt64(),
-		Environment: convertProjectEnvironmentModelToEnvironmentRequest(ctx, plan, &ProjectEnvironmentModel{}),
+		Environment: convertProjectEnvironmentModelToEnvironmentRequest(ctx, plan, &ProjectEnvironmentModel{}, planSecrets),
 	}, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -320,15 +384,31 @@ func (r *projectEnvironmentResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
+	planSecrets := extractEnvironmentSecrets(ctx, plan.Secrets, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	planSecrets = mergeEnvironmentSecretsWriteOnly(ctx, req.Config, planSecrets, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if hasEnvironmentSecretWithoutValue(planSecrets) {
+		resp.Diagnostics.AddError(
+			"Missing environment secret value",
+			"Each `secrets` item must set either `value` or `value_wo`.",
+		)
+		return
+	}
+
 	_, err := r.client.Project.PutProjectProjectIDEnvironmentEnvironmentID(&project.PutProjectProjectIDEnvironmentEnvironmentIDParams{
 		ProjectID:     plan.ProjectID.ValueInt64(),
 		EnvironmentID: plan.ID.ValueInt64(),
-		Environment:   convertProjectEnvironmentModelToEnvironmentRequest(ctx, plan, &state),
+		Environment:   convertProjectEnvironmentModelToEnvironmentRequest(ctx, plan, &state, planSecrets),
 	}, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Updating SemaphoreUI Project Key",
-			"Could not update project key, unexpected error: "+err.Error(),
+			"Error Updating SemaphoreUI Project Environment",
+			"Could not update project environment, unexpected error: "+err.Error(),
 		)
 		return
 	}

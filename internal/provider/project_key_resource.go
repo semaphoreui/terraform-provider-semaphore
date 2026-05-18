@@ -77,18 +77,28 @@ func convertProjectKeyModelToAccessKeyRequest(key ProjectKeyModel) *models.Acces
 		model.Type = ProjectKeyTypeLoginPassword
 		model.LoginPassword = &models.AccessKeyRequestLoginPassword{
 			Login:    key.LoginPassword.Login.ValueString(),
-			Password: key.LoginPassword.Password.ValueString(),
+			Password: resolveSecret(key.LoginPassword.Password, key.LoginPassword.PasswordWo),
 		}
 	} else if key.SSH != nil {
 		model.Type = ProjectKeyTypeSSH
 		model.SSH = &models.AccessKeyRequestSSH{
 			Login:      key.SSH.Login.ValueString(),
-			Passphrase: key.SSH.Passphrase.ValueString(),
-			PrivateKey: key.SSH.PrivateKey.ValueString(),
+			Passphrase: resolveSecret(key.SSH.Passphrase, key.SSH.PassphraseWo),
+			PrivateKey: resolveSecret(key.SSH.PrivateKey, key.SSH.PrivateKeyWo),
 		}
 	}
 
 	return &model
+}
+
+func resolveSecret(value, writeOnly types.String) string {
+	if !writeOnly.IsNull() && !writeOnly.IsUnknown() {
+		return writeOnly.ValueString()
+	}
+	if value.IsNull() || value.IsUnknown() {
+		return ""
+	}
+	return value.ValueString()
 }
 
 func convertAccessKeyResponseToProjectKeyModel(key *models.AccessKey, prev *ProjectKeyModel) ProjectKeyModel {
@@ -146,6 +156,26 @@ func (r *projectKeyResource) Create(ctx context.Context, req resource.CreateRequ
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Write-only attributes are null in plan; pull their cleartext from config.
+	mergeWriteOnlyFromConfig(ctx, req.Config, &plan, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWo) {
+		resp.Diagnostics.AddError(
+			"Missing login password value",
+			"Set one of `login_password.password` or `login_password.password_wo`.",
+		)
+		return
+	}
+	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWo) {
+		resp.Diagnostics.AddError(
+			"Missing SSH private key value",
+			"Set one of `ssh.private_key` or `ssh.private_key_wo`.",
+		)
 		return
 	}
 
@@ -207,6 +237,26 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
+	// Write-only attributes are null in plan; pull their cleartext from config.
+	mergeWriteOnlyFromConfig(ctx, req.Config, &plan, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWo) {
+		resp.Diagnostics.AddError(
+			"Missing login password value",
+			"Set one of `login_password.password` or `login_password.password_wo`.",
+		)
+		return
+	}
+	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWo) {
+		resp.Diagnostics.AddError(
+			"Missing SSH private key value",
+			"Set one of `ssh.private_key` or `ssh.private_key_wo`.",
+		)
+		return
+	}
+
 	// Create an access key based on the plan
 	key := convertProjectKeyModelToAccessKeyRequest(plan)
 	// Check if type of key has changed
@@ -219,6 +269,7 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 		case ProjectKeyTypeLoginPassword:
 			if !plan.LoginPassword.Login.Equal(state.LoginPassword.Login) ||
 				!plan.LoginPassword.Password.Equal(state.LoginPassword.Password) ||
+				!plan.LoginPassword.PasswordWoVersion.Equal(state.LoginPassword.PasswordWoVersion) ||
 				!plan.Name.Equal(state.Name) {
 				key.OverrideSecret = true
 			} else {
@@ -228,7 +279,9 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 		case ProjectKeyTypeSSH:
 			if !plan.SSH.Login.Equal(state.SSH.Login) ||
 				!plan.SSH.Passphrase.Equal(state.SSH.Passphrase) ||
+				!plan.SSH.PassphraseWoVersion.Equal(state.SSH.PassphraseWoVersion) ||
 				!plan.SSH.PrivateKey.Equal(state.SSH.PrivateKey) ||
+				!plan.SSH.PrivateKeyWoVersion.Equal(state.SSH.PrivateKeyWoVersion) ||
 				!plan.Name.Equal(state.Name) {
 				key.OverrideSecret = true
 			} else {

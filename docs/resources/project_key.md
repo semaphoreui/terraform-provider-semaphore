@@ -35,6 +35,29 @@ resource "semaphoreui_project_key" "ssh" {
   }
 }
 
+# Write-only secrets are sent to SemaphoreUI on create/update and not stored in state.
+# Bump `*_wo_version` to rotate.
+resource "semaphoreui_project_key" "login_password_write_only" {
+  project_id = semaphoreui_project.project.id
+  name       = "Example Login (write-only)"
+  login_password = {
+    login               = "username"
+    password_wo         = var.password # e.g. data.infisical_secret.api.value
+    password_wo_version = 1
+  }
+}
+
+resource "semaphoreui_project_key" "ssh_write_only" {
+  project_id = semaphoreui_project.project.id
+  name       = "Example SSH (write-only)"
+  ssh = {
+    passphrase_wo          = var.ssh_passphrase
+    passphrase_wo_version  = 1
+    private_key_wo         = var.ssh_private_key
+    private_key_wo_version = 1
+  }
+}
+
 resource "semaphoreui_project_key" "none" {
   project_id = semaphoreui_project.project.id
   name       = "Example None"
@@ -63,13 +86,12 @@ resource "semaphoreui_project_key" "none" {
 <a id="nestedatt--login_password"></a>
 ### Nested Schema for `login_password`
 
-Required:
-
-- `password` (String, Sensitive) The login password.
-
 Optional:
 
 - `login` (String) The login username.
+- `password` (String, Sensitive) The login password. Conflicts with `password_wo`. Ensure that if an attribute is set, these are not set: "[login_password.password_wo]".
+- `password_wo` (String, Sensitive) Write-only login password. Change `password_wo_version` to rotate. Conflicts with `password`. Ensure that if an attribute is set, these are not set: "[login_password.password]". Ensure that if an attribute is set, also these are set: "[login_password.password_wo_version]".
+- `password_wo_version` (Number) Version marker for `password_wo`. Ensure that if an attribute is set, also these are set: "[login_password.password_wo]".
 
 
 <a id="nestedatt--none"></a>
@@ -82,8 +104,12 @@ Optional:
 Optional:
 
 - `login` (String) The login username.
-- `passphrase` (String, Sensitive) The SSH Key passphrase.
-- `private_key` (String, Sensitive) The SSH private key.
+- `passphrase` (String, Sensitive) The SSH Key passphrase. Conflicts with `passphrase_wo`. Ensure that if an attribute is set, these are not set: "[ssh.passphrase_wo]".
+- `passphrase_wo` (String, Sensitive) Write-only SSH key passphrase. Change `passphrase_wo_version` to rotate. Conflicts with `passphrase`. Ensure that if an attribute is set, these are not set: "[ssh.passphrase]". Ensure that if an attribute is set, also these are set: "[ssh.passphrase_wo_version]".
+- `passphrase_wo_version` (Number) Version marker for `passphrase_wo`. Ensure that if an attribute is set, also these are set: "[ssh.passphrase_wo]".
+- `private_key` (String, Sensitive) The SSH private key. Conflicts with `private_key_wo`. Ensure that if an attribute is set, these are not set: "[ssh.private_key_wo]".
+- `private_key_wo` (String, Sensitive) Write-only SSH private key. Change `private_key_wo_version` to rotate. Conflicts with `private_key`. Ensure that if an attribute is set, these are not set: "[ssh.private_key]". Ensure that if an attribute is set, also these are set: "[ssh.private_key_wo_version]".
+- `private_key_wo_version` (Number) Version marker for `private_key_wo`. Ensure that if an attribute is set, also these are set: "[ssh.private_key_wo]".
 
 ## Import
 

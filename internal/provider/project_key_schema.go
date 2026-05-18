@@ -24,14 +24,20 @@ type (
 	}
 
 	ProjectKeyLoginPassword struct {
-		Login    types.String `tfsdk:"login"`
-		Password types.String `tfsdk:"password"`
+		Login             types.String `tfsdk:"login"`
+		Password          types.String `tfsdk:"password"`
+		PasswordWo        types.String `tfsdk:"password_wo"`
+		PasswordWoVersion types.Int64  `tfsdk:"password_wo_version"`
 	}
 
 	ProjectKeySSH struct {
-		Login      types.String `tfsdk:"login"`
-		Passphrase types.String `tfsdk:"passphrase"`
-		PrivateKey types.String `tfsdk:"private_key"`
+		Login               types.String `tfsdk:"login"`
+		Passphrase          types.String `tfsdk:"passphrase"`
+		PassphraseWo        types.String `tfsdk:"passphrase_wo"`
+		PassphraseWoVersion types.Int64  `tfsdk:"passphrase_wo_version"`
+		PrivateKey          types.String `tfsdk:"private_key"`
+		PrivateKeyWo        types.String `tfsdk:"private_key_wo"`
+		PrivateKeyWoVersion types.Int64  `tfsdk:"private_key_wo_version"`
 	}
 
 	ProjectKeyNone struct{}
@@ -140,10 +146,35 @@ func ProjectKeySchema() superschema.Schema {
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
-							Required: true,
+							MarkdownDescription: "Conflicts with `password_wo`.",
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("login_password").AtName("password_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
+						},
+					},
+					"password_wo": superschema.StringAttribute{
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only login password. Change `password_wo_version` to rotate. Conflicts with `password`.",
+							Optional:            true,
+							Sensitive:           true,
+							WriteOnly:           true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("login_password").AtName("password")),
+								stringvalidator.AlsoRequires(path.MatchRoot("login_password").AtName("password_wo_version")),
+							},
+						},
+					},
+					"password_wo_version": superschema.Int64Attribute{
+						Resource: &schemaR.Int64Attribute{
+							MarkdownDescription: "Version marker for `password_wo`.",
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRoot("login_password").AtName("password_wo")),
+							},
 						},
 					},
 				},
@@ -176,10 +207,35 @@ func ProjectKeySchema() superschema.Schema {
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
-							Optional: true,
+							MarkdownDescription: "Conflicts with `passphrase_wo`.",
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("ssh").AtName("passphrase_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
+						},
+					},
+					"passphrase_wo": superschema.StringAttribute{
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only SSH key passphrase. Change `passphrase_wo_version` to rotate. Conflicts with `passphrase`.",
+							Optional:            true,
+							Sensitive:           true,
+							WriteOnly:           true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("ssh").AtName("passphrase")),
+								stringvalidator.AlsoRequires(path.MatchRoot("ssh").AtName("passphrase_wo_version")),
+							},
+						},
+					},
+					"passphrase_wo_version": superschema.Int64Attribute{
+						Resource: &schemaR.Int64Attribute{
+							MarkdownDescription: "Version marker for `passphrase_wo`.",
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRoot("ssh").AtName("passphrase_wo")),
+							},
 						},
 					},
 					"private_key": superschema.StringAttribute{
@@ -188,10 +244,35 @@ func ProjectKeySchema() superschema.Schema {
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
-							Optional: true,
+							MarkdownDescription: "Conflicts with `private_key_wo`.",
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("ssh").AtName("private_key_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
+						},
+					},
+					"private_key_wo": superschema.StringAttribute{
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only SSH private key. Change `private_key_wo_version` to rotate. Conflicts with `private_key`.",
+							Optional:            true,
+							Sensitive:           true,
+							WriteOnly:           true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRoot("ssh").AtName("private_key")),
+								stringvalidator.AlsoRequires(path.MatchRoot("ssh").AtName("private_key_wo_version")),
+							},
+						},
+					},
+					"private_key_wo_version": superschema.Int64Attribute{
+						Resource: &schemaR.Int64Attribute{
+							MarkdownDescription: "Version marker for `private_key_wo`.",
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRoot("ssh").AtName("private_key_wo")),
+							},
 						},
 					},
 				},
