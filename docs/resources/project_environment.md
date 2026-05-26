@@ -47,8 +47,10 @@ resource "semaphoreui_project_environment" "environment" {
   }]
 }
 
-# Write-only secret values are sent to Semaphore on apply and not stored in state.
-# Bump `value_wo_version` to rotate.
+# Write-only secret values. The value_wo cleartext is never written to Terraform state
+# or plan output; only value_wo_version is stored. Bumping the version pushes a new
+# value to Semaphore on the next apply. Use this when sourcing secrets ephemerally from
+# Vault, Infisical, or similar secret managers.
 variable "api_token" {
   type      = string
   sensitive = true
