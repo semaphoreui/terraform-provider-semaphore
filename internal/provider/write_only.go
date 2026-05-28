@@ -14,14 +14,14 @@ func mergeWriteOnlyFromConfig(ctx context.Context, cfg tfsdk.Config, plan *Proje
 	if plan.LoginPassword != nil {
 		var pw types.String
 		diags.Append(cfg.GetAttribute(ctx, path.Root("login_password").AtName("password_wo"), &pw)...)
-		plan.LoginPassword.PasswordWo = pw
+		plan.LoginPassword.PasswordWO = pw
 	}
 	if plan.SSH != nil {
 		var passphrase, privateKey types.String
 		diags.Append(cfg.GetAttribute(ctx, path.Root("ssh").AtName("passphrase_wo"), &passphrase)...)
 		diags.Append(cfg.GetAttribute(ctx, path.Root("ssh").AtName("private_key_wo"), &privateKey)...)
-		plan.SSH.PassphraseWo = passphrase
-		plan.SSH.PrivateKeyWo = privateKey
+		plan.SSH.PassphraseWO = passphrase
+		plan.SSH.PrivateKeyWO = privateKey
 	}
 }
 

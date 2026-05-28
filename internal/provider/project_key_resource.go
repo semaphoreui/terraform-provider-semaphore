@@ -118,16 +118,6 @@ func convertProjectKeyModelToAccessKeyRequest(key, config ProjectKeyModel) *mode
 	return &model
 }
 
-func resolveSecret(value, writeOnly types.String) string {
-	if !writeOnly.IsNull() && !writeOnly.IsUnknown() {
-		return writeOnly.ValueString()
-	}
-	if value.IsNull() || value.IsUnknown() {
-		return ""
-	}
-	return value.ValueString()
-}
-
 func convertAccessKeyResponseToProjectKeyModel(key *models.AccessKey, prev *ProjectKeyModel) ProjectKeyModel {
 	model := ProjectKeyModel{
 		ID:        types.Int64Value(key.ID),
@@ -191,14 +181,14 @@ func (r *projectKeyResource) Create(ctx context.Context, req resource.CreateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWo) {
+	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWO) {
 		resp.Diagnostics.AddError(
 			"Missing login password value",
 			"Set one of `login_password.password` or `login_password.password_wo`.",
 		)
 		return
 	}
-	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWo) {
+	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWO) {
 		resp.Diagnostics.AddError(
 			"Missing SSH private key value",
 			"Set one of `ssh.private_key` or `ssh.private_key_wo`.",
@@ -270,14 +260,14 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWo) {
+	if plan.LoginPassword != nil && missingStringValue(plan.LoginPassword.Password, plan.LoginPassword.PasswordWO) {
 		resp.Diagnostics.AddError(
 			"Missing login password value",
 			"Set one of `login_password.password` or `login_password.password_wo`.",
 		)
 		return
 	}
-	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWo) {
+	if plan.SSH != nil && missingStringValue(plan.SSH.PrivateKey, plan.SSH.PrivateKeyWO) {
 		resp.Diagnostics.AddError(
 			"Missing SSH private key value",
 			"Set one of `ssh.private_key` or `ssh.private_key_wo`.",
@@ -312,7 +302,7 @@ func (r *projectKeyResource) Update(ctx context.Context, req resource.UpdateRequ
 
 			if !plan.SSH.Login.Equal(state.SSH.Login) ||
 				!plan.SSH.Passphrase.Equal(state.SSH.Passphrase) ||
-				!plan.SSH.PassphraseWoVersion.Equal(state.SSH.PassphraseWoVersion) ||
+				!plan.SSH.PassphraseWOVersion.Equal(state.SSH.PassphraseWOVersion) ||
 				!plan.SSH.PrivateKey.Equal(state.SSH.PrivateKey) ||
 				!plan.Name.Equal(state.Name) ||
 				privateKeyVersionChanged ||
