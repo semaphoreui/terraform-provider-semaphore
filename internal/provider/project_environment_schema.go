@@ -165,9 +165,9 @@ func ProjectEnvironmentSchema() superschema.Schema {
 					"value_wo": superschema.StringAttribute{
 						Resource: &schemaR.StringAttribute{
 							MarkdownDescription: "Write-only variable value. Change `value_wo_version` to rotate. Conflicts with `value`.",
-							Optional:  true,
-							Sensitive: true,
-							WriteOnly: true,
+							Optional:            true,
+							Sensitive:           true,
+							WriteOnly:           true,
 							Validators: []validator.String{
 								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("value")),
 								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("value_wo_version")),
@@ -177,7 +177,7 @@ func ProjectEnvironmentSchema() superschema.Schema {
 					"value_wo_version": superschema.Int64Attribute{
 						Resource: &schemaR.Int64Attribute{
 							MarkdownDescription: "Version marker for `value_wo`.",
-							Optional: true,
+							Optional:            true,
 							Validators: []validator.Int64{
 								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("value_wo")),
 							},
