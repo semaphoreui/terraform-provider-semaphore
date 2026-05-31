@@ -1,10 +1,6 @@
 # Terraform SemaphoreUI Provider
 
-<<<<<<< HEAD
 The [SemaphoreUI Provider](https://registry.terraform.io/providers/semaphoreui/semaphore/latest/docs) enables [Terraform](https://terraform.io) to manage [SemaphoreUI](https://semaphoreui.com/) resources.
-=======
-[![Registry](https://img.shields.io/badge/registry-CruGlobal%2Fsemaphoreui-623CE4)](https://registry.terraform.io/providers/CruGlobal/semaphoreui/latest/docs)
->>>>>>> cru/main
 
 > **Status: AI-supported, not actively maintained.** This provider was
 > developed for an internal use case and is now maintained on a
