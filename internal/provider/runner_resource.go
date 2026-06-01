@@ -2,6 +2,10 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"net/http"
+
+	"github.com/go-openapi/runtime"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -9,6 +13,14 @@ import (
 	"terraform-provider-semaphoreui/semaphoreui/client/runner"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
+
+// isRunnerNotFound reports whether err is an HTTP 404 returned by the
+// SemaphoreUI API. Undocumented status codes surface as *runtime.APIError, so a
+// delete of an already-removed runner is treated as a no-op (idempotent).
+func isRunnerNotFound(err error) bool {
+	var apiErr *runtime.APIError
+	return errors.As(err, &apiErr) && apiErr.Code == http.StatusNotFound
+}
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
@@ -168,6 +180,12 @@ func (r *runnerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		RunnerID: state.ID.ValueInt64(),
 	}, nil)
 	if err != nil {
+		var notFound *runner.GetRunnersRunnerIDNotFound
+		if errors.As(err, &notFound) {
+			// Drift: runner deleted out-of-band. Remove from state.
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Error Reading SemaphoreUI Runner",
 			"Could not read runner, unexpected error: "+err.Error(),
@@ -249,7 +267,7 @@ func (r *runnerResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	_, err := r.client.Runner.DeleteRunnersRunnerID(&runner.DeleteRunnersRunnerIDParams{
 		RunnerID: state.ID.ValueInt64(),
 	}, nil)
-	if err != nil {
+	if err != nil && !isRunnerNotFound(err) {
 		resp.Diagnostics.AddError(
 			"Error Removing SemaphoreUI Runner",
 			"Could not remove runner, unexpected error: "+err.Error(),

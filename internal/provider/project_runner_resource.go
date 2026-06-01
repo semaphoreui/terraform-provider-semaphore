@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -163,6 +164,12 @@ func (r *projectRunnerResource) Read(ctx context.Context, req resource.ReadReque
 		RunnerID:  state.ID.ValueInt64(),
 	}, nil)
 	if err != nil {
+		var notFound *runner.GetProjectProjectIDRunnersRunnerIDNotFound
+		if errors.As(err, &notFound) {
+			// Drift: runner deleted out-of-band. Remove from state.
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Error Reading SemaphoreUI Project Runner",
 			"Could not read project runner, unexpected error: "+err.Error(),
@@ -247,7 +254,7 @@ func (r *projectRunnerResource) Delete(ctx context.Context, req resource.DeleteR
 		ProjectID: state.ProjectID.ValueInt64(),
 		RunnerID:  state.ID.ValueInt64(),
 	}, nil)
-	if err != nil {
+	if err != nil && !isRunnerNotFound(err) {
 		resp.Diagnostics.AddError(
 			"Error Removing SemaphoreUI Project Runner",
 			"Could not remove project runner, unexpected error: "+err.Error(),

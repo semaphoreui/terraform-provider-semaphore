@@ -62,6 +62,25 @@ func testAccCheckRunnerDestroy(s *terraform.State) error {
 	return nil
 }
 
+// testAccDeleteRunnerOutOfBand deletes the runner directly via the API to
+// simulate a deletion performed outside Terraform (e.g. from the web UI).
+func testAccDeleteRunnerOutOfBand(resourceName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("not found: %s", resourceName)
+		}
+		id, _ := strconv.ParseInt(rs.Primary.Attributes["id"], 10, 64)
+		_, err := testClient().Runner.DeleteRunnersRunnerID(&runner.DeleteRunnersRunnerIDParams{
+			RunnerID: id,
+		}, nil)
+		if err != nil {
+			return fmt.Errorf("error deleting runner out-of-band: %s", err.Error())
+		}
+		return nil
+	}
+}
+
 func testAccRunnerImportID(n string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		rs, ok := s.RootModule().Resources[n]
@@ -117,6 +136,28 @@ func TestAcc_RunnerResource_basic(t *testing.T) {
 				),
 			},
 			// Deletion is verified by CheckDestroy after the test completes.
+		},
+	})
+}
+
+// TestAcc_RunnerResource_disappears verifies that a runner deleted out-of-band
+// (e.g. from the web UI) is detected as drift and planned for recreation,
+// rather than failing the plan with a 404 error.
+func TestAcc_RunnerResource_disappears(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckRunnerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRunnerConfig(nameSuffix, 1, true, `["linux"]`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccRunnerExists("semaphoreui_runner.test"),
+					testAccDeleteRunnerOutOfBand("semaphoreui_runner.test"),
+				),
+				ExpectNonEmptyPlan: true,
+			},
 		},
 	})
 }
