@@ -200,10 +200,12 @@ func (p *SemaphoreUIProvider) Resources(ctx context.Context) []func() resource.R
 		NewProjectKeyResource,
 		NewProjectRepositoryResource,
 		NewProjectResource,
+		NewProjectRunnerResource,
 		NewProjectScheduleResource,
 		NewProjectTemplateResource,
 		NewProjectUserResource,
 		NewProjectViewResource,
+		NewRunnerResource,
 		NewUserResource,
 	}
 }
@@ -217,11 +219,13 @@ func (p *SemaphoreUIProvider) DataSources(ctx context.Context) []func() datasour
 		NewProjectInventoryDataSource,
 		NewProjectKeyDataSource,
 		NewProjectRepositoryDataSource,
+		NewProjectRunnerDataSource,
 		NewProjectScheduleDataSource,
 		NewProjectsDataSource,
 		NewProjectTemplateDataSource,
 		NewProjectUserDataSource,
 		NewProjectViewDataSource,
+		NewRunnerDataSource,
 		NewUserDataSource,
 	}
 }
