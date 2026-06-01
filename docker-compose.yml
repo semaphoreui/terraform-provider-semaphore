@@ -12,6 +12,8 @@ services:
       MYSQL_DATABASE: semaphore
       MYSQL_USER: semaphore
       MYSQL_PASSWORD: semaphore
+    networks:
+      - semaphore_network
   semaphore:
     container_name: semaphore
     image: semaphoreui/semaphore:${SEMAPHORE_VERSION}
@@ -37,3 +39,7 @@ services:
       interval: 5s
       retries: 10
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/ping"]
+    networks:
+      - semaphore_network
+networks:
+  semaphore_network: {driver: "bridge"}

@@ -18,32 +18,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
           cache: true
       - run: go mod download
       - run: go build -v .
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.1
+          version: v2.12
           args: --tests=false
 
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
           cache: true
       # We need the latest version of Terraform for our documentation generation to use
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_wrapper: false
-      - uses: arduino/setup-task@v2.0.0
+      - uses: arduino/setup-task@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: task generate
@@ -62,20 +62,20 @@ jobs:
       fail-fast: false
       matrix:
         semaphore:
-          - 'v2.12.17'
-          - 'v2.13.15'
-          - 'v2.14.12'
+          - 'v2.16.51'
+          - 'v2.17.39'
+          - 'v2.18.2'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
           cache: true
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: '1.12.x'
+          terraform_version: '1.15.x'
           terraform_wrapper: false
-      - uses: arduino/setup-task@v2.0.0
+      - uses: arduino/setup-task@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: go mod download
@@ -83,3 +83,14 @@ jobs:
         env:
             SEMAPHORE_VERSION: ${{ matrix.semaphore }}
         timeout-minutes: 10
+
+  # Wrapper job to allow us to require all tests in the matrix
+  all-tests:
+    name: Test Matrix
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+      - name: Check matrix status
+        if: ${{ needs.test.result != 'success' }}
+        run: exit 1

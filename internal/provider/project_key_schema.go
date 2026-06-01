@@ -142,51 +142,32 @@ func ProjectKeySchema() superschema.Schema {
 					},
 					"password": superschema.StringAttribute{
 						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The login password.",
+							MarkdownDescription: "The login password. Persisted to Terraform state. Set exactly one of `password` or `password_wo`.",
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ExactlyOneOf(
-									path.MatchRelative().AtParent().AtName("password"),
-									path.MatchRelative().AtParent().AtName("password_wo")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
 						},
 					},
 					"password_wo": superschema.StringAttribute{
-						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The login password.",
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only variant of `password` — accepts ephemeral values (e.g. from `vault_kv_secret_v2`) and is never persisted to Terraform state. Mutually exclusive with `password`. Bump `password_wo_version` to push a new value to SemaphoreUI.",
+							Optional:            true,
 							Sensitive:           true,
 							WriteOnly:           true,
-							Description:         "Write-only version of the password for ephemeral compatibility.",
-						},
-						Resource: &schemaR.StringAttribute{
-							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ExactlyOneOf(
-									path.MatchRelative().AtParent().AtName("password"),
-									path.MatchRelative().AtParent().AtName("password_wo")),
-								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("password_wo_version")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
-							Computed: true,
+							Computed:  true,
+							Sensitive: true,
 						},
 					},
 					"password_wo_version": superschema.Int64Attribute{
-						Common: &schemaR.Int64Attribute{
-							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only password attribute.",
-						},
 						Resource: &schemaR.Int64Attribute{
-							Optional: true,
-							Validators: []validator.Int64{
-								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("password_wo")),
-							},
+							MarkdownDescription: "Version trigger for `password_wo`. Increment to instruct the provider to re-read the write-only value and push it to SemaphoreUI. Only meaningful when `password_wo` is set.",
+							Optional:            true,
 						},
 						DataSource: &schemaD.Int64Attribute{
 							Computed: true,
@@ -218,47 +199,32 @@ func ProjectKeySchema() superschema.Schema {
 					},
 					"passphrase": superschema.StringAttribute{
 						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The SSH Key passphrase.",
+							MarkdownDescription: "The SSH Key passphrase. Persisted to Terraform state. Set at most one of `passphrase` or `passphrase_wo`.",
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("passphrase_wo")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
 						},
 					},
 					"passphrase_wo": superschema.StringAttribute{
-						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The SSH Key passphrase.",
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only variant of `passphrase` — accepts ephemeral values and is never persisted to Terraform state. Mutually exclusive with `passphrase`. Bump `passphrase_wo_version` to push a new value to SemaphoreUI.",
+							Optional:            true,
 							Sensitive:           true,
 							WriteOnly:           true,
-							Description:         "Write-only version of the passphrase for ephemeral compatibility.",
-						},
-						Resource: &schemaR.StringAttribute{
-							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("passphrase")),
-								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("passphrase_wo_version")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
-							Computed: true,
+							Computed:  true,
+							Sensitive: true,
 						},
 					},
 					"passphrase_wo_version": superschema.Int64Attribute{
-						Common: &schemaR.Int64Attribute{
-							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only passphrase attribute.",
-						},
 						Resource: &schemaR.Int64Attribute{
-							Optional: true,
-							Validators: []validator.Int64{
-								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("passphrase_wo")),
-							},
+							MarkdownDescription: "Version trigger for `passphrase_wo`. Increment to push a new value to SemaphoreUI.",
+							Optional:            true,
 						},
 						DataSource: &schemaD.Int64Attribute{
 							Computed: true,
@@ -266,47 +232,32 @@ func ProjectKeySchema() superschema.Schema {
 					},
 					"private_key": superschema.StringAttribute{
 						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The SSH private key.",
+							MarkdownDescription: "The SSH private key. Persisted to Terraform state. Set exactly one of `private_key` or `private_key_wo`.",
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
 							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("private_key_wo")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
 						},
 					},
 					"private_key_wo": superschema.StringAttribute{
-						Common: &schemaR.StringAttribute{
-							MarkdownDescription: "The SSH private key.",
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only variant of `private_key` — accepts ephemeral values (e.g. from `vault_kv_secret_v2`) and is never persisted to Terraform state. Mutually exclusive with `private_key`. Bump `private_key_wo_version` to push a new value to SemaphoreUI.",
+							Optional:            true,
 							Sensitive:           true,
 							WriteOnly:           true,
-							Description:         "Write-only version of the private key for ephemeral compatibility.",
-						},
-						Resource: &schemaR.StringAttribute{
-							Optional: true,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("private_key")),
-								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("private_key_wo_version")),
-							},
 						},
 						DataSource: &schemaD.StringAttribute{
-							Computed: true,
+							Computed:  true,
+							Sensitive: true,
 						},
 					},
 					"private_key_wo_version": superschema.Int64Attribute{
-						Common: &schemaR.Int64Attribute{
-							Optional:    true,
-							Description: "Version tracker to trigger updates for the write-only private key attribute.",
-						},
 						Resource: &schemaR.Int64Attribute{
-							Optional: true,
-							Validators: []validator.Int64{
-								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("private_key_wo")),
-							},
+							MarkdownDescription: "Version trigger for `private_key_wo`. Increment to instruct the provider to re-read the write-only value and push it to SemaphoreUI. Only meaningful when `private_key_wo` is set.",
+							Optional:            true,
 						},
 						DataSource: &schemaD.Int64Attribute{
 							Computed: true,
