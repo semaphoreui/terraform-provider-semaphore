@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -56,7 +57,7 @@ func (m *ViewRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ViewRequest) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -68,7 +69,7 @@ func (m *ViewRequest) validateID(formats strfmt.Registry) error {
 }
 
 func (m *ViewRequest) validatePosition(formats strfmt.Registry) error {
-	if swag.IsZero(m.Position) { // not required
+	if typeutils.IsZero(m.Position) { // not required
 		return nil
 	}
 
@@ -80,7 +81,7 @@ func (m *ViewRequest) validatePosition(formats strfmt.Registry) error {
 }
 
 func (m *ViewRequest) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -101,13 +102,13 @@ func (m *ViewRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ViewRequest) UnmarshalBinary(b []byte) error {
 	var res ViewRequest
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

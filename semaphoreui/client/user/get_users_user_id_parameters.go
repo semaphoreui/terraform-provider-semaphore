@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetUsersUserIDParams creates a new GetUsersUserIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetUsersUserIDParams() *GetUsersUserIDParams {
-	return &GetUsersUserIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetUsersUserIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetUsersUserIDParamsWithTimeout creates a new GetUsersUserIDParams object
 // with the ability to set a timeout on a request.
 func NewGetUsersUserIDParamsWithTimeout(timeout time.Duration) *GetUsersUserIDParams {
 	return &GetUsersUserIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetUsersUserIDParamsWithContext creates a new GetUsersUserIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersUserIDParams].
 func NewGetUsersUserIDParamsWithContext(ctx context.Context) *GetUsersUserIDParams {
 	return &GetUsersUserIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type GetUsersUserIDParams struct {
 	*/
 	UserID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get users user ID params (not the query body).
@@ -85,60 +89,63 @@ func (o *GetUsersUserIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get users user ID params
+// WithTimeout adds the timeout to the get users user ID params.
 func (o *GetUsersUserIDParams) WithTimeout(timeout time.Duration) *GetUsersUserIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get users user ID params
+// SetTimeout adds the timeout to the get users user ID params.
 func (o *GetUsersUserIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get users user ID params
+// WithContext adds the context to the get users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersUserIDParams].
 func (o *GetUsersUserIDParams) WithContext(ctx context.Context) *GetUsersUserIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get users user ID params
+// SetContext adds the context to the get users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersUserIDParams].
 func (o *GetUsersUserIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get users user ID params
+// WithHTTPClient adds the HTTPClient to the get users user ID params.
 func (o *GetUsersUserIDParams) WithHTTPClient(client *http.Client) *GetUsersUserIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get users user ID params
+// SetHTTPClient adds the HTTPClient to the get users user ID params.
 func (o *GetUsersUserIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithUserID adds the userID to the get users user ID params
+// WithUserID adds the userID to the get users user ID params.
 func (o *GetUsersUserIDParams) WithUserID(userID int64) *GetUsersUserIDParams {
 	o.SetUserID(userID)
 	return o
 }
 
-// SetUserID adds the userId to the get users user ID params
+// SetUserID adds the userId to the get users user ID params.
 func (o *GetUsersUserIDParams) SetUserID(userID int64) {
 	o.UserID = userID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetUsersUserIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param user_id
-	if err := r.SetPathParam("user_id", swag.FormatInt64(o.UserID)); err != nil {
+	if err := r.SetPathParam("user_id", conv.FormatInteger(o.UserID)); err != nil {
 		return err
 	}
 

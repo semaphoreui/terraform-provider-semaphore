@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetEventsParams() *GetEventsParams {
-	return &GetEventsParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetEventsParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetEventsParamsWithTimeout creates a new GetEventsParams object
 // with the ability to set a timeout on a request.
 func NewGetEventsParamsWithTimeout(timeout time.Duration) *GetEventsParams {
 	return &GetEventsParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetEventsParamsWithContext creates a new GetEventsParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsParams].
 func NewGetEventsParamsWithContext(ctx context.Context) *GetEventsParams {
 	return &GetEventsParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetEventsParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetEventsParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get events params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetEventsParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get events params
+// WithTimeout adds the timeout to the get events params.
 func (o *GetEventsParams) WithTimeout(timeout time.Duration) *GetEventsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get events params
+// SetTimeout adds the timeout to the get events params.
 func (o *GetEventsParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get events params
+// WithContext adds the context to the get events params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsParams].
 func (o *GetEventsParams) WithContext(ctx context.Context) *GetEventsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get events params
+// SetContext adds the context to the get events params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsParams].
 func (o *GetEventsParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get events params
+// WithHTTPClient adds the HTTPClient to the get events params.
 func (o *GetEventsParams) WithHTTPClient(client *http.Client) *GetEventsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get events params
+// SetHTTPClient adds the HTTPClient to the get events params.
 func (o *GetEventsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetEventsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

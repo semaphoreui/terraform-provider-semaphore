@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -68,7 +69,7 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -80,7 +81,7 @@ func (m *Environment) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -92,12 +93,12 @@ func (m *Environment) validateProjectID(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateSecrets(formats strfmt.Registry) error {
-	if swag.IsZero(m.Secrets) { // not required
+	if typeutils.IsZero(m.Secrets) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Secrets); i++ {
-		if swag.IsZero(m.Secrets[i]) { // not required
+		if typeutils.IsZero(m.Secrets[i]) { // not required
 			continue
 		}
 
@@ -141,7 +142,7 @@ func (m *Environment) contextValidateSecrets(ctx context.Context, formats strfmt
 
 		if m.Secrets[i] != nil {
 
-			if swag.IsZero(m.Secrets[i]) { // not required
+			if typeutils.IsZero(m.Secrets[i]) { // not required
 				return nil
 			}
 
@@ -169,13 +170,13 @@ func (m *Environment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Environment) UnmarshalBinary(b []byte) error {
 	var res Environment
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

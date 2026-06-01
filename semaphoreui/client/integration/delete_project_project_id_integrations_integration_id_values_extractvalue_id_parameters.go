@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams creates a new DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams() *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
-	return &DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout creates a new DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	return &DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithContext creates a new DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	return &DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -77,9 +81,9 @@ type DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams s
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID integrations integration ID values extractvalue ID params (not the query body).
@@ -97,92 +101,95 @@ func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDPara
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID integrations integration ID values extractvalue ID params
+// WithTimeout adds the timeout to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID integrations integration ID values extractvalue ID params
+// SetTimeout adds the timeout to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID integrations integration ID values extractvalue ID params
+// WithContext adds the context to the delete project project ID integrations integration ID values extractvalue ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID integrations integration ID values extractvalue ID params
+// SetContext adds the context to the delete project project ID integrations integration ID values extractvalue ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID values extractvalue ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID values extractvalue ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithExtractvalueID adds the extractvalueID to the delete project project ID integrations integration ID values extractvalue ID params
+// WithExtractvalueID adds the extractvalueID to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithExtractvalueID(extractvalueID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetExtractvalueID(extractvalueID)
 	return o
 }
 
-// SetExtractvalueID adds the extractvalueId to the delete project project ID integrations integration ID values extractvalue ID params
+// SetExtractvalueID adds the extractvalueId to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetExtractvalueID(extractvalueID int64) {
 	o.ExtractvalueID = extractvalueID
 }
 
-// WithIntegrationID adds the integrationID to the delete project project ID integrations integration ID values extractvalue ID params
+// WithIntegrationID adds the integrationID to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithIntegrationID(integrationID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the delete project project ID integrations integration ID values extractvalue ID params
+// SetIntegrationID adds the integrationId to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithProjectID adds the projectID to the delete project project ID integrations integration ID values extractvalue ID params
+// WithProjectID adds the projectID to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID integrations integration ID values extractvalue ID params
+// SetProjectID adds the projectId to the delete project project ID integrations integration ID values extractvalue ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param extractvalue_id
-	if err := r.SetPathParam("extractvalue_id", swag.FormatInt64(o.ExtractvalueID)); err != nil {
+	if err := r.SetPathParam("extractvalue_id", conv.FormatInteger(o.ExtractvalueID)); err != nil {
 		return err
 	}
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetAuthOidcProviderIDLoginParams() *GetAuthOidcProviderIDLoginParams {
-	return &GetAuthOidcProviderIDLoginParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetAuthOidcProviderIDLoginParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetAuthOidcProviderIDLoginParamsWithTimeout creates a new GetAuthOidcProviderIDLoginParams object
 // with the ability to set a timeout on a request.
 func NewGetAuthOidcProviderIDLoginParamsWithTimeout(timeout time.Duration) *GetAuthOidcProviderIDLoginParams {
 	return &GetAuthOidcProviderIDLoginParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetAuthOidcProviderIDLoginParamsWithContext creates a new GetAuthOidcProviderIDLoginParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDLoginParams].
 func NewGetAuthOidcProviderIDLoginParamsWithContext(ctx context.Context) *GetAuthOidcProviderIDLoginParams {
 	return &GetAuthOidcProviderIDLoginParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -61,9 +65,9 @@ type GetAuthOidcProviderIDLoginParams struct {
 	// ProviderID.
 	ProviderID string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get auth oidc provider ID login params (not the query body).
@@ -81,54 +85,57 @@ func (o *GetAuthOidcProviderIDLoginParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get auth oidc provider ID login params
+// WithTimeout adds the timeout to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) WithTimeout(timeout time.Duration) *GetAuthOidcProviderIDLoginParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get auth oidc provider ID login params
+// SetTimeout adds the timeout to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get auth oidc provider ID login params
+// WithContext adds the context to the get auth oidc provider ID login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDLoginParams].
 func (o *GetAuthOidcProviderIDLoginParams) WithContext(ctx context.Context) *GetAuthOidcProviderIDLoginParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get auth oidc provider ID login params
+// SetContext adds the context to the get auth oidc provider ID login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDLoginParams].
 func (o *GetAuthOidcProviderIDLoginParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get auth oidc provider ID login params
+// WithHTTPClient adds the HTTPClient to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) WithHTTPClient(client *http.Client) *GetAuthOidcProviderIDLoginParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get auth oidc provider ID login params
+// SetHTTPClient adds the HTTPClient to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProviderID adds the providerID to the get auth oidc provider ID login params
+// WithProviderID adds the providerID to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) WithProviderID(providerID string) *GetAuthOidcProviderIDLoginParams {
 	o.SetProviderID(providerID)
 	return o
 }
 
-// SetProviderID adds the providerId to the get auth oidc provider ID login params
+// SetProviderID adds the providerId to the get auth oidc provider ID login params.
 func (o *GetAuthOidcProviderIDLoginParams) SetProviderID(providerID string) {
 	o.ProviderID = providerID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetAuthOidcProviderIDLoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

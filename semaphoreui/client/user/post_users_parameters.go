@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -22,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostUsersParams() *PostUsersParams {
-	return &PostUsersParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostUsersParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostUsersParamsWithTimeout creates a new PostUsersParams object
 // with the ability to set a timeout on a request.
 func NewPostUsersParamsWithTimeout(timeout time.Duration) *PostUsersParams {
 	return &PostUsersParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostUsersParamsWithContext creates a new PostUsersParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersParams].
 func NewPostUsersParamsWithContext(ctx context.Context) *PostUsersParams {
 	return &PostUsersParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -63,9 +66,9 @@ type PostUsersParams struct {
 	// User.
 	User *models.UserRequest
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post users params (not the query body).
@@ -83,54 +86,57 @@ func (o *PostUsersParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post users params
+// WithTimeout adds the timeout to the post users params.
 func (o *PostUsersParams) WithTimeout(timeout time.Duration) *PostUsersParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post users params
+// SetTimeout adds the timeout to the post users params.
 func (o *PostUsersParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post users params
+// WithContext adds the context to the post users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersParams].
 func (o *PostUsersParams) WithContext(ctx context.Context) *PostUsersParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post users params
+// SetContext adds the context to the post users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersParams].
 func (o *PostUsersParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post users params
+// WithHTTPClient adds the HTTPClient to the post users params.
 func (o *PostUsersParams) WithHTTPClient(client *http.Client) *PostUsersParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post users params
+// SetHTTPClient adds the HTTPClient to the post users params.
 func (o *PostUsersParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithUser adds the user to the post users params
+// WithUser adds the user to the post users params.
 func (o *PostUsersParams) WithUser(user *models.UserRequest) *PostUsersParams {
 	o.SetUser(user)
 	return o
 }
 
-// SetUser adds the user to the post users params
+// SetUser adds the user to the post users params.
 func (o *PostUsersParams) SetUser(user *models.UserRequest) {
 	o.User = user
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

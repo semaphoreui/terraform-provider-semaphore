@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetPingParams() *GetPingParams {
-	return &GetPingParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetPingParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetPingParamsWithTimeout creates a new GetPingParams object
 // with the ability to set a timeout on a request.
 func NewGetPingParamsWithTimeout(timeout time.Duration) *GetPingParams {
 	return &GetPingParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetPingParamsWithContext creates a new GetPingParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetPingParams].
 func NewGetPingParamsWithContext(ctx context.Context) *GetPingParams {
 	return &GetPingParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetPingParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetPingParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get ping params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetPingParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get ping params
+// WithTimeout adds the timeout to the get ping params.
 func (o *GetPingParams) WithTimeout(timeout time.Duration) *GetPingParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get ping params
+// SetTimeout adds the timeout to the get ping params.
 func (o *GetPingParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get ping params
+// WithContext adds the context to the get ping params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetPingParams].
 func (o *GetPingParams) WithContext(ctx context.Context) *GetPingParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get ping params
+// SetContext adds the context to the get ping params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetPingParams].
 func (o *GetPingParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get ping params
+// WithHTTPClient adds the HTTPClient to the get ping params.
 func (o *GetPingParams) WithHTTPClient(client *http.Client) *GetPingParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get ping params
+// SetHTTPClient adds the HTTPClient to the get ping params.
 func (o *GetPingParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetPingParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

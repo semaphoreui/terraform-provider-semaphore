@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParams creates a new PostProjectProjectIDIntegrationsIntegrationIDAliasesParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParams() *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
-	return &PostProjectProjectIDIntegrationsIntegrationIDAliasesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParamsWithTimeout creates a new PostProjectProjectIDIntegrationsIntegrationIDAliasesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	return &PostProjectProjectIDIntegrationsIntegrationIDAliasesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParamsWithContext creates a new PostProjectProjectIDIntegrationsIntegrationIDAliasesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDAliasesParams].
 func NewPostProjectProjectIDIntegrationsIntegrationIDAliasesParamsWithContext(ctx context.Context) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	return &PostProjectProjectIDIntegrationsIntegrationIDAliasesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type PostProjectProjectIDIntegrationsIntegrationIDAliasesParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID integrations integration ID aliases params (not the query body).
@@ -91,76 +95,79 @@ func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetDefaults
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID integrations integration ID aliases params
+// WithTimeout adds the timeout to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID integrations integration ID aliases params
+// SetTimeout adds the timeout to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID integrations integration ID aliases params
+// WithContext adds the context to the post project project ID integrations integration ID aliases params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDAliasesParams].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WithContext(ctx context.Context) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID integrations integration ID aliases params
+// SetContext adds the context to the post project project ID integrations integration ID aliases params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDAliasesParams].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID integrations integration ID aliases params
+// WithHTTPClient adds the HTTPClient to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID integrations integration ID aliases params
+// SetHTTPClient adds the HTTPClient to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithIntegrationID adds the integrationID to the post project project ID integrations integration ID aliases params
+// WithIntegrationID adds the integrationID to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WithIntegrationID(integrationID int64) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the post project project ID integrations integration ID aliases params
+// SetIntegrationID adds the integrationId to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithProjectID adds the projectID to the post project project ID integrations integration ID aliases params
+// WithProjectID adds the projectID to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WithProjectID(projectID int64) *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID integrations integration ID aliases params
+// SetProjectID adds the projectId to the post project project ID integrations integration ID aliases params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDAliasesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

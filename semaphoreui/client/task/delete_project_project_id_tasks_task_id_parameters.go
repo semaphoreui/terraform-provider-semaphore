@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDTasksTaskIDParams creates a new DeleteProjectProjectIDTasksTaskIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDTasksTaskIDParams() *DeleteProjectProjectIDTasksTaskIDParams {
-	return &DeleteProjectProjectIDTasksTaskIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDTasksTaskIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDTasksTaskIDParamsWithTimeout creates a new DeleteProjectProjectIDTasksTaskIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDTasksTaskIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDTasksTaskIDParams {
 	return &DeleteProjectProjectIDTasksTaskIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDTasksTaskIDParamsWithContext creates a new DeleteProjectProjectIDTasksTaskIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDTasksTaskIDParams].
 func NewDeleteProjectProjectIDTasksTaskIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDTasksTaskIDParams {
 	return &DeleteProjectProjectIDTasksTaskIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDTasksTaskIDParams struct {
 	*/
 	TaskID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID tasks task ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDTasksTaskIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID tasks task ID params
+// WithTimeout adds the timeout to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDTasksTaskIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID tasks task ID params
+// SetTimeout adds the timeout to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID tasks task ID params
+// WithContext adds the context to the delete project project ID tasks task ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDTasksTaskIDParams].
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDTasksTaskIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID tasks task ID params
+// SetContext adds the context to the delete project project ID tasks task ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDTasksTaskIDParams].
 func (o *DeleteProjectProjectIDTasksTaskIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID tasks task ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDTasksTaskIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID tasks task ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the delete project project ID tasks task ID params
+// WithProjectID adds the projectID to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDTasksTaskIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID tasks task ID params
+// SetProjectID adds the projectId to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithTaskID adds the taskID to the delete project project ID tasks task ID params
+// WithTaskID adds the taskID to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WithTaskID(taskID int64) *DeleteProjectProjectIDTasksTaskIDParams {
 	o.SetTaskID(taskID)
 	return o
 }
 
-// SetTaskID adds the taskId to the delete project project ID tasks task ID params
+// SetTaskID adds the taskId to the delete project project ID tasks task ID params.
 func (o *DeleteProjectProjectIDTasksTaskIDParams) SetTaskID(taskID int64) {
 	o.TaskID = taskID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDTasksTaskIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param task_id
-	if err := r.SetPathParam("task_id", swag.FormatInt64(o.TaskID)); err != nil {
+	if err := r.SetPathParam("task_id", conv.FormatInteger(o.TaskID)); err != nil {
 		return err
 	}
 

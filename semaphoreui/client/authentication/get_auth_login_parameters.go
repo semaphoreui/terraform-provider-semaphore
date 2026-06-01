@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetAuthLoginParams() *GetAuthLoginParams {
-	return &GetAuthLoginParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetAuthLoginParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetAuthLoginParamsWithTimeout creates a new GetAuthLoginParams object
 // with the ability to set a timeout on a request.
 func NewGetAuthLoginParamsWithTimeout(timeout time.Duration) *GetAuthLoginParams {
 	return &GetAuthLoginParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetAuthLoginParamsWithContext creates a new GetAuthLoginParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthLoginParams].
 func NewGetAuthLoginParamsWithContext(ctx context.Context) *GetAuthLoginParams {
 	return &GetAuthLoginParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetAuthLoginParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetAuthLoginParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get auth login params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetAuthLoginParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get auth login params
+// WithTimeout adds the timeout to the get auth login params.
 func (o *GetAuthLoginParams) WithTimeout(timeout time.Duration) *GetAuthLoginParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get auth login params
+// SetTimeout adds the timeout to the get auth login params.
 func (o *GetAuthLoginParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get auth login params
+// WithContext adds the context to the get auth login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthLoginParams].
 func (o *GetAuthLoginParams) WithContext(ctx context.Context) *GetAuthLoginParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get auth login params
+// SetContext adds the context to the get auth login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthLoginParams].
 func (o *GetAuthLoginParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get auth login params
+// WithHTTPClient adds the HTTPClient to the get auth login params.
 func (o *GetAuthLoginParams) WithHTTPClient(client *http.Client) *GetAuthLoginParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get auth login params
+// SetHTTPClient adds the HTTPClient to the get auth login params.
 func (o *GetAuthLoginParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetAuthLoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostProjectProjectIDIntegrationsAliasesParams creates a new PostProjectProjectIDIntegrationsAliasesParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDIntegrationsAliasesParams() *PostProjectProjectIDIntegrationsAliasesParams {
-	return &PostProjectProjectIDIntegrationsAliasesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDIntegrationsAliasesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDIntegrationsAliasesParamsWithTimeout creates a new PostProjectProjectIDIntegrationsAliasesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDIntegrationsAliasesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsAliasesParams {
 	return &PostProjectProjectIDIntegrationsAliasesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDIntegrationsAliasesParamsWithContext creates a new PostProjectProjectIDIntegrationsAliasesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsAliasesParams].
 func NewPostProjectProjectIDIntegrationsAliasesParamsWithContext(ctx context.Context) *PostProjectProjectIDIntegrationsAliasesParams {
 	return &PostProjectProjectIDIntegrationsAliasesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type PostProjectProjectIDIntegrationsAliasesParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID integrations aliases params (not the query body).
@@ -85,60 +89,63 @@ func (o *PostProjectProjectIDIntegrationsAliasesParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID integrations aliases params
+// WithTimeout adds the timeout to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsAliasesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID integrations aliases params
+// SetTimeout adds the timeout to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID integrations aliases params
+// WithContext adds the context to the post project project ID integrations aliases params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsAliasesParams].
 func (o *PostProjectProjectIDIntegrationsAliasesParams) WithContext(ctx context.Context) *PostProjectProjectIDIntegrationsAliasesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID integrations aliases params
+// SetContext adds the context to the post project project ID integrations aliases params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsAliasesParams].
 func (o *PostProjectProjectIDIntegrationsAliasesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID integrations aliases params
+// WithHTTPClient adds the HTTPClient to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDIntegrationsAliasesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID integrations aliases params
+// SetHTTPClient adds the HTTPClient to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the post project project ID integrations aliases params
+// WithProjectID adds the projectID to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) WithProjectID(projectID int64) *PostProjectProjectIDIntegrationsAliasesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID integrations aliases params
+// SetProjectID adds the projectId to the post project project ID integrations aliases params.
 func (o *PostProjectProjectIDIntegrationsAliasesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDIntegrationsAliasesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

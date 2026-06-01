@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams() *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
-	return &PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout creates a new PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	return &PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithContext creates a new PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func NewPutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithContext(ctx context.Context) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	return &PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -82,9 +85,9 @@ type PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams struct 
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID integrations integration ID matchers matcher ID params (not the query body).
@@ -102,87 +105,90 @@ func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) Se
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID integrations integration ID matchers matcher ID params
+// WithTimeout adds the timeout to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID integrations integration ID matchers matcher ID params
+// SetTimeout adds the timeout to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID integrations integration ID matchers matcher ID params
+// WithContext adds the context to the put project project ID integrations integration ID matchers matcher ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithContext(ctx context.Context) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID integrations integration ID matchers matcher ID params
+// SetContext adds the context to the put project project ID integrations integration ID matchers matcher ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID integrations integration ID matchers matcher ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID integrations integration ID matchers matcher ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithIntegrationMatcher adds the integrationMatcher to the put project project ID integrations integration ID matchers matcher ID params
+// WithIntegrationMatcher adds the integrationMatcher to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithIntegrationMatcher(integrationMatcher *models.IntegrationMatcherRequest) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetIntegrationMatcher(integrationMatcher)
 	return o
 }
 
-// SetIntegrationMatcher adds the integrationMatcher to the put project project ID integrations integration ID matchers matcher ID params
+// SetIntegrationMatcher adds the integrationMatcher to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetIntegrationMatcher(integrationMatcher *models.IntegrationMatcherRequest) {
 	o.IntegrationMatcher = integrationMatcher
 }
 
-// WithIntegrationID adds the integrationID to the put project project ID integrations integration ID matchers matcher ID params
+// WithIntegrationID adds the integrationID to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithIntegrationID(integrationID int64) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the put project project ID integrations integration ID matchers matcher ID params
+// SetIntegrationID adds the integrationId to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithMatcherID adds the matcherID to the put project project ID integrations integration ID matchers matcher ID params
+// WithMatcherID adds the matcherID to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithMatcherID(matcherID int64) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetMatcherID(matcherID)
 	return o
 }
 
-// SetMatcherID adds the matcherId to the put project project ID integrations integration ID matchers matcher ID params
+// SetMatcherID adds the matcherId to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetMatcherID(matcherID int64) {
 	o.MatcherID = matcherID
 }
 
-// WithProjectID adds the projectID to the put project project ID integrations integration ID matchers matcher ID params
+// WithProjectID adds the projectID to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithProjectID(projectID int64) *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID integrations integration ID matchers matcher ID params
+// SetProjectID adds the projectId to the put project project ID integrations integration ID matchers matcher ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -193,17 +199,17 @@ func (o *PutProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) Wr
 	}
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param matcher_id
-	if err := r.SetPathParam("matcher_id", swag.FormatInt64(o.MatcherID)); err != nil {
+	if err := r.SetPathParam("matcher_id", conv.FormatInteger(o.MatcherID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

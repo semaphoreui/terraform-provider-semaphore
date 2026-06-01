@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDKeysKeyIDParams() *PutProjectProjectIDKeysKeyIDParams {
-	return &PutProjectProjectIDKeysKeyIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDKeysKeyIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDKeysKeyIDParamsWithTimeout creates a new PutProjectProjectIDKeysKeyIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDKeysKeyIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDKeysKeyIDParams {
 	return &PutProjectProjectIDKeysKeyIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDKeysKeyIDParamsWithContext creates a new PutProjectProjectIDKeysKeyIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDKeysKeyIDParams].
 func NewPutProjectProjectIDKeysKeyIDParamsWithContext(ctx context.Context) *PutProjectProjectIDKeysKeyIDParams {
 	return &PutProjectProjectIDKeysKeyIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -76,9 +79,9 @@ type PutProjectProjectIDKeysKeyIDParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID keys key ID params (not the query body).
@@ -96,76 +99,79 @@ func (o *PutProjectProjectIDKeysKeyIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID keys key ID params
+// WithTimeout adds the timeout to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID keys key ID params
+// SetTimeout adds the timeout to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID keys key ID params
+// WithContext adds the context to the put project project ID keys key ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDKeysKeyIDParams].
 func (o *PutProjectProjectIDKeysKeyIDParams) WithContext(ctx context.Context) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID keys key ID params
+// SetContext adds the context to the put project project ID keys key ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDKeysKeyIDParams].
 func (o *PutProjectProjectIDKeysKeyIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID keys key ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID keys key ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithAccessKey adds the accessKey to the put project project ID keys key ID params
+// WithAccessKey adds the accessKey to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) WithAccessKey(accessKey *models.AccessKeyRequest) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetAccessKey(accessKey)
 	return o
 }
 
-// SetAccessKey adds the accessKey to the put project project ID keys key ID params
+// SetAccessKey adds the accessKey to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) SetAccessKey(accessKey *models.AccessKeyRequest) {
 	o.AccessKey = accessKey
 }
 
-// WithKeyID adds the keyID to the put project project ID keys key ID params
+// WithKeyID adds the keyID to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) WithKeyID(keyID int64) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetKeyID(keyID)
 	return o
 }
 
-// SetKeyID adds the keyId to the put project project ID keys key ID params
+// SetKeyID adds the keyId to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) SetKeyID(keyID int64) {
 	o.KeyID = keyID
 }
 
-// WithProjectID adds the projectID to the put project project ID keys key ID params
+// WithProjectID adds the projectID to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) WithProjectID(projectID int64) *PutProjectProjectIDKeysKeyIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID keys key ID params
+// SetProjectID adds the projectId to the put project project ID keys key ID params.
 func (o *PutProjectProjectIDKeysKeyIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDKeysKeyIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -176,12 +182,12 @@ func (o *PutProjectProjectIDKeysKeyIDParams) WriteToRequest(r runtime.ClientRequ
 	}
 
 	// path param key_id
-	if err := r.SetPathParam("key_id", swag.FormatInt64(o.KeyID)); err != nil {
+	if err := r.SetPathParam("key_id", conv.FormatInteger(o.KeyID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

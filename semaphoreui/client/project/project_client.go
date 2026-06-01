@@ -3,7 +3,9 @@
 package project
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new project API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new project API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new project API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for project API
+Client for project API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,57 +79,156 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectID delete project.
 	DeleteProjectProjectID(params *DeleteProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDNoContent, error)
 
+	// DeleteProjectProjectIDContext delete project.
+	DeleteProjectProjectIDContext(ctx context.Context, params *DeleteProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDNoContent, error)
+
+	// DeleteProjectProjectIDUsersUserID removes user from project.
 	DeleteProjectProjectIDUsersUserID(params *DeleteProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDUsersUserIDNoContent, error)
 
+	// DeleteProjectProjectIDUsersUserIDContext removes user from project.
+	DeleteProjectProjectIDUsersUserIDContext(ctx context.Context, params *DeleteProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDUsersUserIDNoContent, error)
+
+	// DeleteProjectProjectIDViewsViewID removes view.
 	DeleteProjectProjectIDViewsViewID(params *DeleteProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDViewsViewIDNoContent, error)
 
+	// DeleteProjectProjectIDViewsViewIDContext removes view.
+	DeleteProjectProjectIDViewsViewIDContext(ctx context.Context, params *DeleteProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDViewsViewIDNoContent, error)
+
+	// GetProjectProjectID fetch project.
 	GetProjectProjectID(params *GetProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDOK, error)
 
+	// GetProjectProjectIDContext fetch project.
+	GetProjectProjectIDContext(ctx context.Context, params *GetProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDOK, error)
+
+	// GetProjectProjectIDBackup backup a project.
 	GetProjectProjectIDBackup(params *GetProjectProjectIDBackupParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDBackupOK, error)
 
+	// GetProjectProjectIDBackupContext backup a project.
+	GetProjectProjectIDBackupContext(ctx context.Context, params *GetProjectProjectIDBackupParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDBackupOK, error)
+
+	// GetProjectProjectIDEvents get events related to this project.
 	GetProjectProjectIDEvents(params *GetProjectProjectIDEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDEventsOK, error)
 
+	// GetProjectProjectIDEventsContext get events related to this project.
+	GetProjectProjectIDEventsContext(ctx context.Context, params *GetProjectProjectIDEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDEventsOK, error)
+
+	// GetProjectProjectIDRole fetch permissions of the current user for project.
 	GetProjectProjectIDRole(params *GetProjectProjectIDRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDRoleOK, error)
 
+	// GetProjectProjectIDRoleContext fetch permissions of the current user for project.
+	GetProjectProjectIDRoleContext(ctx context.Context, params *GetProjectProjectIDRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDRoleOK, error)
+
+	// GetProjectProjectIDUsers get users linked to project.
 	GetProjectProjectIDUsers(params *GetProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDUsersOK, error)
 
+	// GetProjectProjectIDUsersContext get users linked to project.
+	GetProjectProjectIDUsersContext(ctx context.Context, params *GetProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDUsersOK, error)
+
+	// GetProjectProjectIDViews get view.
 	GetProjectProjectIDViews(params *GetProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsOK, error)
 
+	// GetProjectProjectIDViewsContext get view.
+	GetProjectProjectIDViewsContext(ctx context.Context, params *GetProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsOK, error)
+
+	// GetProjectProjectIDViewsViewID get view.
 	GetProjectProjectIDViewsViewID(params *GetProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsViewIDOK, error)
 
+	// GetProjectProjectIDViewsViewIDContext get view.
+	GetProjectProjectIDViewsViewIDContext(ctx context.Context, params *GetProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsViewIDOK, error)
+
+	// GetProjects get projects.
 	GetProjects(params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error)
 
+	// GetProjectsContext get projects.
+	GetProjectsContext(ctx context.Context, params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error)
+
+	// PostProjectProjectIDNotificationsTest send test notification.
 	PostProjectProjectIDNotificationsTest(params *PostProjectProjectIDNotificationsTestParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) error
 
+	// PostProjectProjectIDNotificationsTestContext send test notification.
+	PostProjectProjectIDNotificationsTestContext(ctx context.Context, params *PostProjectProjectIDNotificationsTestParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) error
+
+	// PostProjectProjectIDUsers link user to project.
 	PostProjectProjectIDUsers(params *PostProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDUsersNoContent, error)
 
+	// PostProjectProjectIDUsersContext link user to project.
+	PostProjectProjectIDUsersContext(ctx context.Context, params *PostProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDUsersNoContent, error)
+
+	// PostProjectProjectIDViews create view.
 	PostProjectProjectIDViews(params *PostProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDViewsCreated, error)
 
+	// PostProjectProjectIDViewsContext create view.
+	PostProjectProjectIDViewsContext(ctx context.Context, params *PostProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDViewsCreated, error)
+
+	// PostProjects create a new project.
 	PostProjects(params *PostProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsCreated, error)
 
+	// PostProjectsContext create a new project.
+	PostProjectsContext(ctx context.Context, params *PostProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsCreated, error)
+
+	// PostProjectsRestore restore project.
 	PostProjectsRestore(params *PostProjectsRestoreParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsRestoreOK, error)
 
+	// PostProjectsRestoreContext restore project.
+	PostProjectsRestoreContext(ctx context.Context, params *PostProjectsRestoreParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsRestoreOK, error)
+
+	// PutProjectProjectID update project.
 	PutProjectProjectID(params *PutProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDNoContent, error)
 
+	// PutProjectProjectIDContext update project.
+	PutProjectProjectIDContext(ctx context.Context, params *PutProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDNoContent, error)
+
+	// PutProjectProjectIDUsersUserID update user role.
 	PutProjectProjectIDUsersUserID(params *PutProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDUsersUserIDNoContent, error)
 
+	// PutProjectProjectIDUsersUserIDContext update user role.
+	PutProjectProjectIDUsersUserIDContext(ctx context.Context, params *PutProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDUsersUserIDNoContent, error)
+
+	// PutProjectProjectIDViewsViewID updates view.
 	PutProjectProjectIDViewsViewID(params *PutProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDViewsViewIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutProjectProjectIDViewsViewIDContext updates view.
+	PutProjectProjectIDViewsViewIDContext(ctx context.Context, params *PutProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDViewsViewIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectID deletes project
+DeleteProjectProjectIDdeletes project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectID(params *DeleteProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDContextdeletes project.
+
+Do not use the deprecated [DeleteProjectProjectIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDContext(ctx context.Context, params *DeleteProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectID",
 		Method:             "DELETE",
@@ -136,13 +239,14 @@ func (a *Client) DeleteProjectProjectID(params *DeleteProjectProjectIDParams, au
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +267,35 @@ func (a *Client) DeleteProjectProjectID(params *DeleteProjectProjectIDParams, au
 }
 
 /*
-DeleteProjectProjectIDUsersUserID removes user from project
+DeleteProjectProjectIDUsersUserIDremoves user from project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDUsersUserIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDUsersUserID(params *DeleteProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDUsersUserIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDUsersUserIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDUsersUserIDContextremoves user from project.
+
+Do not use the deprecated [DeleteProjectProjectIDUsersUserIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDUsersUserIDContext(ctx context.Context, params *DeleteProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDUsersUserIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDUsersUserIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDUsersUserID",
 		Method:             "DELETE",
@@ -180,13 +306,14 @@ func (a *Client) DeleteProjectProjectIDUsersUserID(params *DeleteProjectProjectI
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDUsersUserIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -207,13 +334,35 @@ func (a *Client) DeleteProjectProjectIDUsersUserID(params *DeleteProjectProjectI
 }
 
 /*
-DeleteProjectProjectIDViewsViewID removes view
+DeleteProjectProjectIDViewsViewIDremoves view.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDViewsViewIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDViewsViewID(params *DeleteProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDViewsViewIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDViewsViewIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDViewsViewIDContextremoves view.
+
+Do not use the deprecated [DeleteProjectProjectIDViewsViewIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDViewsViewIDContext(ctx context.Context, params *DeleteProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDViewsViewIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDViewsViewIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDViewsViewID",
 		Method:             "DELETE",
@@ -224,13 +373,14 @@ func (a *Client) DeleteProjectProjectIDViewsViewID(params *DeleteProjectProjectI
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDViewsViewIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -251,13 +401,35 @@ func (a *Client) DeleteProjectProjectIDViewsViewID(params *DeleteProjectProjectI
 }
 
 /*
-GetProjectProjectID fetches project
+GetProjectProjectIDfetches project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDContext] instead.
 */
 func (a *Client) GetProjectProjectID(params *GetProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDContextfetches project.
+
+Do not use the deprecated [GetProjectProjectIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDContext(ctx context.Context, params *GetProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectID",
 		Method:             "GET",
@@ -268,13 +440,14 @@ func (a *Client) GetProjectProjectID(params *GetProjectProjectIDParams, authInfo
 		Params:             params,
 		Reader:             &GetProjectProjectIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -295,13 +468,35 @@ func (a *Client) GetProjectProjectID(params *GetProjectProjectIDParams, authInfo
 }
 
 /*
-GetProjectProjectIDBackup backups a project
+GetProjectProjectIDBackupbackups a project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDBackupContext] instead.
 */
 func (a *Client) GetProjectProjectIDBackup(params *GetProjectProjectIDBackupParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDBackupOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDBackupContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDBackupContextbackups a project.
+
+Do not use the deprecated [GetProjectProjectIDBackupParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDBackupContext(ctx context.Context, params *GetProjectProjectIDBackupParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDBackupOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDBackupParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDBackup",
 		Method:             "GET",
@@ -312,13 +507,14 @@ func (a *Client) GetProjectProjectIDBackup(params *GetProjectProjectIDBackupPara
 		Params:             params,
 		Reader:             &GetProjectProjectIDBackupReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -339,13 +535,35 @@ func (a *Client) GetProjectProjectIDBackup(params *GetProjectProjectIDBackupPara
 }
 
 /*
-GetProjectProjectIDEvents gets events related to this project
+GetProjectProjectIDEventsgets events related to this project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDEventsContext] instead.
 */
 func (a *Client) GetProjectProjectIDEvents(params *GetProjectProjectIDEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDEventsOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDEventsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDEventsContextgets events related to this project.
+
+Do not use the deprecated [GetProjectProjectIDEventsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDEventsContext(ctx context.Context, params *GetProjectProjectIDEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDEventsOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDEventsParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDEvents",
 		Method:             "GET",
@@ -356,13 +574,14 @@ func (a *Client) GetProjectProjectIDEvents(params *GetProjectProjectIDEventsPara
 		Params:             params,
 		Reader:             &GetProjectProjectIDEventsReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -383,13 +602,35 @@ func (a *Client) GetProjectProjectIDEvents(params *GetProjectProjectIDEventsPara
 }
 
 /*
-GetProjectProjectIDRole fetches permissions of the current user for project
+GetProjectProjectIDRolefetches permissions of the current user for project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDRoleContext] instead.
 */
 func (a *Client) GetProjectProjectIDRole(params *GetProjectProjectIDRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDRoleOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDRoleContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDRoleContextfetches permissions of the current user for project.
+
+Do not use the deprecated [GetProjectProjectIDRoleParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDRoleContext(ctx context.Context, params *GetProjectProjectIDRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDRoleOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDRoleParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDRole",
 		Method:             "GET",
@@ -400,13 +641,14 @@ func (a *Client) GetProjectProjectIDRole(params *GetProjectProjectIDRoleParams, 
 		Params:             params,
 		Reader:             &GetProjectProjectIDRoleReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -427,13 +669,35 @@ func (a *Client) GetProjectProjectIDRole(params *GetProjectProjectIDRoleParams, 
 }
 
 /*
-GetProjectProjectIDUsers gets users linked to project
+GetProjectProjectIDUsersgets users linked to project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDUsersContext] instead.
 */
 func (a *Client) GetProjectProjectIDUsers(params *GetProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDUsersOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDUsersContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDUsersContextgets users linked to project.
+
+Do not use the deprecated [GetProjectProjectIDUsersParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDUsersContext(ctx context.Context, params *GetProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDUsersOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDUsersParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDUsers",
 		Method:             "GET",
@@ -444,13 +708,14 @@ func (a *Client) GetProjectProjectIDUsers(params *GetProjectProjectIDUsersParams
 		Params:             params,
 		Reader:             &GetProjectProjectIDUsersReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -471,13 +736,35 @@ func (a *Client) GetProjectProjectIDUsers(params *GetProjectProjectIDUsersParams
 }
 
 /*
-GetProjectProjectIDViews gets view
+GetProjectProjectIDViewsgets view.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDViewsContext] instead.
 */
 func (a *Client) GetProjectProjectIDViews(params *GetProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDViewsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDViewsContextgets view.
+
+Do not use the deprecated [GetProjectProjectIDViewsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDViewsContext(ctx context.Context, params *GetProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDViewsParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDViews",
 		Method:             "GET",
@@ -488,13 +775,14 @@ func (a *Client) GetProjectProjectIDViews(params *GetProjectProjectIDViewsParams
 		Params:             params,
 		Reader:             &GetProjectProjectIDViewsReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -515,13 +803,35 @@ func (a *Client) GetProjectProjectIDViews(params *GetProjectProjectIDViewsParams
 }
 
 /*
-GetProjectProjectIDViewsViewID gets view
+GetProjectProjectIDViewsViewIDgets view.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDViewsViewIDContext] instead.
 */
 func (a *Client) GetProjectProjectIDViewsViewID(params *GetProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsViewIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDViewsViewIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDViewsViewIDContextgets view.
+
+Do not use the deprecated [GetProjectProjectIDViewsViewIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDViewsViewIDContext(ctx context.Context, params *GetProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDViewsViewIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDViewsViewIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDViewsViewID",
 		Method:             "GET",
@@ -532,13 +842,14 @@ func (a *Client) GetProjectProjectIDViewsViewID(params *GetProjectProjectIDViews
 		Params:             params,
 		Reader:             &GetProjectProjectIDViewsViewIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -559,13 +870,35 @@ func (a *Client) GetProjectProjectIDViewsViewID(params *GetProjectProjectIDViews
 }
 
 /*
-GetProjects gets projects
+GetProjectsgets projects.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectsContext] instead.
 */
 func (a *Client) GetProjects(params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectsContextgets projects.
+
+Do not use the deprecated [GetProjectsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectsContext(ctx context.Context, params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectsParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjects",
 		Method:             "GET",
@@ -576,13 +909,14 @@ func (a *Client) GetProjects(params *GetProjectsParams, authInfo runtime.ClientA
 		Params:             params,
 		Reader:             &GetProjectsReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -603,15 +937,39 @@ func (a *Client) GetProjects(params *GetProjectsParams, authInfo runtime.ClientA
 }
 
 /*
-PostProjectProjectIDNotificationsTest sends test notification
+PostProjectProjectIDNotificationsTestsends test notification.
 
-Sends a test notification to all enabled messengers for the project
+Sends a test notification to all enabled messengers for the project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDNotificationsTestContext] instead.
 */
 func (a *Client) PostProjectProjectIDNotificationsTest(params *PostProjectProjectIDNotificationsTestParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) error {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDNotificationsTestContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDNotificationsTestContextsends test notification.
+
+Sends a test notification to all enabled messengers for the project.
+
+Do not use the deprecated [PostProjectProjectIDNotificationsTestParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDNotificationsTestContext(ctx context.Context, params *PostProjectProjectIDNotificationsTestParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) error {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDNotificationsTestParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDNotificationsTest",
 		Method:             "POST",
@@ -622,13 +980,14 @@ func (a *Client) PostProjectProjectIDNotificationsTest(params *PostProjectProjec
 		Params:             params,
 		Reader:             &PostProjectProjectIDNotificationsTestReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	_, err := a.transport.Submit(op)
+
+	_, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return err
 	}
@@ -638,13 +997,35 @@ func (a *Client) PostProjectProjectIDNotificationsTest(params *PostProjectProjec
 }
 
 /*
-PostProjectProjectIDUsers links user to project
+PostProjectProjectIDUserslinks user to project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDUsersContext] instead.
 */
 func (a *Client) PostProjectProjectIDUsers(params *PostProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDUsersNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDUsersContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDUsersContextlinks user to project.
+
+Do not use the deprecated [PostProjectProjectIDUsersParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDUsersContext(ctx context.Context, params *PostProjectProjectIDUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDUsersNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDUsersParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDUsers",
 		Method:             "POST",
@@ -655,13 +1036,14 @@ func (a *Client) PostProjectProjectIDUsers(params *PostProjectProjectIDUsersPara
 		Params:             params,
 		Reader:             &PostProjectProjectIDUsersReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -682,13 +1064,35 @@ func (a *Client) PostProjectProjectIDUsers(params *PostProjectProjectIDUsersPara
 }
 
 /*
-PostProjectProjectIDViews creates view
+PostProjectProjectIDViewscreates view.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDViewsContext] instead.
 */
 func (a *Client) PostProjectProjectIDViews(params *PostProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDViewsCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDViewsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDViewsContextcreates view.
+
+Do not use the deprecated [PostProjectProjectIDViewsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDViewsContext(ctx context.Context, params *PostProjectProjectIDViewsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDViewsCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDViewsParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDViews",
 		Method:             "POST",
@@ -699,13 +1103,14 @@ func (a *Client) PostProjectProjectIDViews(params *PostProjectProjectIDViewsPara
 		Params:             params,
 		Reader:             &PostProjectProjectIDViewsReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -726,13 +1131,35 @@ func (a *Client) PostProjectProjectIDViews(params *PostProjectProjectIDViewsPara
 }
 
 /*
-PostProjects creates a new project
+PostProjectscreates a new project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectsContext] instead.
 */
 func (a *Client) PostProjects(params *PostProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectsContextcreates a new project.
+
+Do not use the deprecated [PostProjectsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectsContext(ctx context.Context, params *PostProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectsParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjects",
 		Method:             "POST",
@@ -743,13 +1170,14 @@ func (a *Client) PostProjects(params *PostProjectsParams, authInfo runtime.Clien
 		Params:             params,
 		Reader:             &PostProjectsReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -770,13 +1198,35 @@ func (a *Client) PostProjects(params *PostProjectsParams, authInfo runtime.Clien
 }
 
 /*
-PostProjectsRestore restores project
+PostProjectsRestorerestores project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectsRestoreContext] instead.
 */
 func (a *Client) PostProjectsRestore(params *PostProjectsRestoreParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsRestoreOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectsRestoreContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectsRestoreContextrestores project.
+
+Do not use the deprecated [PostProjectsRestoreParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectsRestoreContext(ctx context.Context, params *PostProjectsRestoreParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectsRestoreOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectsRestoreParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectsRestore",
 		Method:             "POST",
@@ -787,13 +1237,14 @@ func (a *Client) PostProjectsRestore(params *PostProjectsRestoreParams, authInfo
 		Params:             params,
 		Reader:             &PostProjectsRestoreReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -814,13 +1265,35 @@ func (a *Client) PostProjectsRestore(params *PostProjectsRestoreParams, authInfo
 }
 
 /*
-PutProjectProjectID updates project
+PutProjectProjectIDupdates project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDContext] instead.
 */
 func (a *Client) PutProjectProjectID(params *PutProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDContextupdates project.
+
+Do not use the deprecated [PutProjectProjectIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDContext(ctx context.Context, params *PutProjectProjectIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectID",
 		Method:             "PUT",
@@ -831,13 +1304,14 @@ func (a *Client) PutProjectProjectID(params *PutProjectProjectIDParams, authInfo
 		Params:             params,
 		Reader:             &PutProjectProjectIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -858,13 +1332,35 @@ func (a *Client) PutProjectProjectID(params *PutProjectProjectIDParams, authInfo
 }
 
 /*
-PutProjectProjectIDUsersUserID updates user role
+PutProjectProjectIDUsersUserIDupdates user role.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDUsersUserIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDUsersUserID(params *PutProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDUsersUserIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDUsersUserIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDUsersUserIDContextupdates user role.
+
+Do not use the deprecated [PutProjectProjectIDUsersUserIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDUsersUserIDContext(ctx context.Context, params *PutProjectProjectIDUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDUsersUserIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDUsersUserIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDUsersUserID",
 		Method:             "PUT",
@@ -875,13 +1371,14 @@ func (a *Client) PutProjectProjectIDUsersUserID(params *PutProjectProjectIDUsers
 		Params:             params,
 		Reader:             &PutProjectProjectIDUsersUserIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -902,13 +1399,35 @@ func (a *Client) PutProjectProjectIDUsersUserID(params *PutProjectProjectIDUsers
 }
 
 /*
-PutProjectProjectIDViewsViewID updates view
+PutProjectProjectIDViewsViewIDupdates view.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDViewsViewIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDViewsViewID(params *PutProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDViewsViewIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDViewsViewIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDViewsViewIDContextupdates view.
+
+Do not use the deprecated [PutProjectProjectIDViewsViewIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDViewsViewIDContext(ctx context.Context, params *PutProjectProjectIDViewsViewIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDViewsViewIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDViewsViewIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDViewsViewID",
 		Method:             "PUT",
@@ -919,13 +1438,14 @@ func (a *Client) PutProjectProjectIDViewsViewID(params *PutProjectProjectIDViews
 		Params:             params,
 		Reader:             &PutProjectProjectIDViewsViewIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -946,6 +1466,14 @@ func (a *Client) PutProjectProjectIDViewsViewID(params *PutProjectProjectIDViews
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [ProjectParams].
+	ctx context.Context
 }

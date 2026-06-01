@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -22,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectsParams() *PostProjectsParams {
-	return &PostProjectsParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectsParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectsParamsWithTimeout creates a new PostProjectsParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectsParamsWithTimeout(timeout time.Duration) *PostProjectsParams {
 	return &PostProjectsParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectsParamsWithContext creates a new PostProjectsParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsParams].
 func NewPostProjectsParamsWithContext(ctx context.Context) *PostProjectsParams {
 	return &PostProjectsParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -63,9 +66,9 @@ type PostProjectsParams struct {
 	// Project.
 	Project *models.ProjectRequest
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post projects params (not the query body).
@@ -83,54 +86,57 @@ func (o *PostProjectsParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post projects params
+// WithTimeout adds the timeout to the post projects params.
 func (o *PostProjectsParams) WithTimeout(timeout time.Duration) *PostProjectsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post projects params
+// SetTimeout adds the timeout to the post projects params.
 func (o *PostProjectsParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post projects params
+// WithContext adds the context to the post projects params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsParams].
 func (o *PostProjectsParams) WithContext(ctx context.Context) *PostProjectsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post projects params
+// SetContext adds the context to the post projects params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsParams].
 func (o *PostProjectsParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post projects params
+// WithHTTPClient adds the HTTPClient to the post projects params.
 func (o *PostProjectsParams) WithHTTPClient(client *http.Client) *PostProjectsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post projects params
+// SetHTTPClient adds the HTTPClient to the post projects params.
 func (o *PostProjectsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProject adds the project to the post projects params
+// WithProject adds the project to the post projects params.
 func (o *PostProjectsParams) WithProject(project *models.ProjectRequest) *PostProjectsParams {
 	o.SetProject(project)
 	return o
 }
 
-// SetProject adds the project to the post projects params
+// SetProject adds the project to the post projects params.
 func (o *PostProjectsParams) SetProject(project *models.ProjectRequest) {
 	o.Project = project
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

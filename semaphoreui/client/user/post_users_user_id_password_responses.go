@@ -9,7 +9,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -114,7 +115,7 @@ func (o *PostUsersUserIDPasswordBody) Validate(formats strfmt.Registry) error {
 }
 
 func (o *PostUsersUserIDPasswordBody) validatePassword(formats strfmt.Registry) error {
-	if swag.IsZero(o.Password) { // not required
+	if typeutils.IsZero(o.Password) { // not required
 		return nil
 	}
 
@@ -135,13 +136,13 @@ func (o *PostUsersUserIDPasswordBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(o)
+	return jsonutils.WriteJSON(o)
 }
 
 // UnmarshalBinary interface implementation
 func (o *PostUsersUserIDPasswordBody) UnmarshalBinary(b []byte) error {
 	var res PostUsersUserIDPasswordBody
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*o = res

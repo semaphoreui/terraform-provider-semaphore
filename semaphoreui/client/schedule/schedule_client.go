@@ -3,7 +3,9 @@
 package schedule
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new schedule API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new schedule API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new schedule API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for schedule API
+Client for schedule API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,27 +79,66 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectIDSchedulesScheduleID deletes schedule.
 	DeleteProjectProjectIDSchedulesScheduleID(params *DeleteProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDSchedulesScheduleIDNoContent, error)
 
+	// DeleteProjectProjectIDSchedulesScheduleIDContext deletes schedule.
+	DeleteProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *DeleteProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDSchedulesScheduleIDNoContent, error)
+
+	// GetProjectProjectIDSchedulesScheduleID get schedule.
 	GetProjectProjectIDSchedulesScheduleID(params *GetProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDSchedulesScheduleIDOK, error)
 
+	// GetProjectProjectIDSchedulesScheduleIDContext get schedule.
+	GetProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *GetProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDSchedulesScheduleIDOK, error)
+
+	// PostProjectProjectIDSchedules create schedule.
 	PostProjectProjectIDSchedules(params *PostProjectProjectIDSchedulesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDSchedulesCreated, error)
 
+	// PostProjectProjectIDSchedulesContext create schedule.
+	PostProjectProjectIDSchedulesContext(ctx context.Context, params *PostProjectProjectIDSchedulesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDSchedulesCreated, error)
+
+	// PutProjectProjectIDSchedulesScheduleID updates schedule.
 	PutProjectProjectIDSchedulesScheduleID(params *PutProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDSchedulesScheduleIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutProjectProjectIDSchedulesScheduleIDContext updates schedule.
+	PutProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *PutProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDSchedulesScheduleIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectIDSchedulesScheduleID deletes schedule
+DeleteProjectProjectIDSchedulesScheduleIDdeletes schedule.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDSchedulesScheduleIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDSchedulesScheduleID(params *DeleteProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDSchedulesScheduleIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDSchedulesScheduleIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDSchedulesScheduleIDContextdeletes schedule.
+
+Do not use the deprecated [DeleteProjectProjectIDSchedulesScheduleIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *DeleteProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDSchedulesScheduleIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDSchedulesScheduleIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDSchedulesScheduleID",
 		Method:             "DELETE",
@@ -106,13 +149,14 @@ func (a *Client) DeleteProjectProjectIDSchedulesScheduleID(params *DeleteProject
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDSchedulesScheduleIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -133,13 +177,35 @@ func (a *Client) DeleteProjectProjectIDSchedulesScheduleID(params *DeleteProject
 }
 
 /*
-GetProjectProjectIDSchedulesScheduleID gets schedule
+GetProjectProjectIDSchedulesScheduleIDgets schedule.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDSchedulesScheduleIDContext] instead.
 */
 func (a *Client) GetProjectProjectIDSchedulesScheduleID(params *GetProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDSchedulesScheduleIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDSchedulesScheduleIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDSchedulesScheduleIDContextgets schedule.
+
+Do not use the deprecated [GetProjectProjectIDSchedulesScheduleIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *GetProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDSchedulesScheduleIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDSchedulesScheduleIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDSchedulesScheduleID",
 		Method:             "GET",
@@ -150,13 +216,14 @@ func (a *Client) GetProjectProjectIDSchedulesScheduleID(params *GetProjectProjec
 		Params:             params,
 		Reader:             &GetProjectProjectIDSchedulesScheduleIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -177,13 +244,35 @@ func (a *Client) GetProjectProjectIDSchedulesScheduleID(params *GetProjectProjec
 }
 
 /*
-PostProjectProjectIDSchedules creates schedule
+PostProjectProjectIDSchedulescreates schedule.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDSchedulesContext] instead.
 */
 func (a *Client) PostProjectProjectIDSchedules(params *PostProjectProjectIDSchedulesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDSchedulesCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDSchedulesContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDSchedulesContextcreates schedule.
+
+Do not use the deprecated [PostProjectProjectIDSchedulesParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDSchedulesContext(ctx context.Context, params *PostProjectProjectIDSchedulesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDSchedulesCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDSchedulesParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDSchedules",
 		Method:             "POST",
@@ -194,13 +283,14 @@ func (a *Client) PostProjectProjectIDSchedules(params *PostProjectProjectIDSched
 		Params:             params,
 		Reader:             &PostProjectProjectIDSchedulesReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -221,13 +311,35 @@ func (a *Client) PostProjectProjectIDSchedules(params *PostProjectProjectIDSched
 }
 
 /*
-PutProjectProjectIDSchedulesScheduleID updates schedule
+PutProjectProjectIDSchedulesScheduleIDupdates schedule.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDSchedulesScheduleIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDSchedulesScheduleID(params *PutProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDSchedulesScheduleIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDSchedulesScheduleIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDSchedulesScheduleIDContextupdates schedule.
+
+Do not use the deprecated [PutProjectProjectIDSchedulesScheduleIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDSchedulesScheduleIDContext(ctx context.Context, params *PutProjectProjectIDSchedulesScheduleIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDSchedulesScheduleIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDSchedulesScheduleIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDSchedulesScheduleID",
 		Method:             "PUT",
@@ -238,13 +350,14 @@ func (a *Client) PutProjectProjectIDSchedulesScheduleID(params *PutProjectProjec
 		Params:             params,
 		Reader:             &PutProjectProjectIDSchedulesScheduleIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -265,6 +378,14 @@ func (a *Client) PutProjectProjectIDSchedulesScheduleID(params *PutProjectProjec
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [ScheduleParams].
+	ctx context.Context
 }

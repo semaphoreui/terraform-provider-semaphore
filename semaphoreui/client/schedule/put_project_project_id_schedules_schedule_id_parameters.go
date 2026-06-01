@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDSchedulesScheduleIDParams() *PutProjectProjectIDSchedulesScheduleIDParams {
-	return &PutProjectProjectIDSchedulesScheduleIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDSchedulesScheduleIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDSchedulesScheduleIDParamsWithTimeout creates a new PutProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDSchedulesScheduleIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDSchedulesScheduleIDParams {
 	return &PutProjectProjectIDSchedulesScheduleIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDSchedulesScheduleIDParamsWithContext creates a new PutProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDSchedulesScheduleIDParams].
 func NewPutProjectProjectIDSchedulesScheduleIDParamsWithContext(ctx context.Context) *PutProjectProjectIDSchedulesScheduleIDParams {
 	return &PutProjectProjectIDSchedulesScheduleIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -76,9 +79,9 @@ type PutProjectProjectIDSchedulesScheduleIDParams struct {
 	*/
 	ScheduleID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID schedules schedule ID params (not the query body).
@@ -96,82 +99,85 @@ func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID schedules schedule ID params
+// WithTimeout adds the timeout to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID schedules schedule ID params
+// SetTimeout adds the timeout to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID schedules schedule ID params
+// WithContext adds the context to the put project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDSchedulesScheduleIDParams].
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithContext(ctx context.Context) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID schedules schedule ID params
+// SetContext adds the context to the put project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDSchedulesScheduleIDParams].
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID schedules schedule ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID schedules schedule ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the put project project ID schedules schedule ID params
+// WithProjectID adds the projectID to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithProjectID(projectID int64) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID schedules schedule ID params
+// SetProjectID adds the projectId to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithSchedule adds the schedule to the put project project ID schedules schedule ID params
+// WithSchedule adds the schedule to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithSchedule(schedule *models.ScheduleRequest) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetSchedule(schedule)
 	return o
 }
 
-// SetSchedule adds the schedule to the put project project ID schedules schedule ID params
+// SetSchedule adds the schedule to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetSchedule(schedule *models.ScheduleRequest) {
 	o.Schedule = schedule
 }
 
-// WithScheduleID adds the scheduleID to the put project project ID schedules schedule ID params
+// WithScheduleID adds the scheduleID to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WithScheduleID(scheduleID int64) *PutProjectProjectIDSchedulesScheduleIDParams {
 	o.SetScheduleID(scheduleID)
 	return o
 }
 
-// SetScheduleID adds the scheduleId to the put project project ID schedules schedule ID params
+// SetScheduleID adds the scheduleId to the put project project ID schedules schedule ID params.
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) SetScheduleID(scheduleID int64) {
 	o.ScheduleID = scheduleID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDSchedulesScheduleIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 	if o.Schedule != nil {
@@ -181,7 +187,7 @@ func (o *PutProjectProjectIDSchedulesScheduleIDParams) WriteToRequest(r runtime.
 	}
 
 	// path param schedule_id
-	if err := r.SetPathParam("schedule_id", swag.FormatInt64(o.ScheduleID)); err != nil {
+	if err := r.SetPathParam("schedule_id", conv.FormatInteger(o.ScheduleID)); err != nil {
 		return err
 	}
 

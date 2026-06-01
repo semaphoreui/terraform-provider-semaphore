@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDSchedulesScheduleIDParams creates a new DeleteProjectProjectIDSchedulesScheduleIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDSchedulesScheduleIDParams() *DeleteProjectProjectIDSchedulesScheduleIDParams {
-	return &DeleteProjectProjectIDSchedulesScheduleIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDSchedulesScheduleIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDSchedulesScheduleIDParamsWithTimeout creates a new DeleteProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDSchedulesScheduleIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	return &DeleteProjectProjectIDSchedulesScheduleIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDSchedulesScheduleIDParamsWithContext creates a new DeleteProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDSchedulesScheduleIDParams].
 func NewDeleteProjectProjectIDSchedulesScheduleIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	return &DeleteProjectProjectIDSchedulesScheduleIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDSchedulesScheduleIDParams struct {
 	*/
 	ScheduleID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID schedules schedule ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID schedules schedule ID params
+// WithTimeout adds the timeout to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID schedules schedule ID params
+// SetTimeout adds the timeout to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID schedules schedule ID params
+// WithContext adds the context to the delete project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDSchedulesScheduleIDParams].
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID schedules schedule ID params
+// SetContext adds the context to the delete project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDSchedulesScheduleIDParams].
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID schedules schedule ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID schedules schedule ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the delete project project ID schedules schedule ID params
+// WithProjectID adds the projectID to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID schedules schedule ID params
+// SetProjectID adds the projectId to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithScheduleID adds the scheduleID to the delete project project ID schedules schedule ID params
+// WithScheduleID adds the scheduleID to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WithScheduleID(scheduleID int64) *DeleteProjectProjectIDSchedulesScheduleIDParams {
 	o.SetScheduleID(scheduleID)
 	return o
 }
 
-// SetScheduleID adds the scheduleId to the delete project project ID schedules schedule ID params
+// SetScheduleID adds the scheduleId to the delete project project ID schedules schedule ID params.
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) SetScheduleID(scheduleID int64) {
 	o.ScheduleID = scheduleID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDSchedulesScheduleIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param schedule_id
-	if err := r.SetPathParam("schedule_id", swag.FormatInt64(o.ScheduleID)); err != nil {
+	if err := r.SetPathParam("schedule_id", conv.FormatInteger(o.ScheduleID)); err != nil {
 		return err
 	}
 
