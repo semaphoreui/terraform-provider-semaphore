@@ -47,10 +47,15 @@ data "semaphoreui_project_key" "none" {
 <a id="nestedatt--login_password"></a>
 ### Nested Schema for `login_password`
 
+Optional:
+
+- `password_wo_version` (Number) .
+
 Read-Only:
 
 - `login` (String) The login username.
 - `password` (String, Sensitive) The login password.
+- `password_wo` (String, Sensitive) The login password.
 
 
 <a id="nestedatt--none"></a>
@@ -60,8 +65,15 @@ Read-Only:
 <a id="nestedatt--ssh"></a>
 ### Nested Schema for `ssh`
 
+Optional:
+
+- `passphrase_wo_version` (Number) .
+- `private_key_wo_version` (Number) .
+
 Read-Only:
 
 - `login` (String) The login username.
 - `passphrase` (String, Sensitive) The SSH Key passphrase.
+- `passphrase_wo` (String, Sensitive) The SSH Key passphrase.
 - `private_key` (String, Sensitive) The SSH private key.
+- `private_key_wo` (String, Sensitive) The SSH private key.

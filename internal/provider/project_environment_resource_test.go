@@ -467,7 +467,7 @@ func TestAcc_ProjectEnvironmentResource_secretsWriteOnly(t *testing.T) {
 					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.type", "env"),
 					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo_version", "1"),
 					resource.TestCheckNoResourceAttr("semaphoreui_project_environment.test", "secrets.0.value_wo"),
-					resource.TestCheckResourceAttr("semaphoreui_project_environment.test", "secrets.0.value", ""),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_environment.test", "secrets.0.value"),
 				),
 			},
 			{

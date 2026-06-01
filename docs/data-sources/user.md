@@ -37,6 +37,7 @@ data "semaphoreui_user" "superman" {
 
 - `email` (String) Email address. Ensure that one and only one attribute from this collection is set : `id`, `username`, `email`.
 - `id` (Number) The ID of the user. Ensure that one and only one attribute from this collection is set : `id`, `username`, `email`.
+- `password_wo_version` (Number) .
 - `username` (String) Username. Ensure that one and only one attribute from this collection is set : `id`, `username`, `email`.
 
 ### Read-Only
@@ -47,3 +48,4 @@ data "semaphoreui_user" "superman" {
 - `external` (Boolean) Indicates if the user is linked to an external identity provider.
 - `name` (String) Display name.
 - `password` (String, Sensitive) This value is never returned by the API and will be an empty string.
+- `password_wo` (String, Sensitive) This value is never returned by the API and will be an empty string.

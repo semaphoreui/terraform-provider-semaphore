@@ -226,6 +226,14 @@ func (a ByEnvironmentID) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByEnvironmentID) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func convertEnvironmentResponseToProjectEnvironmentModel(ctx context.Context, environment *models.Environment, prev *ProjectEnvironmentModel) ProjectEnvironmentModel {
+	return convertEnvironmentResponseToProjectEnvironmentModelWithWriteOnly(ctx, environment, prev, true)
+}
+
+func convertEnvironmentResponseToProjectEnvironmentDataSourceModel(ctx context.Context, environment *models.Environment, prev *ProjectEnvironmentModel) ProjectEnvironmentModel {
+	return convertEnvironmentResponseToProjectEnvironmentModelWithWriteOnly(ctx, environment, prev, false)
+}
+
+func convertEnvironmentResponseToProjectEnvironmentModelWithWriteOnly(ctx context.Context, environment *models.Environment, prev *ProjectEnvironmentModel, includeWriteOnly bool) ProjectEnvironmentModel {
 	model := ProjectEnvironmentModel{
 		ID:        types.Int64Value(environment.ID),
 		ProjectID: types.Int64Value(environment.ProjectID),
@@ -272,18 +280,46 @@ func convertEnvironmentResponseToProjectEnvironmentModel(ctx context.Context, en
 		prev.Secrets.ElementsAs(ctx, &secrets, false)
 	}
 
-	envSecrets, _ := types.ListValueFrom(ctx, types.ObjectType{
-		AttrTypes: map[string]attr.Type{
-			"id":               types.Int64Type,
-			"type":             types.StringType,
-			"name":             types.StringType,
-			"value":            types.StringType,
-			"value_wo":         types.StringType,
-			"value_wo_version": types.Int64Type,
-		},
-	}, secrets)
+	if includeWriteOnly {
+		envSecrets, _ := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: map[string]attr.Type{
+				"id":               types.Int64Type,
+				"type":             types.StringType,
+				"name":             types.StringType,
+				"value":            types.StringType,
+				"value_wo":         types.StringType,
+				"value_wo_version": types.Int64Type,
+			},
+		}, secrets)
+		model.Secrets = envSecrets
+	} else {
+		type projectEnvironmentSecretDataSourceModel struct {
+			ID    types.Int64  `tfsdk:"id"`
+			Type  types.String `tfsdk:"type"`
+			Name  types.String `tfsdk:"name"`
+			Value types.String `tfsdk:"value"`
+		}
 
-	model.Secrets = envSecrets
+		dataSourceSecrets := make([]projectEnvironmentSecretDataSourceModel, 0, len(secrets))
+		for _, secret := range secrets {
+			dataSourceSecrets = append(dataSourceSecrets, projectEnvironmentSecretDataSourceModel{
+				ID:    secret.ID,
+				Type:  secret.Type,
+				Name:  secret.Name,
+				Value: secret.Value,
+			})
+		}
+
+		envSecrets, _ := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: map[string]attr.Type{
+				"id":    types.Int64Type,
+				"type":  types.StringType,
+				"name":  types.StringType,
+				"value": types.StringType,
+			},
+		}, dataSourceSecrets)
+		model.Secrets = envSecrets
+	}
 
 	return model
 }
