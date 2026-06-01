@@ -113,13 +113,48 @@ func (r *runnerResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	model, diags := convertRunnerResponseToRunnerModel(ctx, &response.Payload.Runner, types.StringValue(response.Payload.Token))
+	if err := r.ensureActive(response.Payload.ID, plan.Active.ValueBool(), response.Payload.Active); err != nil {
+		resp.Diagnostics.AddError(
+			"Error Setting SemaphoreUI Runner Active State",
+			"Could not set runner active state, unexpected error: "+err.Error(),
+		)
+		return
+	}
+
+	model, diags := convertRunnerResponseToRunnerModel(ctx, &response.Payload.Runner, resolveRegistrationToken(response.Payload))
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Creation may ignore the `active` flag (it is applied via the dedicated
+	// endpoint above), so reflect the planned value rather than the response.
+	model.Active = plan.Active
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
+}
+
+// resolveRegistrationToken returns the one-time token from a create response,
+// reading the `registration_token` field first and falling back to `token`
+// (older SemaphoreUI versions populate the latter).
+func resolveRegistrationToken(payload *models.RunnerWithToken) types.String {
+	if payload.RegistrationToken != nil && *payload.RegistrationToken != "" {
+		return types.StringValue(*payload.RegistrationToken)
+	}
+	return types.StringValue(payload.Token)
+}
+
+// ensureActive sets the runner active state via the dedicated endpoint when the
+// current state differs from the desired one. Some SemaphoreUI versions ignore
+// the `active` field on create/update and only honor this endpoint.
+func (r *runnerResource) ensureActive(runnerID int64, desired, current bool) error {
+	if desired == current {
+		return nil
+	}
+	_, err := r.client.Runner.PostRunnersRunnerIDActive(&runner.PostRunnersRunnerIDActiveParams{
+		RunnerID: runnerID,
+		Active:   &models.RunnerActive{Active: desired},
+	}, nil)
+	return err
 }
 
 func (r *runnerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -186,11 +221,20 @@ func (r *runnerResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
+	if err := r.ensureActive(plan.ID.ValueInt64(), plan.Active.ValueBool(), response.Payload.Active); err != nil {
+		resp.Diagnostics.AddError(
+			"Error Setting SemaphoreUI Runner Active State",
+			"Could not set runner active state, unexpected error: "+err.Error(),
+		)
+		return
+	}
+
 	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload, state.RegistrationToken)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	model.Active = plan.Active
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }

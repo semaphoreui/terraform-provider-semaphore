@@ -129,10 +129,10 @@ func RunnerSchema() superschema.Schema {
 				},
 			},
 			"registration_token": superschema.StringAttribute{
-				Common: &schemaR.StringAttribute{
-					MarkdownDescription: "The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.",
-					Sensitive:           true,
-				},
+				//Common: &schemaR.StringAttribute{
+				//	MarkdownDescription: "The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.",
+				//	Sensitive:           true,
+				//},
 				Resource: &schemaR.StringAttribute{
 					Computed:      true,
 					PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},

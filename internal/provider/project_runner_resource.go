@@ -116,13 +116,39 @@ func (r *projectRunnerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, &response.Payload.Runner, plan.ProjectID, types.StringValue(response.Payload.Token))
+	if err := r.ensureActive(plan.ProjectID.ValueInt64(), response.Payload.ID, plan.Active.ValueBool(), response.Payload.Active); err != nil {
+		resp.Diagnostics.AddError(
+			"Error Setting SemaphoreUI Project Runner Active State",
+			"Could not set project runner active state, unexpected error: "+err.Error(),
+		)
+		return
+	}
+
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, &response.Payload.Runner, plan.ProjectID, resolveRegistrationToken(response.Payload))
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Creation may ignore the `active` flag (it is applied via the dedicated
+	// endpoint above), so reflect the planned value rather than the response.
+	model.Active = plan.Active
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
+}
+
+// ensureActive sets the runner active state via the dedicated endpoint when the
+// current state differs from the desired one. Some SemaphoreUI versions ignore
+// the `active` field on create/update and only honor this endpoint.
+func (r *projectRunnerResource) ensureActive(projectID, runnerID int64, desired, current bool) error {
+	if desired == current {
+		return nil
+	}
+	_, err := r.client.Runner.PostProjectProjectIDRunnersRunnerIDActive(&runner.PostProjectProjectIDRunnersRunnerIDActiveParams{
+		ProjectID: projectID,
+		RunnerID:  runnerID,
+		Active:    &models.RunnerActive{Active: desired},
+	}, nil)
+	return err
 }
 
 func (r *projectRunnerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -192,11 +218,20 @@ func (r *projectRunnerResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
+	if err := r.ensureActive(plan.ProjectID.ValueInt64(), plan.ID.ValueInt64(), plan.Active.ValueBool(), response.Payload.Active); err != nil {
+		resp.Diagnostics.AddError(
+			"Error Setting SemaphoreUI Project Runner Active State",
+			"Could not set project runner active state, unexpected error: "+err.Error(),
+		)
+		return
+	}
+
 	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, plan.ProjectID, state.RegistrationToken)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	model.Active = plan.Active
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 }
