@@ -75,7 +75,7 @@ func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.Ru
 	if tagsSource == nil {
 		tagsSource = []string{}
 	}
-	tags, diags := types.ListValueFrom(ctx, types.StringType, tagsSource)
+	tags, diags := types.SetValueFrom(ctx, types.StringType, tagsSource)
 	model := RunnerModel{
 		ID:                types.Int64Value(response.ID),
 		Name:              types.StringValue(response.Name),

@@ -22,7 +22,7 @@ type (
 		Webhook           types.String `tfsdk:"webhook"`
 		MaxParallelTasks  types.Int64  `tfsdk:"max_parallel_tasks"`
 		Active            types.Bool   `tfsdk:"active"`
-		Tags              types.List   `tfsdk:"tags"`
+		Tags              types.Set    `tfsdk:"tags"`
 		RegistrationToken types.String `tfsdk:"registration_token"`
 		IsDefault         types.Bool   `tfsdk:"is_default"`
 	}
@@ -115,16 +115,16 @@ func RunnerSchema() superschema.Schema {
 					Computed: true,
 				},
 			},
-			"tags": superschema.ListAttribute{
-				Common: &schemaR.ListAttribute{
+			"tags": superschema.SetAttribute{
+				Common: &schemaR.SetAttribute{
 					MarkdownDescription: "Tags used to route tasks to specific runners.",
 					ElementType:         types.StringType,
 				},
-				Resource: &schemaR.ListAttribute{
+				Resource: &schemaR.SetAttribute{
 					Optional: true,
 					Computed: true,
 				},
-				DataSource: &schemaD.ListAttribute{
+				DataSource: &schemaD.SetAttribute{
 					Computed: true,
 				},
 			},

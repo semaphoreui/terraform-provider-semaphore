@@ -76,7 +76,7 @@ func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *mo
 	if tagsSource == nil {
 		tagsSource = []string{}
 	}
-	tags, diags := types.ListValueFrom(ctx, types.StringType, tagsSource)
+	tags, diags := types.SetValueFrom(ctx, types.StringType, tagsSource)
 	model := ProjectRunnerModel{
 		ID:                types.Int64Value(response.ID),
 		ProjectID:         projectID,

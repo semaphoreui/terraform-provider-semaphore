@@ -38,7 +38,7 @@ resource "semaphoreui_project_runner" "runner" {
 - `active` (Boolean) Indicates whether the runner is allowed to pick up tasks. Value defaults to `true`.
 - `max_parallel_tasks` (Number) The maximum number of tasks the runner may execute in parallel.
 - `name` (String) The display name of the runner.
-- `tags` (List of String) Tags used to route tasks to specific runners.
+- `tags` (Set of String) Tags used to route tasks to specific runners.
 - `webhook` (String) URL called by the runner to report task events.
 
 ### Read-Only
