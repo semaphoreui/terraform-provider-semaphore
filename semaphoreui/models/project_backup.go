@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -81,12 +82,12 @@ func (m *ProjectBackup) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateEnvironments(formats strfmt.Registry) error {
-	if swag.IsZero(m.Environments) { // not required
+	if typeutils.IsZero(m.Environments) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Environments); i++ {
-		if swag.IsZero(m.Environments[i]) { // not required
+		if typeutils.IsZero(m.Environments[i]) { // not required
 			continue
 		}
 
@@ -111,12 +112,12 @@ func (m *ProjectBackup) validateEnvironments(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateInventories(formats strfmt.Registry) error {
-	if swag.IsZero(m.Inventories) { // not required
+	if typeutils.IsZero(m.Inventories) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Inventories); i++ {
-		if swag.IsZero(m.Inventories[i]) { // not required
+		if typeutils.IsZero(m.Inventories[i]) { // not required
 			continue
 		}
 
@@ -141,12 +142,12 @@ func (m *ProjectBackup) validateInventories(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateKeys(formats strfmt.Registry) error {
-	if swag.IsZero(m.Keys) { // not required
+	if typeutils.IsZero(m.Keys) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Keys); i++ {
-		if swag.IsZero(m.Keys[i]) { // not required
+		if typeutils.IsZero(m.Keys[i]) { // not required
 			continue
 		}
 
@@ -171,7 +172,7 @@ func (m *ProjectBackup) validateKeys(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateMeta(formats strfmt.Registry) error {
-	if swag.IsZero(m.Meta) { // not required
+	if typeutils.IsZero(m.Meta) { // not required
 		return nil
 	}
 
@@ -194,12 +195,12 @@ func (m *ProjectBackup) validateMeta(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateRepositories(formats strfmt.Registry) error {
-	if swag.IsZero(m.Repositories) { // not required
+	if typeutils.IsZero(m.Repositories) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Repositories); i++ {
-		if swag.IsZero(m.Repositories[i]) { // not required
+		if typeutils.IsZero(m.Repositories[i]) { // not required
 			continue
 		}
 
@@ -224,12 +225,12 @@ func (m *ProjectBackup) validateRepositories(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateTemplates(formats strfmt.Registry) error {
-	if swag.IsZero(m.Templates) { // not required
+	if typeutils.IsZero(m.Templates) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Templates); i++ {
-		if swag.IsZero(m.Templates[i]) { // not required
+		if typeutils.IsZero(m.Templates[i]) { // not required
 			continue
 		}
 
@@ -254,12 +255,12 @@ func (m *ProjectBackup) validateTemplates(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackup) validateViews(formats strfmt.Registry) error {
-	if swag.IsZero(m.Views) { // not required
+	if typeutils.IsZero(m.Views) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Views); i++ {
-		if swag.IsZero(m.Views[i]) { // not required
+		if typeutils.IsZero(m.Views[i]) { // not required
 			continue
 		}
 
@@ -327,7 +328,7 @@ func (m *ProjectBackup) contextValidateEnvironments(ctx context.Context, formats
 
 		if m.Environments[i] != nil {
 
-			if swag.IsZero(m.Environments[i]) { // not required
+			if typeutils.IsZero(m.Environments[i]) { // not required
 				return nil
 			}
 
@@ -356,7 +357,7 @@ func (m *ProjectBackup) contextValidateInventories(ctx context.Context, formats 
 
 		if m.Inventories[i] != nil {
 
-			if swag.IsZero(m.Inventories[i]) { // not required
+			if typeutils.IsZero(m.Inventories[i]) { // not required
 				return nil
 			}
 
@@ -385,7 +386,7 @@ func (m *ProjectBackup) contextValidateKeys(ctx context.Context, formats strfmt.
 
 		if m.Keys[i] != nil {
 
-			if swag.IsZero(m.Keys[i]) { // not required
+			if typeutils.IsZero(m.Keys[i]) { // not required
 				return nil
 			}
 
@@ -412,7 +413,7 @@ func (m *ProjectBackup) contextValidateMeta(ctx context.Context, formats strfmt.
 
 	if m.Meta != nil {
 
-		if swag.IsZero(m.Meta) { // not required
+		if typeutils.IsZero(m.Meta) { // not required
 			return nil
 		}
 
@@ -439,7 +440,7 @@ func (m *ProjectBackup) contextValidateRepositories(ctx context.Context, formats
 
 		if m.Repositories[i] != nil {
 
-			if swag.IsZero(m.Repositories[i]) { // not required
+			if typeutils.IsZero(m.Repositories[i]) { // not required
 				return nil
 			}
 
@@ -468,7 +469,7 @@ func (m *ProjectBackup) contextValidateTemplates(ctx context.Context, formats st
 
 		if m.Templates[i] != nil {
 
-			if swag.IsZero(m.Templates[i]) { // not required
+			if typeutils.IsZero(m.Templates[i]) { // not required
 				return nil
 			}
 
@@ -497,7 +498,7 @@ func (m *ProjectBackup) contextValidateViews(ctx context.Context, formats strfmt
 
 		if m.Views[i] != nil {
 
-			if swag.IsZero(m.Views[i]) { // not required
+			if typeutils.IsZero(m.Views[i]) { // not required
 				return nil
 			}
 
@@ -525,13 +526,13 @@ func (m *ProjectBackup) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackup) UnmarshalBinary(b []byte) error {
 	var res ProjectBackup
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -571,13 +572,13 @@ func (m *ProjectBackupEnvironmentsItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupEnvironmentsItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupEnvironmentsItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -653,7 +654,7 @@ func (m *ProjectBackupInventoriesItems0) validateTypeEnum(path, location string,
 }
 
 func (m *ProjectBackupInventoriesItems0) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -675,13 +676,13 @@ func (m *ProjectBackupInventoriesItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupInventoriesItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupInventoriesItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -748,7 +749,7 @@ func (m *ProjectBackupKeysItems0) validateTypeEnum(path, location string, value 
 }
 
 func (m *ProjectBackupKeysItems0) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -770,13 +771,13 @@ func (m *ProjectBackupKeysItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupKeysItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupKeysItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -820,7 +821,7 @@ func (m *ProjectBackupMeta) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackupMeta) validateMaxParallelTasks(formats strfmt.Registry) error {
-	if swag.IsZero(m.MaxParallelTasks) { // not required
+	if typeutils.IsZero(m.MaxParallelTasks) { // not required
 		return nil
 	}
 
@@ -841,13 +842,13 @@ func (m *ProjectBackupMeta) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupMeta) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupMeta
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -887,13 +888,13 @@ func (m *ProjectBackupRepositoriesItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupRepositoriesItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupRepositoriesItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -975,13 +976,13 @@ func (m *ProjectBackupTemplatesItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupTemplatesItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupTemplatesItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -1016,7 +1017,7 @@ func (m *ProjectBackupViewsItems0) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ProjectBackupViewsItems0) validatePosition(formats strfmt.Registry) error {
-	if swag.IsZero(m.Position) { // not required
+	if typeutils.IsZero(m.Position) { // not required
 		return nil
 	}
 
@@ -1037,13 +1038,13 @@ func (m *ProjectBackupViewsItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectBackupViewsItems0) UnmarshalBinary(b []byte) error {
 	var res ProjectBackupViewsItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

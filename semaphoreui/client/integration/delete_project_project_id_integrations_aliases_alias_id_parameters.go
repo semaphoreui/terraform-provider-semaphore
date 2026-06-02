@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParams creates a new DeleteProjectProjectIDIntegrationsAliasesAliasIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParams() *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
-	return &DeleteProjectProjectIDIntegrationsAliasesAliasIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParamsWithTimeout creates a new DeleteProjectProjectIDIntegrationsAliasesAliasIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	return &DeleteProjectProjectIDIntegrationsAliasesAliasIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParamsWithContext creates a new DeleteProjectProjectIDIntegrationsAliasesAliasIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsAliasesAliasIDParams].
 func NewDeleteProjectProjectIDIntegrationsAliasesAliasIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	return &DeleteProjectProjectIDIntegrationsAliasesAliasIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDIntegrationsAliasesAliasIDParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID integrations aliases alias ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID integrations aliases alias ID params
+// WithTimeout adds the timeout to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID integrations aliases alias ID params
+// SetTimeout adds the timeout to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID integrations aliases alias ID params
+// WithContext adds the context to the delete project project ID integrations aliases alias ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsAliasesAliasIDParams].
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID integrations aliases alias ID params
+// SetContext adds the context to the delete project project ID integrations aliases alias ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsAliasesAliasIDParams].
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID integrations aliases alias ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID integrations aliases alias ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithAliasID adds the aliasID to the delete project project ID integrations aliases alias ID params
+// WithAliasID adds the aliasID to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WithAliasID(aliasID int64) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	o.SetAliasID(aliasID)
 	return o
 }
 
-// SetAliasID adds the aliasId to the delete project project ID integrations aliases alias ID params
+// SetAliasID adds the aliasId to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetAliasID(aliasID int64) {
 	o.AliasID = aliasID
 }
 
-// WithProjectID adds the projectID to the delete project project ID integrations aliases alias ID params
+// WithProjectID adds the projectID to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID integrations aliases alias ID params
+// SetProjectID adds the projectId to the delete project project ID integrations aliases alias ID params.
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDIntegrationsAliasesAliasIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param alias_id
-	if err := r.SetPathParam("alias_id", swag.FormatInt64(o.AliasID)); err != nil {
+	if err := r.SetPathParam("alias_id", conv.FormatInteger(o.AliasID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

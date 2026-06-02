@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutUsersUserIDParams() *PutUsersUserIDParams {
-	return &PutUsersUserIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutUsersUserIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutUsersUserIDParamsWithTimeout creates a new PutUsersUserIDParams object
 // with the ability to set a timeout on a request.
 func NewPutUsersUserIDParamsWithTimeout(timeout time.Duration) *PutUsersUserIDParams {
 	return &PutUsersUserIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutUsersUserIDParamsWithContext creates a new PutUsersUserIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutUsersUserIDParams].
 func NewPutUsersUserIDParamsWithContext(ctx context.Context) *PutUsersUserIDParams {
 	return &PutUsersUserIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -70,9 +73,9 @@ type PutUsersUserIDParams struct {
 	*/
 	UserID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put users user ID params (not the query body).
@@ -90,65 +93,68 @@ func (o *PutUsersUserIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put users user ID params
+// WithTimeout adds the timeout to the put users user ID params.
 func (o *PutUsersUserIDParams) WithTimeout(timeout time.Duration) *PutUsersUserIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put users user ID params
+// SetTimeout adds the timeout to the put users user ID params.
 func (o *PutUsersUserIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put users user ID params
+// WithContext adds the context to the put users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutUsersUserIDParams].
 func (o *PutUsersUserIDParams) WithContext(ctx context.Context) *PutUsersUserIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put users user ID params
+// SetContext adds the context to the put users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutUsersUserIDParams].
 func (o *PutUsersUserIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put users user ID params
+// WithHTTPClient adds the HTTPClient to the put users user ID params.
 func (o *PutUsersUserIDParams) WithHTTPClient(client *http.Client) *PutUsersUserIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put users user ID params
+// SetHTTPClient adds the HTTPClient to the put users user ID params.
 func (o *PutUsersUserIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithUser adds the user to the put users user ID params
+// WithUser adds the user to the put users user ID params.
 func (o *PutUsersUserIDParams) WithUser(user *models.UserPutRequest) *PutUsersUserIDParams {
 	o.SetUser(user)
 	return o
 }
 
-// SetUser adds the user to the put users user ID params
+// SetUser adds the user to the put users user ID params.
 func (o *PutUsersUserIDParams) SetUser(user *models.UserPutRequest) {
 	o.User = user
 }
 
-// WithUserID adds the userID to the put users user ID params
+// WithUserID adds the userID to the put users user ID params.
 func (o *PutUsersUserIDParams) WithUserID(userID int64) *PutUsersUserIDParams {
 	o.SetUserID(userID)
 	return o
 }
 
-// SetUserID adds the userId to the put users user ID params
+// SetUserID adds the userId to the put users user ID params.
 func (o *PutUsersUserIDParams) SetUserID(userID int64) {
 	o.UserID = userID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutUsersUserIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -159,7 +165,7 @@ func (o *PutUsersUserIDParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	}
 
 	// path param user_id
-	if err := r.SetPathParam("user_id", swag.FormatInt64(o.UserID)); err != nil {
+	if err := r.SetPathParam("user_id", conv.FormatInteger(o.UserID)); err != nil {
 		return err
 	}
 

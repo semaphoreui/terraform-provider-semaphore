@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetInfoParams() *GetInfoParams {
-	return &GetInfoParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetInfoParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetInfoParamsWithTimeout creates a new GetInfoParams object
 // with the ability to set a timeout on a request.
 func NewGetInfoParamsWithTimeout(timeout time.Duration) *GetInfoParams {
 	return &GetInfoParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetInfoParamsWithContext creates a new GetInfoParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetInfoParams].
 func NewGetInfoParamsWithContext(ctx context.Context) *GetInfoParams {
 	return &GetInfoParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetInfoParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetInfoParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get info params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetInfoParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get info params
+// WithTimeout adds the timeout to the get info params.
 func (o *GetInfoParams) WithTimeout(timeout time.Duration) *GetInfoParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get info params
+// SetTimeout adds the timeout to the get info params.
 func (o *GetInfoParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get info params
+// WithContext adds the context to the get info params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetInfoParams].
 func (o *GetInfoParams) WithContext(ctx context.Context) *GetInfoParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get info params
+// SetContext adds the context to the get info params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetInfoParams].
 func (o *GetInfoParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get info params
+// WithHTTPClient adds the HTTPClient to the get info params.
 func (o *GetInfoParams) WithHTTPClient(client *http.Client) *GetInfoParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get info params
+// SetHTTPClient adds the HTTPClient to the get info params.
 func (o *GetInfoParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

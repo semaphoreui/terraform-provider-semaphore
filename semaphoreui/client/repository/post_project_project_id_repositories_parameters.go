@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDRepositoriesParams() *PostProjectProjectIDRepositoriesParams {
-	return &PostProjectProjectIDRepositoriesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDRepositoriesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDRepositoriesParamsWithTimeout creates a new PostProjectProjectIDRepositoriesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDRepositoriesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDRepositoriesParams {
 	return &PostProjectProjectIDRepositoriesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDRepositoriesParamsWithContext creates a new PostProjectProjectIDRepositoriesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDRepositoriesParams].
 func NewPostProjectProjectIDRepositoriesParamsWithContext(ctx context.Context) *PostProjectProjectIDRepositoriesParams {
 	return &PostProjectProjectIDRepositoriesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -70,9 +73,9 @@ type PostProjectProjectIDRepositoriesParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID repositories params (not the query body).
@@ -90,65 +93,68 @@ func (o *PostProjectProjectIDRepositoriesParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID repositories params
+// WithTimeout adds the timeout to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDRepositoriesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID repositories params
+// SetTimeout adds the timeout to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID repositories params
+// WithContext adds the context to the post project project ID repositories params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDRepositoriesParams].
 func (o *PostProjectProjectIDRepositoriesParams) WithContext(ctx context.Context) *PostProjectProjectIDRepositoriesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID repositories params
+// SetContext adds the context to the post project project ID repositories params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDRepositoriesParams].
 func (o *PostProjectProjectIDRepositoriesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID repositories params
+// WithHTTPClient adds the HTTPClient to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDRepositoriesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID repositories params
+// SetHTTPClient adds the HTTPClient to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithRepository adds the repository to the post project project ID repositories params
+// WithRepository adds the repository to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) WithRepository(repository *models.RepositoryRequest) *PostProjectProjectIDRepositoriesParams {
 	o.SetRepository(repository)
 	return o
 }
 
-// SetRepository adds the repository to the post project project ID repositories params
+// SetRepository adds the repository to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) SetRepository(repository *models.RepositoryRequest) {
 	o.Repository = repository
 }
 
-// WithProjectID adds the projectID to the post project project ID repositories params
+// WithProjectID adds the projectID to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) WithProjectID(projectID int64) *PostProjectProjectIDRepositoriesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID repositories params
+// SetProjectID adds the projectId to the post project project ID repositories params.
 func (o *PostProjectProjectIDRepositoriesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDRepositoriesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -159,7 +165,7 @@ func (o *PostProjectProjectIDRepositoriesParams) WriteToRequest(r runtime.Client
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

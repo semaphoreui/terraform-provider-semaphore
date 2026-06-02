@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDViewsViewIDParams creates a new DeleteProjectProjectIDViewsViewIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDViewsViewIDParams() *DeleteProjectProjectIDViewsViewIDParams {
-	return &DeleteProjectProjectIDViewsViewIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDViewsViewIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDViewsViewIDParamsWithTimeout creates a new DeleteProjectProjectIDViewsViewIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDViewsViewIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDViewsViewIDParams {
 	return &DeleteProjectProjectIDViewsViewIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDViewsViewIDParamsWithContext creates a new DeleteProjectProjectIDViewsViewIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDViewsViewIDParams].
 func NewDeleteProjectProjectIDViewsViewIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDViewsViewIDParams {
 	return &DeleteProjectProjectIDViewsViewIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDViewsViewIDParams struct {
 	*/
 	ViewID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID views view ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDViewsViewIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID views view ID params
+// WithTimeout adds the timeout to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDViewsViewIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID views view ID params
+// SetTimeout adds the timeout to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID views view ID params
+// WithContext adds the context to the delete project project ID views view ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDViewsViewIDParams].
 func (o *DeleteProjectProjectIDViewsViewIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDViewsViewIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID views view ID params
+// SetContext adds the context to the delete project project ID views view ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDViewsViewIDParams].
 func (o *DeleteProjectProjectIDViewsViewIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID views view ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDViewsViewIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID views view ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the delete project project ID views view ID params
+// WithProjectID adds the projectID to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDViewsViewIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID views view ID params
+// SetProjectID adds the projectId to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithViewID adds the viewID to the delete project project ID views view ID params
+// WithViewID adds the viewID to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) WithViewID(viewID int64) *DeleteProjectProjectIDViewsViewIDParams {
 	o.SetViewID(viewID)
 	return o
 }
 
-// SetViewID adds the viewId to the delete project project ID views view ID params
+// SetViewID adds the viewId to the delete project project ID views view ID params.
 func (o *DeleteProjectProjectIDViewsViewIDParams) SetViewID(viewID int64) {
 	o.ViewID = viewID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDViewsViewIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param view_id
-	if err := r.SetPathParam("view_id", swag.FormatInt64(o.ViewID)); err != nil {
+	if err := r.SetPathParam("view_id", conv.FormatInteger(o.ViewID)); err != nil {
 		return err
 	}
 

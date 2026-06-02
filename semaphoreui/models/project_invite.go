@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -126,7 +127,7 @@ func (m *ProjectInvite) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateAcceptedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.AcceptedAt) { // not required
+	if typeutils.IsZero(m.AcceptedAt) { // not required
 		return nil
 	}
 
@@ -138,7 +139,7 @@ func (m *ProjectInvite) validateAcceptedAt(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateCreated(formats strfmt.Registry) error {
-	if swag.IsZero(m.Created) { // not required
+	if typeutils.IsZero(m.Created) { // not required
 		return nil
 	}
 
@@ -150,7 +151,7 @@ func (m *ProjectInvite) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateEmail(formats strfmt.Registry) error {
-	if swag.IsZero(m.Email) { // not required
+	if typeutils.IsZero(m.Email) { // not required
 		return nil
 	}
 
@@ -162,7 +163,7 @@ func (m *ProjectInvite) validateEmail(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateExpiresAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.ExpiresAt) { // not required
+	if typeutils.IsZero(m.ExpiresAt) { // not required
 		return nil
 	}
 
@@ -174,7 +175,7 @@ func (m *ProjectInvite) validateExpiresAt(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -186,7 +187,7 @@ func (m *ProjectInvite) validateID(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateInviterUser(formats strfmt.Registry) error {
-	if swag.IsZero(m.InviterUser) { // not required
+	if typeutils.IsZero(m.InviterUser) { // not required
 		return nil
 	}
 
@@ -209,7 +210,7 @@ func (m *ProjectInvite) validateInviterUser(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateInviterUserID(formats strfmt.Registry) error {
-	if swag.IsZero(m.InviterUserID) { // not required
+	if typeutils.IsZero(m.InviterUserID) { // not required
 		return nil
 	}
 
@@ -221,7 +222,7 @@ func (m *ProjectInvite) validateInviterUserID(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -268,7 +269,7 @@ func (m *ProjectInvite) validateRoleEnum(path, location string, value string) er
 }
 
 func (m *ProjectInvite) validateRole(formats strfmt.Registry) error {
-	if swag.IsZero(m.Role) { // not required
+	if typeutils.IsZero(m.Role) { // not required
 		return nil
 	}
 
@@ -316,7 +317,7 @@ func (m *ProjectInvite) validateStatusEnum(path, location string, value string) 
 }
 
 func (m *ProjectInvite) validateStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.Status) { // not required
+	if typeutils.IsZero(m.Status) { // not required
 		return nil
 	}
 
@@ -329,7 +330,7 @@ func (m *ProjectInvite) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateUser(formats strfmt.Registry) error {
-	if swag.IsZero(m.User) { // not required
+	if typeutils.IsZero(m.User) { // not required
 		return nil
 	}
 
@@ -352,7 +353,7 @@ func (m *ProjectInvite) validateUser(formats strfmt.Registry) error {
 }
 
 func (m *ProjectInvite) validateUserID(formats strfmt.Registry) error {
-	if swag.IsZero(m.UserID) { // not required
+	if typeutils.IsZero(m.UserID) { // not required
 		return nil
 	}
 
@@ -385,7 +386,7 @@ func (m *ProjectInvite) contextValidateInviterUser(ctx context.Context, formats 
 
 	if m.InviterUser != nil {
 
-		if swag.IsZero(m.InviterUser) { // not required
+		if typeutils.IsZero(m.InviterUser) { // not required
 			return nil
 		}
 
@@ -410,7 +411,7 @@ func (m *ProjectInvite) contextValidateUser(ctx context.Context, formats strfmt.
 
 	if m.User != nil {
 
-		if swag.IsZero(m.User) { // not required
+		if typeutils.IsZero(m.User) { // not required
 			return nil
 		}
 
@@ -436,13 +437,13 @@ func (m *ProjectInvite) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ProjectInvite) UnmarshalBinary(b []byte) error {
 	var res ProjectInvite
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

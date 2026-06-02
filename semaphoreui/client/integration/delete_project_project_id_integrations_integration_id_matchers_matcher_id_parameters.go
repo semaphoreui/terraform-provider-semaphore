@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams creates a new DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams() *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
-	return &DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout creates a new DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	return &DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithContext creates a new DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func NewDeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	return &DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -77,9 +81,9 @@ type DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams stru
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID integrations integration ID matchers matcher ID params (not the query body).
@@ -97,92 +101,95 @@ func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams)
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID integrations integration ID matchers matcher ID params
+// WithTimeout adds the timeout to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID integrations integration ID matchers matcher ID params
+// SetTimeout adds the timeout to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID integrations integration ID matchers matcher ID params
+// WithContext adds the context to the delete project project ID integrations integration ID matchers matcher ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID integrations integration ID matchers matcher ID params
+// SetContext adds the context to the delete project project ID integrations integration ID matchers matcher ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID matchers matcher ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID matchers matcher ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithIntegrationID adds the integrationID to the delete project project ID integrations integration ID matchers matcher ID params
+// WithIntegrationID adds the integrationID to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithIntegrationID(integrationID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the delete project project ID integrations integration ID matchers matcher ID params
+// SetIntegrationID adds the integrationId to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithMatcherID adds the matcherID to the delete project project ID integrations integration ID matchers matcher ID params
+// WithMatcherID adds the matcherID to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithMatcherID(matcherID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetMatcherID(matcherID)
 	return o
 }
 
-// SetMatcherID adds the matcherId to the delete project project ID integrations integration ID matchers matcher ID params
+// SetMatcherID adds the matcherId to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetMatcherID(matcherID int64) {
 	o.MatcherID = matcherID
 }
 
-// WithProjectID adds the projectID to the delete project project ID integrations integration ID matchers matcher ID params
+// WithProjectID adds the projectID to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID integrations integration ID matchers matcher ID params
+// SetProjectID adds the projectId to the delete project project ID integrations integration ID matchers matcher ID params.
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDIntegrationsIntegrationIDMatchersMatcherIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param matcher_id
-	if err := r.SetPathParam("matcher_id", swag.FormatInt64(o.MatcherID)); err != nil {
+	if err := r.SetPathParam("matcher_id", conv.FormatInteger(o.MatcherID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

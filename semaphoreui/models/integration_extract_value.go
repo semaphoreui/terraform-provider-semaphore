@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -103,7 +104,7 @@ func (m *IntegrationExtractValue) validateBodyDataTypeEnum(path, location string
 }
 
 func (m *IntegrationExtractValue) validateBodyDataType(formats strfmt.Registry) error {
-	if swag.IsZero(m.BodyDataType) { // not required
+	if typeutils.IsZero(m.BodyDataType) { // not required
 		return nil
 	}
 
@@ -145,7 +146,7 @@ func (m *IntegrationExtractValue) validateValueSourceEnum(path, location string,
 }
 
 func (m *IntegrationExtractValue) validateValueSource(formats strfmt.Registry) error {
-	if swag.IsZero(m.ValueSource) { // not required
+	if typeutils.IsZero(m.ValueSource) { // not required
 		return nil
 	}
 
@@ -187,7 +188,7 @@ func (m *IntegrationExtractValue) validateVariableTypeEnum(path, location string
 }
 
 func (m *IntegrationExtractValue) validateVariableType(formats strfmt.Registry) error {
-	if swag.IsZero(m.VariableType) { // not required
+	if typeutils.IsZero(m.VariableType) { // not required
 		return nil
 	}
 
@@ -209,13 +210,13 @@ func (m *IntegrationExtractValue) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *IntegrationExtractValue) UnmarshalBinary(b []byte) error {
 	var res IntegrationExtractValue
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

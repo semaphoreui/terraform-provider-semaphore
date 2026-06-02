@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDRepositoriesRepositoryIDParams() *PutProjectProjectIDRepositoriesRepositoryIDParams {
-	return &PutProjectProjectIDRepositoriesRepositoryIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDRepositoriesRepositoryIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDRepositoriesRepositoryIDParamsWithTimeout creates a new PutProjectProjectIDRepositoriesRepositoryIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDRepositoriesRepositoryIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	return &PutProjectProjectIDRepositoriesRepositoryIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDRepositoriesRepositoryIDParamsWithContext creates a new PutProjectProjectIDRepositoriesRepositoryIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDRepositoriesRepositoryIDParams].
 func NewPutProjectProjectIDRepositoriesRepositoryIDParamsWithContext(ctx context.Context) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	return &PutProjectProjectIDRepositoriesRepositoryIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -76,9 +79,9 @@ type PutProjectProjectIDRepositoriesRepositoryIDParams struct {
 	*/
 	RepositoryID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID repositories repository ID params (not the query body).
@@ -96,76 +99,79 @@ func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID repositories repository ID params
+// WithTimeout adds the timeout to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID repositories repository ID params
+// SetTimeout adds the timeout to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID repositories repository ID params
+// WithContext adds the context to the put project project ID repositories repository ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDRepositoriesRepositoryIDParams].
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithContext(ctx context.Context) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID repositories repository ID params
+// SetContext adds the context to the put project project ID repositories repository ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDRepositoriesRepositoryIDParams].
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID repositories repository ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID repositories repository ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithRepository adds the repository to the put project project ID repositories repository ID params
+// WithRepository adds the repository to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithRepository(repository *models.RepositoryRequest) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetRepository(repository)
 	return o
 }
 
-// SetRepository adds the repository to the put project project ID repositories repository ID params
+// SetRepository adds the repository to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetRepository(repository *models.RepositoryRequest) {
 	o.Repository = repository
 }
 
-// WithProjectID adds the projectID to the put project project ID repositories repository ID params
+// WithProjectID adds the projectID to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithProjectID(projectID int64) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID repositories repository ID params
+// SetProjectID adds the projectId to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithRepositoryID adds the repositoryID to the put project project ID repositories repository ID params
+// WithRepositoryID adds the repositoryID to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WithRepositoryID(repositoryID int64) *PutProjectProjectIDRepositoriesRepositoryIDParams {
 	o.SetRepositoryID(repositoryID)
 	return o
 }
 
-// SetRepositoryID adds the repositoryId to the put project project ID repositories repository ID params
+// SetRepositoryID adds the repositoryId to the put project project ID repositories repository ID params.
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) SetRepositoryID(repositoryID int64) {
 	o.RepositoryID = repositoryID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -176,12 +182,12 @@ func (o *PutProjectProjectIDRepositoriesRepositoryIDParams) WriteToRequest(r run
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param repository_id
-	if err := r.SetPathParam("repository_id", swag.FormatInt64(o.RepositoryID)); err != nil {
+	if err := r.SetPathParam("repository_id", conv.FormatInteger(o.RepositoryID)); err != nil {
 		return err
 	}
 

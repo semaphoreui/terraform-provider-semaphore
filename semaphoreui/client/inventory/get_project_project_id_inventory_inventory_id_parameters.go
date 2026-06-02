@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDInventoryInventoryIDParams creates a new GetProjectProjectIDInventoryInventoryIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDInventoryInventoryIDParams() *GetProjectProjectIDInventoryInventoryIDParams {
-	return &GetProjectProjectIDInventoryInventoryIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDInventoryInventoryIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDInventoryInventoryIDParamsWithTimeout creates a new GetProjectProjectIDInventoryInventoryIDParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDInventoryInventoryIDParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDInventoryInventoryIDParams {
 	return &GetProjectProjectIDInventoryInventoryIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDInventoryInventoryIDParamsWithContext creates a new GetProjectProjectIDInventoryInventoryIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDInventoryInventoryIDParams].
 func NewGetProjectProjectIDInventoryInventoryIDParamsWithContext(ctx context.Context) *GetProjectProjectIDInventoryInventoryIDParams {
 	return &GetProjectProjectIDInventoryInventoryIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type GetProjectProjectIDInventoryInventoryIDParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID inventory inventory ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *GetProjectProjectIDInventoryInventoryIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID inventory inventory ID params
+// WithTimeout adds the timeout to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDInventoryInventoryIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID inventory inventory ID params
+// SetTimeout adds the timeout to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID inventory inventory ID params
+// WithContext adds the context to the get project project ID inventory inventory ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDInventoryInventoryIDParams].
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WithContext(ctx context.Context) *GetProjectProjectIDInventoryInventoryIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID inventory inventory ID params
+// SetContext adds the context to the get project project ID inventory inventory ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDInventoryInventoryIDParams].
 func (o *GetProjectProjectIDInventoryInventoryIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID inventory inventory ID params
+// WithHTTPClient adds the HTTPClient to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDInventoryInventoryIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID inventory inventory ID params
+// SetHTTPClient adds the HTTPClient to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithInventoryID adds the inventoryID to the get project project ID inventory inventory ID params
+// WithInventoryID adds the inventoryID to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WithInventoryID(inventoryID int64) *GetProjectProjectIDInventoryInventoryIDParams {
 	o.SetInventoryID(inventoryID)
 	return o
 }
 
-// SetInventoryID adds the inventoryId to the get project project ID inventory inventory ID params
+// SetInventoryID adds the inventoryId to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) SetInventoryID(inventoryID int64) {
 	o.InventoryID = inventoryID
 }
 
-// WithProjectID adds the projectID to the get project project ID inventory inventory ID params
+// WithProjectID adds the projectID to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WithProjectID(projectID int64) *GetProjectProjectIDInventoryInventoryIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID inventory inventory ID params
+// SetProjectID adds the projectId to the get project project ID inventory inventory ID params.
 func (o *GetProjectProjectIDInventoryInventoryIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDInventoryInventoryIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param inventory_id
-	if err := r.SetPathParam("inventory_id", swag.FormatInt64(o.InventoryID)); err != nil {
+	if err := r.SetPathParam("inventory_id", conv.FormatInteger(o.InventoryID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

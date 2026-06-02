@@ -3,7 +3,9 @@
 package task
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new task API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new task API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new task API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for task API
+Client for task API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,35 +79,90 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectIDTasksTaskID deletes task including output.
 	DeleteProjectProjectIDTasksTaskID(params *DeleteProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTasksTaskIDNoContent, error)
 
+	// DeleteProjectProjectIDTasksTaskIDContext deletes task including output.
+	DeleteProjectProjectIDTasksTaskIDContext(ctx context.Context, params *DeleteProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTasksTaskIDNoContent, error)
+
+	// GetProjectProjectIDTasks get tasks related to current project.
 	GetProjectProjectIDTasks(params *GetProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksOK, error)
 
+	// GetProjectProjectIDTasksContext get tasks related to current project.
+	GetProjectProjectIDTasksContext(ctx context.Context, params *GetProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksOK, error)
+
+	// GetProjectProjectIDTasksLast get last 200 tasks related to current project.
 	GetProjectProjectIDTasksLast(params *GetProjectProjectIDTasksLastParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksLastOK, error)
 
+	// GetProjectProjectIDTasksLastContext get last 200 tasks related to current project.
+	GetProjectProjectIDTasksLastContext(ctx context.Context, params *GetProjectProjectIDTasksLastParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksLastOK, error)
+
+	// GetProjectProjectIDTasksTaskID get a single task.
 	GetProjectProjectIDTasksTaskID(params *GetProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOK, error)
 
+	// GetProjectProjectIDTasksTaskIDContext get a single task.
+	GetProjectProjectIDTasksTaskIDContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOK, error)
+
+	// GetProjectProjectIDTasksTaskIDOutput get task output.
 	GetProjectProjectIDTasksTaskIDOutput(params *GetProjectProjectIDTasksTaskIDOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOutputOK, error)
 
+	// GetProjectProjectIDTasksTaskIDOutputContext get task output.
+	GetProjectProjectIDTasksTaskIDOutputContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOutputOK, error)
+
+	// GetProjectProjectIDTasksTaskIDRawOutput get task raw output.
 	GetProjectProjectIDTasksTaskIDRawOutput(params *GetProjectProjectIDTasksTaskIDRawOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDRawOutputOK, error)
 
+	// GetProjectProjectIDTasksTaskIDRawOutputContext get task raw output.
+	GetProjectProjectIDTasksTaskIDRawOutputContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDRawOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDRawOutputOK, error)
+
+	// PostProjectProjectIDTasks starts a job.
 	PostProjectProjectIDTasks(params *PostProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksCreated, error)
 
+	// PostProjectProjectIDTasksContext starts a job.
+	PostProjectProjectIDTasksContext(ctx context.Context, params *PostProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksCreated, error)
+
+	// PostProjectProjectIDTasksTaskIDStop stop a job.
 	PostProjectProjectIDTasksTaskIDStop(params *PostProjectProjectIDTasksTaskIDStopParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksTaskIDStopNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PostProjectProjectIDTasksTaskIDStopContext stop a job.
+	PostProjectProjectIDTasksTaskIDStopContext(ctx context.Context, params *PostProjectProjectIDTasksTaskIDStopParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksTaskIDStopNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectIDTasksTaskID deletes task including output
+DeleteProjectProjectIDTasksTaskIDdeletes task including output.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDTasksTaskIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDTasksTaskID(params *DeleteProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTasksTaskIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDTasksTaskIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDTasksTaskIDContextdeletes task including output.
+
+Do not use the deprecated [DeleteProjectProjectIDTasksTaskIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDTasksTaskIDContext(ctx context.Context, params *DeleteProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTasksTaskIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDTasksTaskIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDTasksTaskID",
 		Method:             "DELETE",
@@ -114,13 +173,14 @@ func (a *Client) DeleteProjectProjectIDTasksTaskID(params *DeleteProjectProjectI
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDTasksTaskIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -141,13 +201,35 @@ func (a *Client) DeleteProjectProjectIDTasksTaskID(params *DeleteProjectProjectI
 }
 
 /*
-GetProjectProjectIDTasks gets tasks related to current project
+GetProjectProjectIDTasksgets tasks related to current project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTasksContext] instead.
 */
 func (a *Client) GetProjectProjectIDTasks(params *GetProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTasksContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTasksContextgets tasks related to current project.
+
+Do not use the deprecated [GetProjectProjectIDTasksParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTasksContext(ctx context.Context, params *GetProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTasksParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTasks",
 		Method:             "GET",
@@ -158,13 +240,14 @@ func (a *Client) GetProjectProjectIDTasks(params *GetProjectProjectIDTasksParams
 		Params:             params,
 		Reader:             &GetProjectProjectIDTasksReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -185,13 +268,35 @@ func (a *Client) GetProjectProjectIDTasks(params *GetProjectProjectIDTasksParams
 }
 
 /*
-GetProjectProjectIDTasksLast gets last 200 tasks related to current project
+GetProjectProjectIDTasksLastgets last 200 tasks related to current project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTasksLastContext] instead.
 */
 func (a *Client) GetProjectProjectIDTasksLast(params *GetProjectProjectIDTasksLastParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksLastOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTasksLastContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTasksLastContextgets last 200 tasks related to current project.
+
+Do not use the deprecated [GetProjectProjectIDTasksLastParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTasksLastContext(ctx context.Context, params *GetProjectProjectIDTasksLastParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksLastOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTasksLastParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTasksLast",
 		Method:             "GET",
@@ -202,13 +307,14 @@ func (a *Client) GetProjectProjectIDTasksLast(params *GetProjectProjectIDTasksLa
 		Params:             params,
 		Reader:             &GetProjectProjectIDTasksLastReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -229,13 +335,35 @@ func (a *Client) GetProjectProjectIDTasksLast(params *GetProjectProjectIDTasksLa
 }
 
 /*
-GetProjectProjectIDTasksTaskID gets a single task
+GetProjectProjectIDTasksTaskIDgets a single task.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTasksTaskIDContext] instead.
 */
 func (a *Client) GetProjectProjectIDTasksTaskID(params *GetProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTasksTaskIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTasksTaskIDContextgets a single task.
+
+Do not use the deprecated [GetProjectProjectIDTasksTaskIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTasksTaskIDContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTasksTaskIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTasksTaskID",
 		Method:             "GET",
@@ -246,13 +374,14 @@ func (a *Client) GetProjectProjectIDTasksTaskID(params *GetProjectProjectIDTasks
 		Params:             params,
 		Reader:             &GetProjectProjectIDTasksTaskIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -273,13 +402,35 @@ func (a *Client) GetProjectProjectIDTasksTaskID(params *GetProjectProjectIDTasks
 }
 
 /*
-GetProjectProjectIDTasksTaskIDOutput gets task output
+GetProjectProjectIDTasksTaskIDOutputgets task output.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTasksTaskIDOutputContext] instead.
 */
 func (a *Client) GetProjectProjectIDTasksTaskIDOutput(params *GetProjectProjectIDTasksTaskIDOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOutputOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTasksTaskIDOutputContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTasksTaskIDOutputContextgets task output.
+
+Do not use the deprecated [GetProjectProjectIDTasksTaskIDOutputParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTasksTaskIDOutputContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDOutputOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTasksTaskIDOutputParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTasksTaskIDOutput",
 		Method:             "GET",
@@ -290,13 +441,14 @@ func (a *Client) GetProjectProjectIDTasksTaskIDOutput(params *GetProjectProjectI
 		Params:             params,
 		Reader:             &GetProjectProjectIDTasksTaskIDOutputReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -317,13 +469,35 @@ func (a *Client) GetProjectProjectIDTasksTaskIDOutput(params *GetProjectProjectI
 }
 
 /*
-GetProjectProjectIDTasksTaskIDRawOutput gets task raw output
+GetProjectProjectIDTasksTaskIDRawOutputgets task raw output.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTasksTaskIDRawOutputContext] instead.
 */
 func (a *Client) GetProjectProjectIDTasksTaskIDRawOutput(params *GetProjectProjectIDTasksTaskIDRawOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDRawOutputOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTasksTaskIDRawOutputContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTasksTaskIDRawOutputContextgets task raw output.
+
+Do not use the deprecated [GetProjectProjectIDTasksTaskIDRawOutputParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTasksTaskIDRawOutputContext(ctx context.Context, params *GetProjectProjectIDTasksTaskIDRawOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTasksTaskIDRawOutputOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTasksTaskIDRawOutputParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTasksTaskIDRawOutput",
 		Method:             "GET",
@@ -334,13 +508,14 @@ func (a *Client) GetProjectProjectIDTasksTaskIDRawOutput(params *GetProjectProje
 		Params:             params,
 		Reader:             &GetProjectProjectIDTasksTaskIDRawOutputReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -361,13 +536,35 @@ func (a *Client) GetProjectProjectIDTasksTaskIDRawOutput(params *GetProjectProje
 }
 
 /*
-PostProjectProjectIDTasks starts a job
+PostProjectProjectIDTasksstarts a job.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDTasksContext] instead.
 */
 func (a *Client) PostProjectProjectIDTasks(params *PostProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDTasksContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDTasksContextstarts a job.
+
+Do not use the deprecated [PostProjectProjectIDTasksParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDTasksContext(ctx context.Context, params *PostProjectProjectIDTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDTasksParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDTasks",
 		Method:             "POST",
@@ -378,13 +575,14 @@ func (a *Client) PostProjectProjectIDTasks(params *PostProjectProjectIDTasksPara
 		Params:             params,
 		Reader:             &PostProjectProjectIDTasksReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -405,13 +603,35 @@ func (a *Client) PostProjectProjectIDTasks(params *PostProjectProjectIDTasksPara
 }
 
 /*
-PostProjectProjectIDTasksTaskIDStop stops a job
+PostProjectProjectIDTasksTaskIDStopstops a job.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDTasksTaskIDStopContext] instead.
 */
 func (a *Client) PostProjectProjectIDTasksTaskIDStop(params *PostProjectProjectIDTasksTaskIDStopParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksTaskIDStopNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDTasksTaskIDStopContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDTasksTaskIDStopContextstops a job.
+
+Do not use the deprecated [PostProjectProjectIDTasksTaskIDStopParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDTasksTaskIDStopContext(ctx context.Context, params *PostProjectProjectIDTasksTaskIDStopParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTasksTaskIDStopNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDTasksTaskIDStopParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDTasksTaskIDStop",
 		Method:             "POST",
@@ -422,13 +642,14 @@ func (a *Client) PostProjectProjectIDTasksTaskIDStop(params *PostProjectProjectI
 		Params:             params,
 		Reader:             &PostProjectProjectIDTasksTaskIDStopReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -449,6 +670,14 @@ func (a *Client) PostProjectProjectIDTasksTaskIDStop(params *PostProjectProjectI
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [TaskParams].
+	ctx context.Context
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteUsersUserIDParams creates a new DeleteUsersUserIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteUsersUserIDParams() *DeleteUsersUserIDParams {
-	return &DeleteUsersUserIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteUsersUserIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteUsersUserIDParamsWithTimeout creates a new DeleteUsersUserIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteUsersUserIDParamsWithTimeout(timeout time.Duration) *DeleteUsersUserIDParams {
 	return &DeleteUsersUserIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteUsersUserIDParamsWithContext creates a new DeleteUsersUserIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUsersUserIDParams].
 func NewDeleteUsersUserIDParamsWithContext(ctx context.Context) *DeleteUsersUserIDParams {
 	return &DeleteUsersUserIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type DeleteUsersUserIDParams struct {
 	*/
 	UserID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete users user ID params (not the query body).
@@ -85,60 +89,63 @@ func (o *DeleteUsersUserIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete users user ID params
+// WithTimeout adds the timeout to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) WithTimeout(timeout time.Duration) *DeleteUsersUserIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete users user ID params
+// SetTimeout adds the timeout to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete users user ID params
+// WithContext adds the context to the delete users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUsersUserIDParams].
 func (o *DeleteUsersUserIDParams) WithContext(ctx context.Context) *DeleteUsersUserIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete users user ID params
+// SetContext adds the context to the delete users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUsersUserIDParams].
 func (o *DeleteUsersUserIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete users user ID params
+// WithHTTPClient adds the HTTPClient to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) WithHTTPClient(client *http.Client) *DeleteUsersUserIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete users user ID params
+// SetHTTPClient adds the HTTPClient to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithUserID adds the userID to the delete users user ID params
+// WithUserID adds the userID to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) WithUserID(userID int64) *DeleteUsersUserIDParams {
 	o.SetUserID(userID)
 	return o
 }
 
-// SetUserID adds the userId to the delete users user ID params
+// SetUserID adds the userId to the delete users user ID params.
 func (o *DeleteUsersUserIDParams) SetUserID(userID int64) {
 	o.UserID = userID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteUsersUserIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param user_id
-	if err := r.SetPathParam("user_id", swag.FormatInt64(o.UserID)); err != nil {
+	if err := r.SetPathParam("user_id", conv.FormatInteger(o.UserID)); err != nil {
 		return err
 	}
 

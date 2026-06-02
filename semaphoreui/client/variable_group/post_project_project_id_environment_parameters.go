@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDEnvironmentParams() *PostProjectProjectIDEnvironmentParams {
-	return &PostProjectProjectIDEnvironmentParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDEnvironmentParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDEnvironmentParamsWithTimeout creates a new PostProjectProjectIDEnvironmentParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDEnvironmentParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDEnvironmentParams {
 	return &PostProjectProjectIDEnvironmentParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDEnvironmentParamsWithContext creates a new PostProjectProjectIDEnvironmentParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDEnvironmentParams].
 func NewPostProjectProjectIDEnvironmentParamsWithContext(ctx context.Context) *PostProjectProjectIDEnvironmentParams {
 	return &PostProjectProjectIDEnvironmentParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -70,9 +73,9 @@ type PostProjectProjectIDEnvironmentParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID environment params (not the query body).
@@ -90,65 +93,68 @@ func (o *PostProjectProjectIDEnvironmentParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID environment params
+// WithTimeout adds the timeout to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDEnvironmentParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID environment params
+// SetTimeout adds the timeout to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID environment params
+// WithContext adds the context to the post project project ID environment params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDEnvironmentParams].
 func (o *PostProjectProjectIDEnvironmentParams) WithContext(ctx context.Context) *PostProjectProjectIDEnvironmentParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID environment params
+// SetContext adds the context to the post project project ID environment params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDEnvironmentParams].
 func (o *PostProjectProjectIDEnvironmentParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID environment params
+// WithHTTPClient adds the HTTPClient to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDEnvironmentParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID environment params
+// SetHTTPClient adds the HTTPClient to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithEnvironment adds the environment to the post project project ID environment params
+// WithEnvironment adds the environment to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) WithEnvironment(environment *models.EnvironmentRequest) *PostProjectProjectIDEnvironmentParams {
 	o.SetEnvironment(environment)
 	return o
 }
 
-// SetEnvironment adds the environment to the post project project ID environment params
+// SetEnvironment adds the environment to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) SetEnvironment(environment *models.EnvironmentRequest) {
 	o.Environment = environment
 }
 
-// WithProjectID adds the projectID to the post project project ID environment params
+// WithProjectID adds the projectID to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) WithProjectID(projectID int64) *PostProjectProjectIDEnvironmentParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID environment params
+// SetProjectID adds the projectId to the post project project ID environment params.
 func (o *PostProjectProjectIDEnvironmentParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDEnvironmentParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -159,7 +165,7 @@ func (o *PostProjectProjectIDEnvironmentParams) WriteToRequest(r runtime.ClientR
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

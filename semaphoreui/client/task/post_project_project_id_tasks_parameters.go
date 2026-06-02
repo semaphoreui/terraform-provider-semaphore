@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostProjectProjectIDTasksParams creates a new PostProjectProjectIDTasksParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDTasksParams() *PostProjectProjectIDTasksParams {
-	return &PostProjectProjectIDTasksParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDTasksParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDTasksParamsWithTimeout creates a new PostProjectProjectIDTasksParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDTasksParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDTasksParams {
 	return &PostProjectProjectIDTasksParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDTasksParamsWithContext creates a new PostProjectProjectIDTasksParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTasksParams].
 func NewPostProjectProjectIDTasksParamsWithContext(ctx context.Context) *PostProjectProjectIDTasksParams {
 	return &PostProjectProjectIDTasksParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -68,9 +72,9 @@ type PostProjectProjectIDTasksParams struct {
 	// Task.
 	Task PostProjectProjectIDTasksBody
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID tasks params (not the query body).
@@ -88,71 +92,74 @@ func (o *PostProjectProjectIDTasksParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID tasks params
+// WithTimeout adds the timeout to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDTasksParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID tasks params
+// SetTimeout adds the timeout to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID tasks params
+// WithContext adds the context to the post project project ID tasks params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTasksParams].
 func (o *PostProjectProjectIDTasksParams) WithContext(ctx context.Context) *PostProjectProjectIDTasksParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID tasks params
+// SetContext adds the context to the post project project ID tasks params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTasksParams].
 func (o *PostProjectProjectIDTasksParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID tasks params
+// WithHTTPClient adds the HTTPClient to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDTasksParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID tasks params
+// SetHTTPClient adds the HTTPClient to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the post project project ID tasks params
+// WithProjectID adds the projectID to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) WithProjectID(projectID int64) *PostProjectProjectIDTasksParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID tasks params
+// SetProjectID adds the projectId to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithTask adds the task to the post project project ID tasks params
+// WithTask adds the task to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) WithTask(task PostProjectProjectIDTasksBody) *PostProjectProjectIDTasksParams {
 	o.SetTask(task)
 	return o
 }
 
-// SetTask adds the task to the post project project ID tasks params
+// SetTask adds the task to the post project project ID tasks params.
 func (o *PostProjectProjectIDTasksParams) SetTask(task PostProjectProjectIDTasksBody) {
 	o.Task = task
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 	if err := r.SetBodyParam(o.Task); err != nil {

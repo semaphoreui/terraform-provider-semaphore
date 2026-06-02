@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteUserTokensAPITokenIDParams() *DeleteUserTokensAPITokenIDParams {
-	return &DeleteUserTokensAPITokenIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteUserTokensAPITokenIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteUserTokensAPITokenIDParamsWithTimeout creates a new DeleteUserTokensAPITokenIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteUserTokensAPITokenIDParamsWithTimeout(timeout time.Duration) *DeleteUserTokensAPITokenIDParams {
 	return &DeleteUserTokensAPITokenIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteUserTokensAPITokenIDParamsWithContext creates a new DeleteUserTokensAPITokenIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUserTokensAPITokenIDParams].
 func NewDeleteUserTokensAPITokenIDParamsWithContext(ctx context.Context) *DeleteUserTokensAPITokenIDParams {
 	return &DeleteUserTokensAPITokenIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -61,9 +65,9 @@ type DeleteUserTokensAPITokenIDParams struct {
 	// APITokenID.
 	APITokenID string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete user tokens API token ID params (not the query body).
@@ -81,54 +85,57 @@ func (o *DeleteUserTokensAPITokenIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete user tokens API token ID params
+// WithTimeout adds the timeout to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) WithTimeout(timeout time.Duration) *DeleteUserTokensAPITokenIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete user tokens API token ID params
+// SetTimeout adds the timeout to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete user tokens API token ID params
+// WithContext adds the context to the delete user tokens API token ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUserTokensAPITokenIDParams].
 func (o *DeleteUserTokensAPITokenIDParams) WithContext(ctx context.Context) *DeleteUserTokensAPITokenIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete user tokens API token ID params
+// SetContext adds the context to the delete user tokens API token ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteUserTokensAPITokenIDParams].
 func (o *DeleteUserTokensAPITokenIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete user tokens API token ID params
+// WithHTTPClient adds the HTTPClient to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) WithHTTPClient(client *http.Client) *DeleteUserTokensAPITokenIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete user tokens API token ID params
+// SetHTTPClient adds the HTTPClient to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithAPITokenID adds the apiTokenID to the delete user tokens API token ID params
+// WithAPITokenID adds the apiTokenID to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) WithAPITokenID(apiTokenID string) *DeleteUserTokensAPITokenIDParams {
 	o.SetAPITokenID(apiTokenID)
 	return o
 }
 
-// SetAPITokenID adds the apiTokenId to the delete user tokens API token ID params
+// SetAPITokenID adds the apiTokenId to the delete user tokens API token ID params.
 func (o *DeleteUserTokensAPITokenIDParams) SetAPITokenID(apiTokenID string) {
 	o.APITokenID = apiTokenID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteUserTokensAPITokenIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

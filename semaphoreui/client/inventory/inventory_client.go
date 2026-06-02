@@ -3,7 +3,9 @@
 package inventory
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new inventory API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new inventory API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new inventory API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for inventory API
+Client for inventory API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,29 +79,72 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectIDInventoryInventoryID removes inventory.
 	DeleteProjectProjectIDInventoryInventoryID(params *DeleteProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDInventoryInventoryIDNoContent, error)
 
+	// DeleteProjectProjectIDInventoryInventoryIDContext removes inventory.
+	DeleteProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *DeleteProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDInventoryInventoryIDNoContent, error)
+
+	// GetProjectProjectIDInventory get inventory.
 	GetProjectProjectIDInventory(params *GetProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryOK, error)
 
+	// GetProjectProjectIDInventoryContext get inventory.
+	GetProjectProjectIDInventoryContext(ctx context.Context, params *GetProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryOK, error)
+
+	// GetProjectProjectIDInventoryInventoryID get inventory.
 	GetProjectProjectIDInventoryInventoryID(params *GetProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryInventoryIDOK, error)
 
+	// GetProjectProjectIDInventoryInventoryIDContext get inventory.
+	GetProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *GetProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryInventoryIDOK, error)
+
+	// PostProjectProjectIDInventory create inventory.
 	PostProjectProjectIDInventory(params *PostProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDInventoryCreated, error)
 
+	// PostProjectProjectIDInventoryContext create inventory.
+	PostProjectProjectIDInventoryContext(ctx context.Context, params *PostProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDInventoryCreated, error)
+
+	// PutProjectProjectIDInventoryInventoryID updates inventory.
 	PutProjectProjectIDInventoryInventoryID(params *PutProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDInventoryInventoryIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutProjectProjectIDInventoryInventoryIDContext updates inventory.
+	PutProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *PutProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDInventoryInventoryIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectIDInventoryInventoryID removes inventory
+DeleteProjectProjectIDInventoryInventoryIDremoves inventory.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDInventoryInventoryIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDInventoryInventoryID(params *DeleteProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDInventoryInventoryIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDInventoryInventoryIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDInventoryInventoryIDContextremoves inventory.
+
+Do not use the deprecated [DeleteProjectProjectIDInventoryInventoryIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *DeleteProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDInventoryInventoryIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDInventoryInventoryIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDInventoryInventoryID",
 		Method:             "DELETE",
@@ -108,13 +155,14 @@ func (a *Client) DeleteProjectProjectIDInventoryInventoryID(params *DeleteProjec
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDInventoryInventoryIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -135,13 +183,35 @@ func (a *Client) DeleteProjectProjectIDInventoryInventoryID(params *DeleteProjec
 }
 
 /*
-GetProjectProjectIDInventory gets inventory
+GetProjectProjectIDInventorygets inventory.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDInventoryContext] instead.
 */
 func (a *Client) GetProjectProjectIDInventory(params *GetProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDInventoryContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDInventoryContextgets inventory.
+
+Do not use the deprecated [GetProjectProjectIDInventoryParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDInventoryContext(ctx context.Context, params *GetProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDInventoryParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDInventory",
 		Method:             "GET",
@@ -152,13 +222,14 @@ func (a *Client) GetProjectProjectIDInventory(params *GetProjectProjectIDInvento
 		Params:             params,
 		Reader:             &GetProjectProjectIDInventoryReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -179,13 +250,35 @@ func (a *Client) GetProjectProjectIDInventory(params *GetProjectProjectIDInvento
 }
 
 /*
-GetProjectProjectIDInventoryInventoryID gets inventory
+GetProjectProjectIDInventoryInventoryIDgets inventory.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDInventoryInventoryIDContext] instead.
 */
 func (a *Client) GetProjectProjectIDInventoryInventoryID(params *GetProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryInventoryIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDInventoryInventoryIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDInventoryInventoryIDContextgets inventory.
+
+Do not use the deprecated [GetProjectProjectIDInventoryInventoryIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *GetProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDInventoryInventoryIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDInventoryInventoryIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDInventoryInventoryID",
 		Method:             "GET",
@@ -196,13 +289,14 @@ func (a *Client) GetProjectProjectIDInventoryInventoryID(params *GetProjectProje
 		Params:             params,
 		Reader:             &GetProjectProjectIDInventoryInventoryIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -223,13 +317,35 @@ func (a *Client) GetProjectProjectIDInventoryInventoryID(params *GetProjectProje
 }
 
 /*
-PostProjectProjectIDInventory creates inventory
+PostProjectProjectIDInventorycreates inventory.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDInventoryContext] instead.
 */
 func (a *Client) PostProjectProjectIDInventory(params *PostProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDInventoryCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDInventoryContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDInventoryContextcreates inventory.
+
+Do not use the deprecated [PostProjectProjectIDInventoryParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDInventoryContext(ctx context.Context, params *PostProjectProjectIDInventoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDInventoryCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDInventoryParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDInventory",
 		Method:             "POST",
@@ -240,13 +356,14 @@ func (a *Client) PostProjectProjectIDInventory(params *PostProjectProjectIDInven
 		Params:             params,
 		Reader:             &PostProjectProjectIDInventoryReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -267,13 +384,35 @@ func (a *Client) PostProjectProjectIDInventory(params *PostProjectProjectIDInven
 }
 
 /*
-PutProjectProjectIDInventoryInventoryID updates inventory
+PutProjectProjectIDInventoryInventoryIDupdates inventory.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDInventoryInventoryIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDInventoryInventoryID(params *PutProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDInventoryInventoryIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDInventoryInventoryIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDInventoryInventoryIDContextupdates inventory.
+
+Do not use the deprecated [PutProjectProjectIDInventoryInventoryIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDInventoryInventoryIDContext(ctx context.Context, params *PutProjectProjectIDInventoryInventoryIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDInventoryInventoryIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDInventoryInventoryIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDInventoryInventoryID",
 		Method:             "PUT",
@@ -284,13 +423,14 @@ func (a *Client) PutProjectProjectIDInventoryInventoryID(params *PutProjectProje
 		Params:             params,
 		Reader:             &PutProjectProjectIDInventoryInventoryIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -311,6 +451,14 @@ func (a *Client) PutProjectProjectIDInventoryInventoryID(params *PutProjectProje
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [InventoryParams].
+	ctx context.Context
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDViewsParams creates a new GetProjectProjectIDViewsParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDViewsParams() *GetProjectProjectIDViewsParams {
-	return &GetProjectProjectIDViewsParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDViewsParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDViewsParamsWithTimeout creates a new GetProjectProjectIDViewsParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDViewsParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDViewsParams {
 	return &GetProjectProjectIDViewsParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDViewsParamsWithContext creates a new GetProjectProjectIDViewsParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDViewsParams].
 func NewGetProjectProjectIDViewsParamsWithContext(ctx context.Context) *GetProjectProjectIDViewsParams {
 	return &GetProjectProjectIDViewsParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type GetProjectProjectIDViewsParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID views params (not the query body).
@@ -85,60 +89,63 @@ func (o *GetProjectProjectIDViewsParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID views params
+// WithTimeout adds the timeout to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDViewsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID views params
+// SetTimeout adds the timeout to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID views params
+// WithContext adds the context to the get project project ID views params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDViewsParams].
 func (o *GetProjectProjectIDViewsParams) WithContext(ctx context.Context) *GetProjectProjectIDViewsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID views params
+// SetContext adds the context to the get project project ID views params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDViewsParams].
 func (o *GetProjectProjectIDViewsParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID views params
+// WithHTTPClient adds the HTTPClient to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDViewsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID views params
+// SetHTTPClient adds the HTTPClient to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the get project project ID views params
+// WithProjectID adds the projectID to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) WithProjectID(projectID int64) *GetProjectProjectIDViewsParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID views params
+// SetProjectID adds the projectId to the get project project ID views params.
 func (o *GetProjectProjectIDViewsParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDViewsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -79,7 +80,7 @@ func (m *InventoryRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *InventoryRequest) validateBecomeKeyID(formats strfmt.Registry) error {
-	if swag.IsZero(m.BecomeKeyID) { // not required
+	if typeutils.IsZero(m.BecomeKeyID) { // not required
 		return nil
 	}
 
@@ -91,7 +92,7 @@ func (m *InventoryRequest) validateBecomeKeyID(formats strfmt.Registry) error {
 }
 
 func (m *InventoryRequest) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -103,7 +104,7 @@ func (m *InventoryRequest) validateProjectID(formats strfmt.Registry) error {
 }
 
 func (m *InventoryRequest) validateRepositoryID(formats strfmt.Registry) error {
-	if swag.IsZero(m.RepositoryID) { // not required
+	if typeutils.IsZero(m.RepositoryID) { // not required
 		return nil
 	}
 
@@ -115,7 +116,7 @@ func (m *InventoryRequest) validateRepositoryID(formats strfmt.Registry) error {
 }
 
 func (m *InventoryRequest) validateSSHKeyID(formats strfmt.Registry) error {
-	if swag.IsZero(m.SSHKeyID) { // not required
+	if typeutils.IsZero(m.SSHKeyID) { // not required
 		return nil
 	}
 
@@ -162,7 +163,7 @@ func (m *InventoryRequest) validateTypeEnum(path, location string, value string)
 }
 
 func (m *InventoryRequest) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -184,13 +185,13 @@ func (m *InventoryRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *InventoryRequest) UnmarshalBinary(b []byte) error {
 	var res InventoryRequest
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

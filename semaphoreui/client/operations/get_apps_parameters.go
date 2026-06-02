@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetAppsParams() *GetAppsParams {
-	return &GetAppsParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetAppsParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetAppsParamsWithTimeout creates a new GetAppsParams object
 // with the ability to set a timeout on a request.
 func NewGetAppsParamsWithTimeout(timeout time.Duration) *GetAppsParams {
 	return &GetAppsParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetAppsParamsWithContext creates a new GetAppsParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAppsParams].
 func NewGetAppsParamsWithContext(ctx context.Context) *GetAppsParams {
 	return &GetAppsParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetAppsParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetAppsParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get apps params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetAppsParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get apps params
+// WithTimeout adds the timeout to the get apps params.
 func (o *GetAppsParams) WithTimeout(timeout time.Duration) *GetAppsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get apps params
+// SetTimeout adds the timeout to the get apps params.
 func (o *GetAppsParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get apps params
+// WithContext adds the context to the get apps params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAppsParams].
 func (o *GetAppsParams) WithContext(ctx context.Context) *GetAppsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get apps params
+// SetContext adds the context to the get apps params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAppsParams].
 func (o *GetAppsParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get apps params
+// WithHTTPClient adds the HTTPClient to the get apps params.
 func (o *GetAppsParams) WithHTTPClient(client *http.Client) *GetAppsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get apps params
+// SetHTTPClient adds the HTTPClient to the get apps params.
 func (o *GetAppsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

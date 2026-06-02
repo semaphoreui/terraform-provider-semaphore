@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostProjectProjectIDNotificationsTestParams creates a new PostProjectProjectIDNotificationsTestParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDNotificationsTestParams() *PostProjectProjectIDNotificationsTestParams {
-	return &PostProjectProjectIDNotificationsTestParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDNotificationsTestParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDNotificationsTestParamsWithTimeout creates a new PostProjectProjectIDNotificationsTestParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDNotificationsTestParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDNotificationsTestParams {
 	return &PostProjectProjectIDNotificationsTestParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDNotificationsTestParamsWithContext creates a new PostProjectProjectIDNotificationsTestParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDNotificationsTestParams].
 func NewPostProjectProjectIDNotificationsTestParamsWithContext(ctx context.Context) *PostProjectProjectIDNotificationsTestParams {
 	return &PostProjectProjectIDNotificationsTestParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type PostProjectProjectIDNotificationsTestParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID notifications test params (not the query body).
@@ -85,60 +89,63 @@ func (o *PostProjectProjectIDNotificationsTestParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID notifications test params
+// WithTimeout adds the timeout to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDNotificationsTestParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID notifications test params
+// SetTimeout adds the timeout to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID notifications test params
+// WithContext adds the context to the post project project ID notifications test params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDNotificationsTestParams].
 func (o *PostProjectProjectIDNotificationsTestParams) WithContext(ctx context.Context) *PostProjectProjectIDNotificationsTestParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID notifications test params
+// SetContext adds the context to the post project project ID notifications test params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDNotificationsTestParams].
 func (o *PostProjectProjectIDNotificationsTestParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID notifications test params
+// WithHTTPClient adds the HTTPClient to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDNotificationsTestParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID notifications test params
+// SetHTTPClient adds the HTTPClient to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the post project project ID notifications test params
+// WithProjectID adds the projectID to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) WithProjectID(projectID int64) *PostProjectProjectIDNotificationsTestParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID notifications test params
+// SetProjectID adds the projectId to the post project project ID notifications test params.
 func (o *PostProjectProjectIDNotificationsTestParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDNotificationsTestParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

@@ -9,9 +9,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -106,7 +106,7 @@ type PutProjectProjectIDBody struct {
 func (o *PutProjectProjectIDBody) UnmarshalJSON(raw []byte) error {
 	// PutProjectProjectIDParamsBodyAO0
 	var putProjectProjectIDParamsBodyAO0 models.ProjectRequest
-	if err := swag.ReadJSON(raw, &putProjectProjectIDParamsBodyAO0); err != nil {
+	if err := jsonutils.ReadJSON(raw, &putProjectProjectIDParamsBodyAO0); err != nil {
 		return err
 	}
 	o.ProjectRequest = putProjectProjectIDParamsBodyAO0
@@ -115,7 +115,7 @@ func (o *PutProjectProjectIDBody) UnmarshalJSON(raw []byte) error {
 	var dataPutProjectProjectIDParamsBodyAO1 struct {
 		ID int64 `json:"id,omitempty"`
 	}
-	if err := swag.ReadJSON(raw, &dataPutProjectProjectIDParamsBodyAO1); err != nil {
+	if err := jsonutils.ReadJSON(raw, &dataPutProjectProjectIDParamsBodyAO1); err != nil {
 		return err
 	}
 
@@ -128,7 +128,7 @@ func (o *PutProjectProjectIDBody) UnmarshalJSON(raw []byte) error {
 func (o PutProjectProjectIDBody) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	putProjectProjectIDParamsBodyAO0, err := swag.WriteJSON(o.ProjectRequest)
+	putProjectProjectIDParamsBodyAO0, err := jsonutils.WriteJSON(o.ProjectRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -139,12 +139,12 @@ func (o PutProjectProjectIDBody) MarshalJSON() ([]byte, error) {
 
 	dataPutProjectProjectIDParamsBodyAO1.ID = o.ID
 
-	jsonDataPutProjectProjectIDParamsBodyAO1, errPutProjectProjectIDParamsBodyAO1 := swag.WriteJSON(dataPutProjectProjectIDParamsBodyAO1)
+	jsonDataPutProjectProjectIDParamsBodyAO1, errPutProjectProjectIDParamsBodyAO1 := jsonutils.WriteJSON(dataPutProjectProjectIDParamsBodyAO1)
 	if errPutProjectProjectIDParamsBodyAO1 != nil {
 		return nil, errPutProjectProjectIDParamsBodyAO1
 	}
 	_parts = append(_parts, jsonDataPutProjectProjectIDParamsBodyAO1)
-	return swag.ConcatJSON(_parts...), nil
+	return jsonutils.ConcatJSON(_parts...), nil
 }
 
 // Validate validates this put project project ID body
@@ -168,7 +168,7 @@ func (o *PutProjectProjectIDBody) Validate(formats strfmt.Registry) error {
 
 func (o *PutProjectProjectIDBody) validateID(formats strfmt.Registry) error {
 
-	if swag.IsZero(o.ID) { // not required
+	if typeutils.IsZero(o.ID) { // not required
 		return nil
 	}
 
@@ -199,13 +199,13 @@ func (o *PutProjectProjectIDBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(o)
+	return jsonutils.WriteJSON(o)
 }
 
 // UnmarshalBinary interface implementation
 func (o *PutProjectProjectIDBody) UnmarshalBinary(b []byte) error {
 	var res PutProjectProjectIDBody
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*o = res
