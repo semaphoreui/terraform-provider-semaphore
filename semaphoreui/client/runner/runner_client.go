@@ -154,6 +154,12 @@ type ClientService interface {
 	// PostProjectProjectIDRunnersRunnerIDActiveContext set project runner active state.
 	PostProjectProjectIDRunnersRunnerIDActiveContext(ctx context.Context, params *PostProjectProjectIDRunnersRunnerIDActiveParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDRunnersRunnerIDActiveNoContent, error)
 
+	// PostProjectProjectIDRunnersRunnerIDRegistrationToken regenerate the one time registration token of an unregistered project runner.
+	PostProjectProjectIDRunnersRunnerIDRegistrationToken(params *PostProjectProjectIDRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDRunnersRunnerIDRegistrationTokenOK, error)
+
+	// PostProjectProjectIDRunnersRunnerIDRegistrationTokenContext regenerate the one time registration token of an unregistered project runner.
+	PostProjectProjectIDRunnersRunnerIDRegistrationTokenContext(ctx context.Context, params *PostProjectProjectIDRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDRunnersRunnerIDRegistrationTokenOK, error)
+
 	// PostRunners add global runner.
 	PostRunners(params *PostRunnersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersCreated, error)
 
@@ -165,6 +171,12 @@ type ClientService interface {
 
 	// PostRunnersRunnerIDActiveContext set global runner active state.
 	PostRunnersRunnerIDActiveContext(ctx context.Context, params *PostRunnersRunnerIDActiveParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersRunnerIDActiveNoContent, error)
+
+	// PostRunnersRunnerIDRegistrationToken regenerate the one time registration token of an unregistered global runner.
+	PostRunnersRunnerIDRegistrationToken(params *PostRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersRunnerIDRegistrationTokenOK, error)
+
+	// PostRunnersRunnerIDRegistrationTokenContext regenerate the one time registration token of an unregistered global runner.
+	PostRunnersRunnerIDRegistrationTokenContext(ctx context.Context, params *PostRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersRunnerIDRegistrationTokenOK, error)
 
 	// PutProjectProjectIDRunnersRunnerID update project runner.
 	PutProjectProjectIDRunnersRunnerID(params *PutProjectProjectIDRunnersRunnerIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDRunnersRunnerIDNoContent, error)
@@ -990,6 +1002,73 @@ func (a *Client) PostProjectProjectIDRunnersRunnerIDActiveContext(ctx context.Co
 }
 
 /*
+PostProjectProjectIDRunnersRunnerIDRegistrationTokenregenerates the one time registration token of an unregistered project runner.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDRunnersRunnerIDRegistrationTokenContext] instead.
+*/
+func (a *Client) PostProjectProjectIDRunnersRunnerIDRegistrationToken(params *PostProjectProjectIDRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDRunnersRunnerIDRegistrationTokenOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDRunnersRunnerIDRegistrationTokenContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDRunnersRunnerIDRegistrationTokenContextregenerates the one time registration token of an unregistered project runner.
+
+Do not use the deprecated [PostProjectProjectIDRunnersRunnerIDRegistrationTokenParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDRunnersRunnerIDRegistrationTokenContext(ctx context.Context, params *PostProjectProjectIDRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDRunnersRunnerIDRegistrationTokenOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewPostProjectProjectIDRunnersRunnerIDRegistrationTokenParams()
+	}
+
+	op := &runtime.ClientOperation{
+		ID:                 "PostProjectProjectIDRunnersRunnerIDRegistrationToken",
+		Method:             "POST",
+		PathPattern:        "/project/{project_id}/runners/{runner_id}/registration-token",
+		ProducesMediaTypes: []string{"application/json", "text/plain; charset=utf-8"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &PostProjectProjectIDRunnersRunnerIDRegistrationTokenReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Client:             params.HTTPClient,
+	}
+
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.SubmitContext(ctx, op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*PostProjectProjectIDRunnersRunnerIDRegistrationTokenOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostProjectProjectIDRunnersRunnerIDRegistrationToken: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
 PostRunnersadds global runner.
 
 This method does not support injected context.
@@ -1120,6 +1199,73 @@ func (a *Client) PostRunnersRunnerIDActiveContext(ctx context.Context, params *P
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostRunnersRunnerIDActive: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+PostRunnersRunnerIDRegistrationTokenregenerates the one time registration token of an unregistered global runner.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostRunnersRunnerIDRegistrationTokenContext] instead.
+*/
+func (a *Client) PostRunnersRunnerIDRegistrationToken(params *PostRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersRunnerIDRegistrationTokenOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostRunnersRunnerIDRegistrationTokenContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostRunnersRunnerIDRegistrationTokenContextregenerates the one time registration token of an unregistered global runner.
+
+Do not use the deprecated [PostRunnersRunnerIDRegistrationTokenParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostRunnersRunnerIDRegistrationTokenContext(ctx context.Context, params *PostRunnersRunnerIDRegistrationTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostRunnersRunnerIDRegistrationTokenOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewPostRunnersRunnerIDRegistrationTokenParams()
+	}
+
+	op := &runtime.ClientOperation{
+		ID:                 "PostRunnersRunnerIDRegistrationToken",
+		Method:             "POST",
+		PathPattern:        "/runners/{runner_id}/registration-token",
+		ProducesMediaTypes: []string{"application/json", "text/plain; charset=utf-8"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &PostRunnersRunnerIDRegistrationTokenReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Client:             params.HTTPClient,
+	}
+
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.SubmitContext(ctx, op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*PostRunnersRunnerIDRegistrationTokenOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostRunnersRunnerIDRegistrationToken: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

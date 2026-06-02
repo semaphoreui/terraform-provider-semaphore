@@ -36,7 +36,7 @@ resource "semaphoreui_runner" "runner" {
 
 - `id` (Number) The runner ID.
 - `is_default` (Boolean) Indicates whether this is the default runner.
-- `registration_token` (String, Sensitive) The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.
+- `registration_token` (String) .
 
 ## Import
 

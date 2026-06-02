@@ -37,6 +37,6 @@ data "semaphoreui_runner" "by_name" {
 - `active` (Boolean) Indicates whether the runner is allowed to pick up tasks.
 - `is_default` (Boolean) Indicates whether this is the default runner.
 - `max_parallel_tasks` (Number) The maximum number of tasks the runner may execute in parallel.
-- `registration_token` (String, Sensitive) The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.
+- `registration_token` (String) .
 - `tags` (Set of String) Tags used to route tasks to specific runners.
 - `webhook` (String) URL called by the runner to report task events.

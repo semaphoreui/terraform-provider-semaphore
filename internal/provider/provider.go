@@ -205,6 +205,7 @@ func (p *SemaphoreUIProvider) Resources(ctx context.Context) []func() resource.R
 		NewProjectTemplateResource,
 		NewProjectUserResource,
 		NewProjectViewResource,
+		NewRunnerRegistrationTokenResource,
 		NewRunnerResource,
 		NewUserResource,
 	}
