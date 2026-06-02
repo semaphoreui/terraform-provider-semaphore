@@ -79,24 +79,20 @@ func convertRunnerModelToRunnerRequest(ctx context.Context, model RunnerModel) (
 }
 
 // convertRunnerResponseToRunnerModel maps an API response onto the model.
-// registrationToken is supplied by the caller: the API only returns the token
-// once, in the creation response, so on subsequent reads we pass the value
-// carried over from prior state rather than losing it.
-func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.Runner, registrationToken types.String) (RunnerModel, diag.Diagnostics) {
+func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.Runner) (RunnerModel, diag.Diagnostics) {
 	tagsSource := response.Tags
 	if tagsSource == nil {
 		tagsSource = []string{}
 	}
 	tags, diags := types.SetValueFrom(ctx, types.StringType, tagsSource)
 	model := RunnerModel{
-		ID:                types.Int64Value(response.ID),
-		Name:              types.StringValue(response.Name),
-		Webhook:           types.StringValue(response.Webhook),
-		MaxParallelTasks:  types.Int64Value(response.MaxParallelTasks),
-		Active:            types.BoolValue(response.Active),
-		Tags:              tags,
-		RegistrationToken: registrationToken,
-		IsDefault:         types.BoolValue(response.IsDefault),
+		ID:               types.Int64Value(response.ID),
+		Name:             types.StringValue(response.Name),
+		Webhook:          types.StringValue(response.Webhook),
+		MaxParallelTasks: types.Int64Value(response.MaxParallelTasks),
+		Active:           types.BoolValue(response.Active),
+		Tags:             tags,
+		IsDefault:        types.BoolValue(response.IsDefault),
 	}
 	return model, diags
 }
@@ -133,7 +129,7 @@ func (r *runnerResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	model, diags := convertRunnerResponseToRunnerModel(ctx, &response.Payload.Runner, resolveRegistrationToken(response.Payload))
+	model, diags := convertRunnerResponseToRunnerModel(ctx, &response.Payload.Runner)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -143,16 +139,6 @@ func (r *runnerResource) Create(ctx context.Context, req resource.CreateRequest,
 	model.Active = plan.Active
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
-}
-
-// resolveRegistrationToken returns the one-time token from a create response,
-// reading the `registration_token` field first and falling back to `token`
-// (older SemaphoreUI versions populate the latter).
-func resolveRegistrationToken(payload *models.RunnerWithToken) types.String {
-	if payload.RegistrationToken != nil && *payload.RegistrationToken != "" {
-		return types.StringValue(*payload.RegistrationToken)
-	}
-	return types.StringValue(payload.Token)
 }
 
 // ensureActive sets the runner active state via the dedicated endpoint when the
@@ -193,7 +179,7 @@ func (r *runnerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload, state.RegistrationToken)
+	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -247,7 +233,7 @@ func (r *runnerResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload, state.RegistrationToken)
+	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -297,9 +283,7 @@ func (r *runnerResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	// The registration token is only returned when the runner is created, so it
-	// is not available on import and remains an empty string in state.
-	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload, types.StringValue(""))
+	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

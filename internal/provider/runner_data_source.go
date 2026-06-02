@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
 	"terraform-provider-semaphoreui/semaphoreui/client/runner"
 )
@@ -64,7 +63,7 @@ func (d *runnerDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 			)
 			return
 		}
-		model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload, types.StringValue(""))
+		model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -83,7 +82,7 @@ func (d *runnerDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 	for _, item := range response.Payload {
 		if item.Name == config.Name.ValueString() {
-			model, diags := convertRunnerResponseToRunnerModel(ctx, item, types.StringValue(""))
+			model, diags := convertRunnerResponseToRunnerModel(ctx, item)
 			resp.Diagnostics.Append(diags...)
 			if resp.Diagnostics.HasError() {
 				return

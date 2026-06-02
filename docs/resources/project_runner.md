@@ -3,12 +3,12 @@
 page_title: "semaphoreui_project_runner Resource - SemaphoreUI"
 subcategory: ""
 description: |-
-  The project runner resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. The registration token returned at creation is stored in state and must be passed to the runner host (for example via cloud-init).
+  The project runner resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. Use the semaphoreui_runner_registration_token resource to generate the one-time token the runner uses to register.
 ---
 
 # semaphoreui_project_runner (Resource)
 
-The project runner resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. The registration token returned at creation is stored in state and must be passed to the runner host (for example via cloud-init).
+The project runner resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. Use the `semaphoreui_runner_registration_token` resource to generate the one-time token the runner uses to register.
 
 ## Example Usage
 
@@ -45,7 +45,6 @@ resource "semaphoreui_project_runner" "runner" {
 
 - `id` (Number) The runner ID.
 - `is_default` (Boolean) Indicates whether this is the default runner.
-- `registration_token` (String, Sensitive) The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.
 
 ## Import
 

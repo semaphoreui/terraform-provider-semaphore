@@ -40,11 +40,8 @@ type Runner struct {
 	// Owning project. Null for global runners.
 	ProjectID *int64 `json:"project_id,omitempty"`
 
-	// registered
+	// Whether the runner has been registered (has an auth token).
 	Registered bool `json:"registered,omitempty"`
-
-	// registration token
-	RegistrationToken *string `json:"registration_token,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`

@@ -69,25 +69,21 @@ func convertProjectRunnerModelToRunnerRequest(ctx context.Context, model Project
 }
 
 // convertRunnerResponseToProjectRunnerModel maps an API response onto the model.
-// registrationToken is supplied by the caller: the API only returns the token
-// once, in the creation response, so on subsequent reads we pass the value
-// carried over from prior state rather than losing it.
-func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *models.Runner, projectID types.Int64, registrationToken types.String) (ProjectRunnerModel, diag.Diagnostics) {
+func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *models.Runner, projectID types.Int64) (ProjectRunnerModel, diag.Diagnostics) {
 	tagsSource := response.Tags
 	if tagsSource == nil {
 		tagsSource = []string{}
 	}
 	tags, diags := types.SetValueFrom(ctx, types.StringType, tagsSource)
 	model := ProjectRunnerModel{
-		ID:                types.Int64Value(response.ID),
-		ProjectID:         projectID,
-		Name:              types.StringValue(response.Name),
-		Webhook:           types.StringValue(response.Webhook),
-		MaxParallelTasks:  types.Int64Value(response.MaxParallelTasks),
-		Active:            types.BoolValue(response.Active),
-		Tags:              tags,
-		RegistrationToken: registrationToken,
-		IsDefault:         types.BoolValue(response.IsDefault),
+		ID:               types.Int64Value(response.ID),
+		ProjectID:        projectID,
+		Name:             types.StringValue(response.Name),
+		Webhook:          types.StringValue(response.Webhook),
+		MaxParallelTasks: types.Int64Value(response.MaxParallelTasks),
+		Active:           types.BoolValue(response.Active),
+		Tags:             tags,
+		IsDefault:        types.BoolValue(response.IsDefault),
 	}
 	return model, diags
 }
@@ -125,7 +121,7 @@ func (r *projectRunnerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, &response.Payload.Runner, plan.ProjectID, resolveRegistrationToken(response.Payload))
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, &response.Payload.Runner, plan.ProjectID)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -177,7 +173,7 @@ func (r *projectRunnerResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, state.ProjectID, state.RegistrationToken)
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, state.ProjectID)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -233,7 +229,7 @@ func (r *projectRunnerResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, plan.ProjectID, state.RegistrationToken)
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, plan.ProjectID)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -285,9 +281,7 @@ func (r *projectRunnerResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 
-	// The registration token is only returned when the runner is created, so it
-	// is not available on import and remains an empty string in state.
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, types.Int64Value(fields["project"]), types.StringValue(""))
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, types.Int64Value(fields["project"]))
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

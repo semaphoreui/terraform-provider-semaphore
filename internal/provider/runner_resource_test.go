@@ -111,17 +111,14 @@ func TestAcc_RunnerResource_basic(t *testing.T) {
 					resource.TestCheckTypeSetElemAttr("semaphoreui_runner.test", "tags.*", "linux"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_runner.test", "tags.*", "production"),
 					resource.TestCheckResourceAttrSet("semaphoreui_runner.test", "id"),
-					resource.TestCheckResourceAttrSet("semaphoreui_runner.test", "registration_token"),
 				),
 			},
-			// ImportState testing. The registration token is only returned at creation, so
-			// it is not present after import and must be ignored on verification.
+			// ImportState testing
 			{
-				ResourceName:            "semaphoreui_runner.test",
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdFunc:       testAccRunnerImportID("semaphoreui_runner.test"),
-				ImportStateVerifyIgnore: []string{"registration_token"},
+				ResourceName:      "semaphoreui_runner.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: testAccRunnerImportID("semaphoreui_runner.test"),
 			},
 			// Update and Read testing
 			{

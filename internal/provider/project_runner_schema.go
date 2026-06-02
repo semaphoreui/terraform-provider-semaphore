@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	superschema "github.com/orange-cloudavenue/terraform-plugin-framework-superschema"
@@ -17,15 +16,14 @@ import (
 
 type (
 	ProjectRunnerModel struct {
-		ID                types.Int64  `tfsdk:"id"`
-		ProjectID         types.Int64  `tfsdk:"project_id"`
-		Name              types.String `tfsdk:"name"`
-		Webhook           types.String `tfsdk:"webhook"`
-		MaxParallelTasks  types.Int64  `tfsdk:"max_parallel_tasks"`
-		Active            types.Bool   `tfsdk:"active"`
-		Tags              types.Set    `tfsdk:"tags"`
-		RegistrationToken types.String `tfsdk:"registration_token"`
-		IsDefault         types.Bool   `tfsdk:"is_default"`
+		ID               types.Int64  `tfsdk:"id"`
+		ProjectID        types.Int64  `tfsdk:"project_id"`
+		Name             types.String `tfsdk:"name"`
+		Webhook          types.String `tfsdk:"webhook"`
+		MaxParallelTasks types.Int64  `tfsdk:"max_parallel_tasks"`
+		Active           types.Bool   `tfsdk:"active"`
+		Tags             types.Set    `tfsdk:"tags"`
+		IsDefault        types.Bool   `tfsdk:"is_default"`
 	}
 )
 
@@ -35,7 +33,7 @@ func ProjectRunnerSchema() superschema.Schema {
 			MarkdownDescription: "The project runner",
 		},
 		Resource: superschema.SchemaDetails{
-			MarkdownDescription: "resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. The registration token returned at creation is stored in state and must be passed to the runner host (for example via cloud-init).",
+			MarkdownDescription: "resource allows you to define a runner owned by a project. Runners execute the tasks scheduled by templates. Use the `semaphoreui_runner_registration_token` resource to generate the one-time token the runner uses to register.",
 		},
 		DataSource: superschema.SchemaDetails{
 			MarkdownDescription: "data source allows you to read a runner owned by a project.",
@@ -135,19 +133,6 @@ func ProjectRunnerSchema() superschema.Schema {
 					Computed: true,
 				},
 				DataSource: &schemaD.SetAttribute{
-					Computed: true,
-				},
-			},
-			"registration_token": superschema.StringAttribute{
-				Common: &schemaR.StringAttribute{
-					MarkdownDescription: "The one-time registration token the runner uses to register with SemaphoreUI. Returned only when the runner is created and persisted to Terraform state.",
-					Sensitive:           true,
-				},
-				Resource: &schemaR.StringAttribute{
-					Computed:      true,
-					PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
-				},
-				DataSource: &schemaD.StringAttribute{
 					Computed: true,
 				},
 			},

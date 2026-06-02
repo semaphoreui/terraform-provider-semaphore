@@ -26,7 +26,7 @@ type RunnerRequest struct {
 	// Required for project runners and must match the URL project. Ignored for global runners.
 	ProjectID int64 `json:"project_id,omitempty"`
 
-	// When true, the runner is created without a token and stays inactive. The token is not stored; the runner must be registered later via `semaphore runner register --runner-id <id>`. Useful for tools like Terraform that create the runner up front and pass its ID to the runner host via cloud-init.
+	// Defaults to true. When false, the runner is created with no credentials at all (no auth token and no registration token) and stays inactive. A one-time registration token must then be generated for it (see the registration-token endpoint) and used to register the runner. Useful for tools like Terraform that create the runner up front.
 	//
 	Registered bool `json:"registered,omitempty"`
 

@@ -3,12 +3,12 @@
 page_title: "semaphoreui_runner Resource - SemaphoreUI"
 subcategory: ""
 description: |-
-  The global runner resource allows you to define a global (admin) runner. Global runners are shared across projects and are matched to tasks by their tags. The registration token returned at creation is stored in state and must be passed to the runner host (for example via cloud-init).
+  The global runner resource allows you to define a global (admin) runner. Global runners are shared across projects and are matched to tasks by their tags. Use the semaphoreui_runner_registration_token resource to generate the one-time token the runner uses to register.
 ---
 
 # semaphoreui_runner (Resource)
 
-The global runner resource allows you to define a global (admin) runner. Global runners are shared across projects and are matched to tasks by their tags. The registration token returned at creation is stored in state and must be passed to the runner host (for example via cloud-init).
+The global runner resource allows you to define a global (admin) runner. Global runners are shared across projects and are matched to tasks by their tags. Use the `semaphoreui_runner_registration_token` resource to generate the one-time token the runner uses to register.
 
 ## Example Usage
 
@@ -36,7 +36,6 @@ resource "semaphoreui_runner" "runner" {
 
 - `id` (Number) The runner ID.
 - `is_default` (Boolean) Indicates whether this is the default runner.
-- `registration_token` (String) .
 
 ## Import
 
