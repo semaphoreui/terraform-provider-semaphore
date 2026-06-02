@@ -38,8 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Miscellaneous
 
 * bump Go to 1.26.3 and refresh all dependencies (terraform-plugin-framework 1.15→1.19, terraform-plugin-go 0.28→0.31, terraform-plugin-testing 1.13→1.16, golangci-lint v8→v9, etc.) ([#76](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/76))
-* bump test matrix to the latest three SemaphoreUI minor lines (v2.16.51 / v2.17.39 / v2.18.2); Taskfile default is now v2.18.2 ([#78](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/78))
-* regenerate API client from upstream `api-docs.yml` at SemaphoreUI v2.18.2; internally restructures the client into per-resource sub-packages (Inventory, KeyStore, Repository, Schedule, Task, Template, VariableGroup) — no user-facing schema changes ([#78](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/78))
+* bump test matrix to the latest three SemaphoreUI minor lines (v2.16.51 / v2.17.39 / v2.18.6-beta5); Taskfile default is now v2.18.6-beta5 ([#78](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/78))
+* regenerate API client from upstream `api-docs.yml` at SemaphoreUI v2.18.6-beta5; internally restructures the client into per-resource sub-packages (Inventory, KeyStore, Repository, Schedule, Task, Template, VariableGroup) — no user-facing schema changes ([#78](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/78))
 * add Dependabot auto-merge workflow that auto-approves and squash-merges patch/minor/security PRs; majors still require human review ([#76](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/76))
 * bump `hashicorp/setup-terraform` from 3 to 4 ([#77](https://github.com/CruGlobal/terraform-provider-semaphoreui/pull/77))
 
