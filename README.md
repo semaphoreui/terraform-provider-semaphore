@@ -12,7 +12,7 @@ The [SemaphoreUI Provider](https://registry.terraform.io/providers/semaphoreui/s
 > reviewed. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
 > contribution workflow.
 
-The [SemaphoreUI Provider](https://registry.terraform.io/providers/CruGlobal/semaphoreui/latest/docs)
+The [SemaphoreUI Provider](https://registry.terraform.io/providers/semaphoreui/semaphore/latest/docs)
 enables [Terraform](https://terraform.io) to manage
 [SemaphoreUI](https://semaphoreui.com/) resources — projects,
 environments, inventories, keys, repositories, schedules, templates,
@@ -26,7 +26,7 @@ follows the [Keep a Changelog](https://keepachangelog.com/) spec.
 
 A reachable installation of [SemaphoreUI](https://semaphoreui.com/) and
 an API token. See the
-[provider docs](https://registry.terraform.io/providers/CruGlobal/semaphoreui/latest/docs)
+[provider docs](https://registry.terraform.io/providers/semaphoreui/semaphore/latest/docs)
 for the available configuration options.
 
 The provider is tested against the **three most recent SemaphoreUI minor
