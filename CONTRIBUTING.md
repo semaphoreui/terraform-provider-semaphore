@@ -45,7 +45,7 @@ The repo uses [Task](https://taskfile.dev) (`Taskfile.yml`):
 Run a single acceptance test:
 
 ```sh
-SEMAPHORE_VERSION=v2.18.6-beta5 task testacc -- -run TestAcc_ProjectResource_basic
+SEMAPHORE_VERSION=v2.18.6 task testacc -- -run TestAcc_ProjectResource_basic
 ```
 
 Tests prefixed `TestAcc_` require the live API. The matrix in
@@ -111,7 +111,7 @@ task client
 task lint
 SEMAPHORE_VERSION=v2.16.51 task testacc
 SEMAPHORE_VERSION=v2.17.39 task testacc
-SEMAPHORE_VERSION=v2.18.6-beta5  task testacc
+SEMAPHORE_VERSION=v2.18.6  task testacc
 ```
 
 The local `api-docs.yml` is a *patched* copy of upstream. When

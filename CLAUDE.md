@@ -38,7 +38,7 @@ For acceptance tests, `TF_ACC=1` plus the `SEMAPHOREUI_*` env vars must be set â
 4. `go test` runs against the live server.
 5. `task docker:stop` tears it all down (with `-v`, so all data is lost).
 
-The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.6-beta5`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.6-beta5`); see `.github/workflows/test.yml`.
+The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.6`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.6`); see `.github/workflows/test.yml`.
 
 ## Architecture
 
@@ -88,7 +88,7 @@ Several upstream API responses return `nil` for fields that should be zero/false
 
 ### Nullability patches in `api-docs.yml`
 
-The local `api-docs.yml` is a *patched* copy of the upstream spec from a tagged release (currently `v2.18.6-beta5`). Upstream tends to drop nullable annotations from fields it considers always-set, but the Semaphore API genuinely returns `null` for several optional fields. The patches re-add `x-nullable: true` for those:
+The local `api-docs.yml` is a *patched* copy of the upstream spec from a tagged release (currently `v2.18.6`). Upstream tends to drop nullable annotations from fields it considers always-set, but the Semaphore API genuinely returns `null` for several optional fields. The patches re-add `x-nullable: true` for those:
 
 - `Project.alert_chat` / `ProjectRequest.alert_chat`
 - `ViewRequest.id` â€” upstream omits it, but the PUT views endpoint returns 400 without it

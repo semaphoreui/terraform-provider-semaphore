@@ -64,7 +64,7 @@ jobs:
         semaphore:
           - 'v2.16.51'
           - 'v2.17.39'
-          - 'v2.18.6-beta5'
+          - 'v2.18.6'
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
