@@ -139,7 +139,13 @@ func ProjectRunnerSchema() superschema.Schema {
 			"is_default": superschema.BoolAttribute{
 				Common: &schemaR.BoolAttribute{
 					MarkdownDescription: "Indicates whether this is the default runner.",
-					Computed:            true,
+				},
+				Resource: &schemaR.BoolAttribute{
+					Optional: true,
+					Computed: true,
+				},
+				DataSource: &schemaD.BoolAttribute{
+					Computed: true,
 				},
 			},
 		},
