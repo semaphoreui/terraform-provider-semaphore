@@ -17,6 +17,9 @@ type RunnerRequest struct {
 	// active
 	Active bool `json:"active,omitempty"`
 
+	// is default
+	IsDefault bool `json:"is_default,omitempty"`
+
 	// max parallel tasks
 	MaxParallelTasks int64 `json:"max_parallel_tasks,omitempty"`
 

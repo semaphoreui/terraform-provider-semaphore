@@ -35,14 +35,15 @@ func testAccRunnerExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccRunnerConfig(nameSuffix string, maxParallelTasks int, active bool, tags string) string {
+func testAccRunnerConfig(nameSuffix string, maxParallelTasks int, active bool, isDefault bool, tags string) string {
 	return fmt.Sprintf(`
 resource "semaphoreui_runner" "test" {
   name               = "Test %[1]s"
   max_parallel_tasks = %[2]d
   active             = %[3]t
-  tags               = %[4]s
-}`, nameSuffix, maxParallelTasks, active, tags)
+  is_default         = %[4]t
+  tags               = %[5]s
+}`, nameSuffix, maxParallelTasks, active, isDefault, tags)
 }
 
 func testAccCheckRunnerDestroy(s *terraform.State) error {
@@ -101,12 +102,13 @@ func TestAcc_RunnerResource_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create and Read testing
 			{
-				Config: testAccRunnerConfig(nameSuffix, 1, true, `["linux", "production"]`),
+				Config: testAccRunnerConfig(nameSuffix, 1, true, false, `["linux", "production"]`),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccRunnerExists("semaphoreui_runner.test"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "max_parallel_tasks", "1"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "active", "true"),
+					resource.TestCheckResourceAttr("semaphoreui_runner.test", "is_default", "false"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "tags.#", "2"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_runner.test", "tags.*", "linux"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_runner.test", "tags.*", "production"),
@@ -122,12 +124,13 @@ func TestAcc_RunnerResource_basic(t *testing.T) {
 			},
 			// Update and Read testing
 			{
-				Config: testAccRunnerConfig(nameSuffix, 4, false, `["windows"]`),
+				Config: testAccRunnerConfig(nameSuffix, 4, false, true, `["windows"]`),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccRunnerExists("semaphoreui_runner.test"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "max_parallel_tasks", "4"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "active", "false"),
+					resource.TestCheckResourceAttr("semaphoreui_runner.test", "is_default", "true"),
 					resource.TestCheckResourceAttr("semaphoreui_runner.test", "tags.#", "1"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_runner.test", "tags.*", "windows"),
 				),
@@ -148,7 +151,7 @@ func TestAcc_RunnerResource_disappears(t *testing.T) {
 		CheckDestroy:             testAccCheckRunnerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccRunnerConfig(nameSuffix, 1, true, `["linux"]`),
+				Config: testAccRunnerConfig(nameSuffix, 1, true, false, `["linux"]`),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccRunnerExists("semaphoreui_runner.test"),
 					testAccDeleteRunnerOutOfBand("semaphoreui_runner.test"),

@@ -5,13 +5,14 @@ import (
 	"errors"
 	"net/http"
 
+	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
+	"terraform-provider-semaphoreui/semaphoreui/client/runner"
+	"terraform-provider-semaphoreui/semaphoreui/models"
+
 	"github.com/go-openapi/runtime"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
-	"terraform-provider-semaphoreui/semaphoreui/client/runner"
-	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
 // isRunnerNotFound reports whether err is an HTTP 404 returned by the
@@ -69,6 +70,7 @@ func convertRunnerModelToRunnerRequest(ctx context.Context, model RunnerModel) (
 		Webhook:          model.Webhook.ValueString(),
 		MaxParallelTasks: model.MaxParallelTasks.ValueInt64(),
 		Active:           model.Active.ValueBool(),
+		IsDefault:        model.IsDefault.ValueBool(),
 	}
 	if !model.Tags.IsNull() && !model.Tags.IsUnknown() {
 		var tags []string

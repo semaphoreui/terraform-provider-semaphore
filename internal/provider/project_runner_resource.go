@@ -59,6 +59,7 @@ func convertProjectRunnerModelToRunnerRequest(ctx context.Context, model Project
 		Webhook:          model.Webhook.ValueString(),
 		MaxParallelTasks: model.MaxParallelTasks.ValueInt64(),
 		Active:           model.Active.ValueBool(),
+		IsDefault:        model.IsDefault.ValueBool(),
 	}
 	if !model.Tags.IsNull() && !model.Tags.IsUnknown() {
 		var tags []string

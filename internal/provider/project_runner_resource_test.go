@@ -89,7 +89,7 @@ resource "semaphoreui_project" "test" {
 `, nameSuffix)
 }
 
-func testAccProjectRunnerConfig(nameSuffix string, maxParallelTasks int, active bool, tags string) string {
+func testAccProjectRunnerConfig(nameSuffix string, maxParallelTasks int, active bool, isDefault bool, tags string) string {
 	return fmt.Sprintf(`
 %[1]s
 resource "semaphoreui_project_runner" "test" {
@@ -97,8 +97,9 @@ resource "semaphoreui_project_runner" "test" {
   name               = "Test %[2]s"
   max_parallel_tasks = %[3]d
   active             = %[4]t
-  tags               = %[5]s
-}`, testAccProjectRunnerProjectConfig(nameSuffix), nameSuffix, maxParallelTasks, active, tags)
+  is_default         = %[5]t
+  tags               = %[6]s
+}`, testAccProjectRunnerProjectConfig(nameSuffix), nameSuffix, maxParallelTasks, active, isDefault, tags)
 }
 
 func testAccProjectRunnerImportID(n string) resource.ImportStateIdFunc {
@@ -120,12 +121,13 @@ func TestAcc_ProjectRunnerResource_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create and Read testing
 			{
-				Config: testAccProjectRunnerConfig(nameSuffix, 1, true, `["linux", "production"]`),
+				Config: testAccProjectRunnerConfig(nameSuffix, 1, true, false, `["linux", "production"]`),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectRunnerExists("semaphoreui_project_runner.test"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "max_parallel_tasks", "1"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "active", "true"),
+					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "is_default", "false"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "tags.#", "2"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_project_runner.test", "tags.*", "linux"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_project_runner.test", "tags.*", "production"),
@@ -142,12 +144,13 @@ func TestAcc_ProjectRunnerResource_basic(t *testing.T) {
 			},
 			// Update and Read testing
 			{
-				Config: testAccProjectRunnerConfig(nameSuffix, 4, false, `["windows"]`),
+				Config: testAccProjectRunnerConfig(nameSuffix, 4, false, true, `["windows"]`),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccProjectRunnerExists("semaphoreui_project_runner.test"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "name", fmt.Sprintf("Test %s", nameSuffix)),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "max_parallel_tasks", "4"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "active", "false"),
+					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "is_default", "true"),
 					resource.TestCheckResourceAttr("semaphoreui_project_runner.test", "tags.#", "1"),
 					resource.TestCheckTypeSetElemAttr("semaphoreui_project_runner.test", "tags.*", "windows"),
 				),

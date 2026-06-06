@@ -1226,6 +1226,8 @@ definitions:
         type: array
         items:
           type: string
+      is_default:
+        type: boolean
       registered:
         type: boolean
         description: >

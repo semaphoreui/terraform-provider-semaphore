@@ -26,7 +26,8 @@ resource "semaphoreui_runner" "runner" {
 
 ### Optional
 
-- `active` (Boolean) Indicates whether the runner is allowed to pick up tasks. Value defaults to `true`.
+- `active` (Boolean) Indicates whether the runner is allowed to pick up tasks. Value defaults to `false`.
+- `is_default` (Boolean) Indicates whether this is the default runner. Value defaults to `false`.
 - `max_parallel_tasks` (Number) The maximum number of tasks the runner may execute in parallel.
 - `name` (String) The display name of the runner.
 - `tags` (Set of String) Tags used to route tasks to specific runners.
@@ -35,7 +36,6 @@ resource "semaphoreui_runner" "runner" {
 ### Read-Only
 
 - `id` (Number) The runner ID.
-- `is_default` (Boolean) Indicates whether this is the default runner.
 
 ## Import
 

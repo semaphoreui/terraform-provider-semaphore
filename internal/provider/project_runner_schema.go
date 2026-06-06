@@ -117,7 +117,7 @@ func ProjectRunnerSchema() superschema.Schema {
 				Resource: &schemaR.BoolAttribute{
 					Optional: true,
 					Computed: true,
-					Default:  booldefault.StaticBool(true),
+					Default:  booldefault.StaticBool(false),
 				},
 				DataSource: &schemaD.BoolAttribute{
 					Computed: true,
@@ -143,6 +143,7 @@ func ProjectRunnerSchema() superschema.Schema {
 				Resource: &schemaR.BoolAttribute{
 					Optional: true,
 					Computed: true,
+					Default:  booldefault.StaticBool(false),
 				},
 				DataSource: &schemaD.BoolAttribute{
 					Computed: true,
