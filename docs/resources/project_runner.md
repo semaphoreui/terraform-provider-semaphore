@@ -46,6 +46,7 @@ resource "semaphoreui_project_runner" "runner" {
 
 - `id` (Number) The runner ID.
 - `private_key` (String, Sensitive) The generated private key, returned only when the server creates the key pair; empty when `registered` is false.
+- `registered` (Boolean) Whether the runner is registered (has an auth token). A runner created up front with no credentials stays unregistered until a registration token is generated (see `semaphoreui_runner_registration_token`) and used to register it.
 - `token` (String, Sensitive) The token the runner uses to authenticate. Set only for registered runners; empty when `registered` is false.
 
 ## Import

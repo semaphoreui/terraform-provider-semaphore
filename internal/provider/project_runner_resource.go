@@ -88,6 +88,7 @@ func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *mo
 		Active:           types.BoolValue(response.Active),
 		Tags:             tags,
 		IsDefault:        types.BoolValue(response.IsDefault),
+		Registered:       types.BoolValue(response.Registered),
 		Token:            types.StringValue(response.Token),
 		PrivateKey:       types.StringValue(response.PrivateKey),
 	}

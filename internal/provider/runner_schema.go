@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	schemaR "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -24,6 +25,7 @@ type (
 		Active           types.Bool   `tfsdk:"active"`
 		Tags             types.Set    `tfsdk:"tags"`
 		IsDefault        types.Bool   `tfsdk:"is_default"`
+		Registered       types.Bool   `tfsdk:"registered"`
 		Token            types.String `tfsdk:"token"`
 		PrivateKey       types.String `tfsdk:"private_key"`
 	}
@@ -137,6 +139,18 @@ func RunnerSchema() superschema.Schema {
 					Optional: true,
 					Computed: true,
 					Default:  booldefault.StaticBool(false),
+				},
+				DataSource: &schemaD.BoolAttribute{
+					Computed: true,
+				},
+			},
+			"registered": superschema.BoolAttribute{
+				Common: &schemaR.BoolAttribute{
+					MarkdownDescription: "Whether the runner is registered (has an auth token). A runner created up front with no credentials stays unregistered until a registration token is generated (see `semaphoreui_runner_registration_token`) and used to register it.",
+				},
+				Resource: &schemaR.BoolAttribute{
+					Computed:      true,
+					PlanModifiers: []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 				},
 				DataSource: &schemaD.BoolAttribute{
 					Computed: true,
