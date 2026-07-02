@@ -16,10 +16,10 @@ import (
 type RunnerWithToken struct {
 	Runner
 
-	// Generated private key, returned only when the server creates the key pair.
+	// Generated private key, returned only when the server creates the key pair. Empty when the runner is not registered.
 	PrivateKey string `json:"private_key,omitempty"`
 
-	// Token the runner uses to authenticate.
+	// Token the runner uses to authenticate. Empty when the runner is not registered.
 	Token string `json:"token,omitempty"`
 }
 

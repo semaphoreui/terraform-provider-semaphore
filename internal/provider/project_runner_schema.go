@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	superschema "github.com/orange-cloudavenue/terraform-plugin-framework-superschema"
@@ -24,6 +25,8 @@ type (
 		Active           types.Bool   `tfsdk:"active"`
 		Tags             types.Set    `tfsdk:"tags"`
 		IsDefault        types.Bool   `tfsdk:"is_default"`
+		Token            types.String `tfsdk:"token"`
+		PrivateKey       types.String `tfsdk:"private_key"`
 	}
 )
 
@@ -146,6 +149,32 @@ func ProjectRunnerSchema() superschema.Schema {
 					Default:  booldefault.StaticBool(false),
 				},
 				DataSource: &schemaD.BoolAttribute{
+					Computed: true,
+				},
+			},
+			"token": superschema.StringAttribute{
+				Common: &schemaR.StringAttribute{
+					MarkdownDescription: "The token the runner uses to authenticate. Set only for registered runners; empty when `registered` is false.",
+					Sensitive:           true,
+				},
+				Resource: &schemaR.StringAttribute{
+					Computed:      true,
+					PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				},
+				DataSource: &schemaD.StringAttribute{
+					Computed: true,
+				},
+			},
+			"private_key": superschema.StringAttribute{
+				Common: &schemaR.StringAttribute{
+					MarkdownDescription: "The generated private key, returned only when the server creates the key pair; empty when `registered` is false.",
+					Sensitive:           true,
+				},
+				Resource: &schemaR.StringAttribute{
+					Computed:      true,
+					PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				},
+				DataSource: &schemaD.StringAttribute{
 					Computed: true,
 				},
 			},

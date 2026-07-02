@@ -43,5 +43,7 @@ data "semaphoreui_project_runner" "by_name" {
 - `active` (Boolean) Indicates whether the runner is allowed to pick up tasks.
 - `is_default` (Boolean) Indicates whether this is the default runner.
 - `max_parallel_tasks` (Number) The maximum number of tasks the runner may execute in parallel.
+- `private_key` (String, Sensitive) The generated private key, returned only when the server creates the key pair; empty when `registered` is false.
 - `tags` (Set of String) Tags used to route tasks to specific runners.
+- `token` (String, Sensitive) The token the runner uses to authenticate. Set only for registered runners; empty when `registered` is false.
 - `webhook` (String) URL called by the runner to report task events.

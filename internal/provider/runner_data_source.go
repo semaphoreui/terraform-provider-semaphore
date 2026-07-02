@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
 	"terraform-provider-semaphoreui/semaphoreui/client/runner"
+	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -82,7 +83,9 @@ func (d *runnerDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 	for _, item := range response.Payload {
 		if item.Name == config.Name.ValueString() {
-			model, diags := convertRunnerResponseToRunnerModel(ctx, item)
+			// The list endpoint returns bare Runner objects (no token/private
+			// key); wrap so the shared converter leaves those fields null.
+			model, diags := convertRunnerResponseToRunnerModel(ctx, &models.RunnerWithToken{Runner: *item})
 			resp.Diagnostics.Append(diags...)
 			if resp.Diagnostics.HasError() {
 				return

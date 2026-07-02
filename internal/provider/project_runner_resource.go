@@ -70,7 +70,10 @@ func convertProjectRunnerModelToRunnerRequest(ctx context.Context, model Project
 }
 
 // convertRunnerResponseToProjectRunnerModel maps an API response onto the model.
-func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *models.Runner, projectID types.Int64) (ProjectRunnerModel, diag.Diagnostics) {
+// The token and private key are only present on responses backed by
+// RunnerWithToken (create and single-runner GET); they are empty for unregistered
+// runners and for list responses, which callers wrap without those fields.
+func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *models.RunnerWithToken, projectID types.Int64) (ProjectRunnerModel, diag.Diagnostics) {
 	tagsSource := response.Tags
 	if tagsSource == nil {
 		tagsSource = []string{}
@@ -85,6 +88,8 @@ func convertRunnerResponseToProjectRunnerModel(ctx context.Context, response *mo
 		Active:           types.BoolValue(response.Active),
 		Tags:             tags,
 		IsDefault:        types.BoolValue(response.IsDefault),
+		Token:            types.StringValue(response.Token),
+		PrivateKey:       types.StringValue(response.PrivateKey),
 	}
 	return model, diags
 }
@@ -122,7 +127,7 @@ func (r *projectRunnerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, &response.Payload.Runner, plan.ProjectID)
+	model, diags := convertRunnerResponseToProjectRunnerModel(ctx, response.Payload, plan.ProjectID)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

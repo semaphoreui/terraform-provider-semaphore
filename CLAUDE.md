@@ -93,6 +93,8 @@ The local `api-docs.yml` is a *patched* copy of the upstream spec from a tagged 
 - `Project.alert_chat` / `ProjectRequest.alert_chat`
 - `ViewRequest.id` — upstream omits it, but the PUT views endpoint returns 400 without it
 
+A related response-schema patch also lives in the spec: the single-runner GET responses (`/runners/{runner_id}` and `/project/{project_id}/runners/{runner_id}`) are pointed at `RunnerWithToken` instead of `Runner` so the `runner` / `project_runner` resources can surface `token` and `private_key` on read (both are empty strings for unregistered runners; the list endpoints still return bare `Runner`).
+
 When bumping `api-docs.yml`, re-import upstream verbatim first (one commit), then re-apply the nullability patches based on which tests fail (a follow-up commit). The two-commit split keeps the diff legible — reviewers can see what came from upstream versus what we patched locally.
 
 ### Template `environment_id` quirk

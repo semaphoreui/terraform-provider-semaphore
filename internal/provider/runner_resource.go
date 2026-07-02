@@ -80,8 +80,11 @@ func convertRunnerModelToRunnerRequest(ctx context.Context, model RunnerModel) (
 	return &request, diags
 }
 
-// convertRunnerResponseToRunnerModel maps an API response onto the model.
-func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.Runner) (RunnerModel, diag.Diagnostics) {
+// convertRunnerResponseToRunnerModel maps an API response onto the model. The
+// token and private key are only present on responses backed by RunnerWithToken
+// (create and single-runner GET); they are empty for unregistered runners and
+// for list responses, which callers wrap without those fields.
+func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.RunnerWithToken) (RunnerModel, diag.Diagnostics) {
 	tagsSource := response.Tags
 	if tagsSource == nil {
 		tagsSource = []string{}
@@ -95,6 +98,8 @@ func convertRunnerResponseToRunnerModel(ctx context.Context, response *models.Ru
 		Active:           types.BoolValue(response.Active),
 		Tags:             tags,
 		IsDefault:        types.BoolValue(response.IsDefault),
+		Token:            types.StringValue(response.Token),
+		PrivateKey:       types.StringValue(response.PrivateKey),
 	}
 	return model, diags
 }
@@ -131,7 +136,7 @@ func (r *runnerResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	model, diags := convertRunnerResponseToRunnerModel(ctx, &response.Payload.Runner)
+	model, diags := convertRunnerResponseToRunnerModel(ctx, response.Payload)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

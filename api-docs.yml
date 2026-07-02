@@ -1244,10 +1244,10 @@ definitions:
         properties:
           token:
             type: string
-            description: Token the runner uses to authenticate.
+            description: Token the runner uses to authenticate. Empty when the runner is not registered.
           private_key:
             type: string
-            description: Generated private key, returned only when the server creates the key pair.
+            description: Generated private key, returned only when the server creates the key pair. Empty when the runner is not registered.
 
   RunnerActive:
     type: object
@@ -3301,7 +3301,7 @@ paths:
         200:
           description: Runner
           schema:
-            $ref: "#/definitions/Runner"
+            $ref: "#/definitions/RunnerWithToken"
         404:
           description: Runner not found
     put:
@@ -3430,7 +3430,7 @@ paths:
         200:
           description: Runner
           schema:
-            $ref: "#/definitions/Runner"
+            $ref: "#/definitions/RunnerWithToken"
         404:
           description: Runner not found
     put:

@@ -45,6 +45,8 @@ resource "semaphoreui_project_runner" "runner" {
 ### Read-Only
 
 - `id` (Number) The runner ID.
+- `private_key` (String, Sensitive) The generated private key, returned only when the server creates the key pair; empty when `registered` is false.
+- `token` (String, Sensitive) The token the runner uses to authenticate. Set only for registered runners; empty when `registered` is false.
 
 ## Import
 

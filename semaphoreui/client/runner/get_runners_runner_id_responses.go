@@ -49,7 +49,7 @@ GetRunnersRunnerIDOK describes a response with status code 200, with default hea
 Runner
 */
 type GetRunnersRunnerIDOK struct {
-	Payload *models.Runner
+	Payload *models.RunnerWithToken
 }
 
 // IsSuccess returns true when this get runners runner Id o k response has a 2xx status code
@@ -92,13 +92,13 @@ func (o *GetRunnersRunnerIDOK) String() string {
 	return fmt.Sprintf("[GET /runners/{runner_id}][%d] getRunnersRunnerIdOK %s", 200, payload)
 }
 
-func (o *GetRunnersRunnerIDOK) GetPayload() *models.Runner {
+func (o *GetRunnersRunnerIDOK) GetPayload() *models.RunnerWithToken {
 	return o.Payload
 }
 
 func (o *GetRunnersRunnerIDOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Runner)
+	o.Payload = new(models.RunnerWithToken)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {

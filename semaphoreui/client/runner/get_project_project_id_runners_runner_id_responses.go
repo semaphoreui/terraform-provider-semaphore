@@ -49,7 +49,7 @@ GetProjectProjectIDRunnersRunnerIDOK describes a response with status code 200, 
 Runner
 */
 type GetProjectProjectIDRunnersRunnerIDOK struct {
-	Payload *models.Runner
+	Payload *models.RunnerWithToken
 }
 
 // IsSuccess returns true when this get project project Id runners runner Id o k response has a 2xx status code
@@ -92,13 +92,13 @@ func (o *GetProjectProjectIDRunnersRunnerIDOK) String() string {
 	return fmt.Sprintf("[GET /project/{project_id}/runners/{runner_id}][%d] getProjectProjectIdRunnersRunnerIdOK %s", 200, payload)
 }
 
-func (o *GetProjectProjectIDRunnersRunnerIDOK) GetPayload() *models.Runner {
+func (o *GetProjectProjectIDRunnersRunnerIDOK) GetPayload() *models.RunnerWithToken {
 	return o.Payload
 }
 
 func (o *GetProjectProjectIDRunnersRunnerIDOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Runner)
+	o.Payload = new(models.RunnerWithToken)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
