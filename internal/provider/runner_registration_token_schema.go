@@ -24,7 +24,11 @@ func RunnerRegistrationTokenSchema() superschema.Schema {
 			MarkdownDescription: "A one-time, short-lived registration token for an unregistered runner.",
 		},
 		Resource: superschema.SchemaDetails{
-			MarkdownDescription: "resource generates a fresh one-time registration token for an existing, unregistered runner. " +
+			Deprecated: superschema.DeprecatedResource{
+				DeprecationMessage: "The semaphoreui_runner_registration_token resource is deprecated and will be removed in a future release.",
+			},
+			MarkdownDescription: "**Deprecated:** this resource is deprecated and will be removed in a future release. " +
+				"resource generates a fresh one-time registration token for an existing, unregistered runner. " +
 				"Regenerating invalidates the previous token. The token is returned only once, at creation, and stored " +
 				"(sensitive) in Terraform state. The resource is immutable: changing `runner_id`, `project_id` or `keepers` " +
 				"forces a new token to be generated. Use `keepers` to rotate the token on demand (e.g. bump a value to issue a new one). " +
