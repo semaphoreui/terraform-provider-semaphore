@@ -36,10 +36,14 @@ resource "semaphoreui_user" "example" {
 
 ### Optional
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `admin` (Boolean) Indicates if the user is an admin. Value defaults to `false`.
 - `alert` (Boolean) Indicates if alerts should be sent to the user's email. Value defaults to `false`.
 - `external` (Boolean) <i style="color:red;font-weight: bold">(ForceNew)</i> Indicates if the user is linked to an external identity provider. Value defaults to `false`.
-- `password` (String, Sensitive) Login Password. This value is never returned by the API and will be an empty string after import.
+- `password` (String, Sensitive) Login Password. This value is never returned by the API and will be an empty string after import. Ensure that if an attribute is set, these are not set: "[password_wo]".
+- `password_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Login Password. Write-only version for ephemeral compatibility. Ensure that if an attribute is set, these are not set: "[password]". Ensure that if an attribute is set, also these are set: "[password_wo_version]".
+- `password_wo_version` (Number) . Ensure that if an attribute is set, also these are set: "[password_wo]".
 
 ### Read-Only
 
