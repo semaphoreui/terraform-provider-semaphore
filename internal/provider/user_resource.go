@@ -3,13 +3,14 @@ package provider
 import (
 	"context"
 	"fmt"
+	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
+	"terraform-provider-semaphoreui/semaphoreui/client/user"
+	"terraform-provider-semaphoreui/semaphoreui/models"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
-	"terraform-provider-semaphoreui/semaphoreui/client/user"
-	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -63,16 +64,25 @@ func convertResponsePayloadToUserModel(user *models.User, prev UserModel) UserMo
 		External: types.BoolValue(user.External),
 		Alert:    types.BoolValue(user.Alert),
 		// Password is not returned by the API so we use previously set password
-		Password: prev.Password,
+		Password:          prev.Password,
+		PasswordWOVersion: prev.PasswordWOVersion,
 	}
 }
 
-func convertUserModelToUserRequest(user UserModel) *models.UserRequest {
+func convertUserModelToUserRequest(user, config UserModel) *models.UserRequest {
+	// Determine which password to use
+	var password string
+	if !config.PasswordWO.IsNull() {
+		password = config.PasswordWO.ValueString()
+	} else {
+		password = user.Password.ValueString()
+	}
+
 	return &models.UserRequest{
 		Username: user.Username.ValueString(),
 		Name:     user.Name.ValueString(),
 		Email:    user.Email.ValueString(),
-		Password: strfmt.Password(user.Password.ValueString()),
+		Password: strfmt.Password(password),
 		Admin:    user.Admin.ValueBool(),
 		Alert:    user.Alert.ValueBool(),
 		External: user.External.ValueBool(),
@@ -91,15 +101,15 @@ func convertUserModelToUserPutRequest(user UserModel) *models.UserPutRequest {
 
 func (r *userResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	// Retrieve values from plan
-	var plan UserModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	var plan, config UserModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	// Generate API request body from plan
-	var payload = convertUserModelToUserRequest(plan)
+	var payload = convertUserModelToUserRequest(plan, config)
 
 	//Create new user
 	response, err := r.client.User.PostUsers(&user.PostUsersParams{User: payload}, nil)
@@ -115,8 +125,7 @@ func (r *userResource) Create(ctx context.Context, req resource.CreateRequest, r
 	plan = convertResponsePayloadToUserModel(response.Payload, plan)
 
 	// Set state to fully populated data
-	diags = resp.State.Set(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -156,9 +165,10 @@ func (r *userResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	// Retrieve values from plan
-	var plan UserModel
-	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
+	var plan, config, state UserModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -176,11 +186,18 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
+	// Determine which password to use
+	var password string
+	if !config.PasswordWO.IsNull() {
+		password = config.PasswordWO.ValueString()
+	} else {
+		password = plan.Password.ValueString()
+	}
+
 	// Update password if it's changed
-	var prevPassword types.String
-	req.State.GetAttribute(ctx, path.Root("password"), &prevPassword)
-	if plan.Password != prevPassword {
-		_, err := r.client.User.PostUsersUserIDPassword(&user.PostUsersUserIDPasswordParams{UserID: plan.ID.ValueInt64(), Password: user.PostUsersUserIDPasswordBody{Password: strfmt.Password(plan.Password.ValueString())}}, nil)
+	passwordVersionChanged := !plan.PasswordWOVersion.Equal(state.PasswordWOVersion)
+	if plan.Password != state.Password || passwordVersionChanged {
+		_, err := r.client.User.PostUsersUserIDPassword(&user.PostUsersUserIDPasswordParams{UserID: plan.ID.ValueInt64(), Password: user.PostUsersUserIDPasswordBody{Password: strfmt.Password(password)}}, nil)
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Updating Semaphore User Password",
@@ -202,8 +219,7 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	// Update resource state with updated user
 	plan = convertResponsePayloadToUserModel(response.Payload, plan)
 
-	diags = resp.State.Set(ctx, plan)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}

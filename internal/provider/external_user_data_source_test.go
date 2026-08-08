@@ -2,16 +2,17 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"regexp"
 	"strconv"
 	"terraform-provider-semaphoreui/semaphoreui/client/user"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-// function to clean up external users since they are not deleted by the provider
+// function to clean up external users since they are not deleted by the provider.
 func testAccExternalUserCleanup(s *terraform.State) error {
 	// loop though each semaphoreui_external_user and ensure they are deleted
 	for _, rs := range s.RootModule().Resources {

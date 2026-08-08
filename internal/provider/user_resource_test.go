@@ -2,14 +2,16 @@ package provider
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"regexp"
 	"strconv"
 	"terraform-provider-semaphoreui/semaphoreui/client/user"
 	"testing"
 
+	"github.com/hashicorp/go-version"
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
 func testAccUserExists(resourceName string) resource.TestCheckFunc {
@@ -134,6 +136,48 @@ func TestAcc_UserResource_errorOnExists(t *testing.T) {
 			{
 				Config:      testAccUserConfig_Exists(userNameSuffix),
 				ExpectError: regexp.MustCompile("Could not create user, unexpected error"),
+			},
+		},
+	})
+}
+
+func TestAcc_UserResource_passwordWo(t *testing.T) {
+	userNameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.11.0"))),
+		},
+		Steps: []resource.TestStep{
+			// Create and Read testing
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = true
+  password_wo = "password!"
+  password_wo_version = 1`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserExists("semaphoreui_user.test"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "username", fmt.Sprintf("test-%s", userNameSuffix)),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "password_wo_version", "1"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttrSet("semaphoreui_user.test", "id"),
+					resource.TestCheckResourceAttrSet("semaphoreui_user.test", "created"),
+				),
+			},
+			// Update and Read testing
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = false
+  password_wo = "something"
+  password_wo_version = 2`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserExists("semaphoreui_user.test"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "username", fmt.Sprintf("test-%s", userNameSuffix)),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "password_wo_version", "2"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "admin", "false"),
+				),
 			},
 		},
 	})

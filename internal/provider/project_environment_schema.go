@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	schemaD "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	schemaR "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -22,10 +24,12 @@ type (
 	}
 
 	ProjectEnvironmentSecretModel struct {
-		ID    types.Int64  `tfsdk:"id"`
-		Type  types.String `tfsdk:"type"`
-		Name  types.String `tfsdk:"name"`
-		Value types.String `tfsdk:"value"`
+		ID             types.Int64  `tfsdk:"id"`
+		Type           types.String `tfsdk:"type"`
+		Name           types.String `tfsdk:"name"`
+		Value          types.String `tfsdk:"value"`
+		ValueWo        types.String `tfsdk:"value_wo"`
+		ValueWoVersion types.Int64  `tfsdk:"value_wo_version"`
 	}
 )
 
@@ -148,10 +152,35 @@ func ProjectEnvironmentSchema() superschema.Schema {
 							Sensitive:           true,
 						},
 						Resource: &schemaR.StringAttribute{
-							Required: true,
+							MarkdownDescription: "Conflicts with `value_wo`.",
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("value_wo")),
+							},
 						},
 						DataSource: &schemaD.StringAttribute{
 							Computed: true,
+						},
+					},
+					"value_wo": superschema.StringAttribute{
+						Resource: &schemaR.StringAttribute{
+							MarkdownDescription: "Write-only variable value. Change `value_wo_version` to rotate. Conflicts with `value`.",
+							Optional:            true,
+							Sensitive:           true,
+							WriteOnly:           true,
+							Validators: []validator.String{
+								stringvalidator.ConflictsWith(path.MatchRelative().AtParent().AtName("value")),
+								stringvalidator.AlsoRequires(path.MatchRelative().AtParent().AtName("value_wo_version")),
+							},
+						},
+					},
+					"value_wo_version": superschema.Int64Attribute{
+						Resource: &schemaR.Int64Attribute{
+							MarkdownDescription: "Version marker for `value_wo`.",
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.AlsoRequires(path.MatchRelative().AtParent().AtName("value_wo")),
+							},
 						},
 					},
 				},
