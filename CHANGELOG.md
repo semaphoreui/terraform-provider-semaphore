@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/semaphoreui/terraform-provider-semaphore/compare/v0.3.7...v0.4.0) (2026-07-02)
+
+
+### Features
+
+* return flag runner registered ([084dd4e](https://github.com/semaphoreui/terraform-provider-semaphore/commit/084dd4e48a0ea26cfa989be1ab36cf6c8a553e03))
+
 ## [0.2.3](https://github.com/CruGlobal/terraform-provider-semaphoreui/compare/v0.2.1...v0.2.3) (2025-12-11)
 
 
