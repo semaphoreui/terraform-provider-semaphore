@@ -179,6 +179,7 @@ func TestAcc_ProjectTemplateResource_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "playbook", "playbook.yml"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "app", "ansible"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "allow_override_args_in_task", "false"),
+					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "allow_parallel_tasks", "false"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "suppress_success_alerts", "false"),
 
 					resource.TestCheckNoResourceAttr("semaphoreui_project_template.test", "arguments"),
@@ -206,6 +207,7 @@ func TestAcc_ProjectTemplateResource_basic(t *testing.T) {
 			{
 				Config: testAccProjectTemplateConfig(nameSuffix, `
 allow_override_args_in_task = true
+allow_parallel_tasks = true
 git_branch = "staging"
 arguments = [
   "--help",
@@ -219,6 +221,7 @@ view_id = semaphoreui_project_view.test.id
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "playbook", "playbook.yml"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "app", "ansible"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "allow_override_args_in_task", "true"),
+					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "allow_parallel_tasks", "true"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "suppress_success_alerts", "false"),
 					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "git_branch", "staging"),
 

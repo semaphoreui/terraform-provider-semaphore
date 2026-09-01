@@ -136,6 +136,7 @@ resource "semaphoreui_project_template" "deploy" {
 ### Optional
 
 - `allow_override_args_in_task` (Boolean) Allow overriding arguments in the task. Value defaults to `false`.
+- `allow_parallel_tasks` (Boolean) Allow tasks of this template to run in parallel. Value defaults to `false`.
 - `app` (String) The application name. Must be a valid SemaphoreUI application name. Default applications include: `ansible`, `terraform`, `tofu`, `bash`, `powershell` and `python`. Value defaults to `ansible`.
 - `arguments` (List of String) Commandline arguments passed to the application.
 - `build` (Attributes) Specifies a build type template used to create artifacts. SemaphoreUI doesn't support artifacts out-of-box, it only provides task versioning. You should implement the artifact creation yourself. Ensure that if an attribute is set, these are not set: "[deploy]". (see [below for nested schema](#nestedatt--build))

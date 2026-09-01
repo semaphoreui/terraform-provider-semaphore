@@ -120,6 +120,7 @@ func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template 
 		Name:                    template.Name.ValueString(),
 		Playbook:                template.Playbook.ValueString(),
 		AllowOverrideArgsInTask: template.AllowOverrideArgsInTask.ValueBool(),
+		AllowParallelTasks:      template.AllowParallelTasks.ValueBool(),
 		SuppressSuccessAlerts:   template.SuppressSuccessAlerts.ValueBool(),
 	}
 	if !template.ID.IsNull() && !template.ID.IsUnknown() {
@@ -237,6 +238,7 @@ func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request 
 		Name:                    types.StringValue(request.Name),
 		Playbook:                types.StringValue(request.Playbook),
 		AllowOverrideArgsInTask: types.BoolValue(request.AllowOverrideArgsInTask),
+		AllowParallelTasks:      types.BoolValue(request.AllowParallelTasks),
 		SuppressSuccessAlerts:   types.BoolValue(request.SuppressSuccessAlerts),
 	}
 
