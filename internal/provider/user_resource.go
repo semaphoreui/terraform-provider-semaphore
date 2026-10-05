@@ -203,6 +203,7 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 				"Error Updating Semaphore User Password",
 				"Could not update user password, unexpected error: "+err.Error(),
 			)
+			return
 		}
 	}
 

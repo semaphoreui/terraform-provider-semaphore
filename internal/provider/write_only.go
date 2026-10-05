@@ -9,22 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// mergeWriteOnlyFromConfig reads write-only project key values from config.
-func mergeWriteOnlyFromConfig(ctx context.Context, cfg tfsdk.Config, plan *ProjectKeyModel, diags *diag.Diagnostics) {
-	if plan.LoginPassword != nil {
-		var pw types.String
-		diags.Append(cfg.GetAttribute(ctx, path.Root("login_password").AtName("password_wo"), &pw)...)
-		plan.LoginPassword.PasswordWO = pw
-	}
-	if plan.SSH != nil {
-		var passphrase, privateKey types.String
-		diags.Append(cfg.GetAttribute(ctx, path.Root("ssh").AtName("passphrase_wo"), &passphrase)...)
-		diags.Append(cfg.GetAttribute(ctx, path.Root("ssh").AtName("private_key_wo"), &privateKey)...)
-		plan.SSH.PassphraseWO = passphrase
-		plan.SSH.PrivateKeyWO = privateKey
-	}
-}
-
 func extractEnvironmentSecrets(ctx context.Context, list types.List, diags *diag.Diagnostics) []ProjectEnvironmentSecretModel {
 	if list.IsNull() || list.IsUnknown() {
 		return nil
