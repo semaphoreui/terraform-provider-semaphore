@@ -3,13 +3,32 @@ package provider
 import (
 	"fmt"
 	"strconv"
+	"terraform-provider-semaphoreui/semaphoreui/client/operations"
 	"terraform-provider-semaphoreui/semaphoreui/client/runner"
 	"testing"
 
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
+
+// testAccPreCheckRunnerTags requires the tags/default-runner API introduced in
+// SemaphoreUI 2.18. Older servers expose a single tag instead of the tags set.
+func testAccPreCheckRunnerTags(t *testing.T) {
+	testAccPreCheck(t)
+	info, err := testClient().Operations.GetInfo(&operations.GetInfoParams{}, nil)
+	if err != nil {
+		t.Fatalf("could not read SemaphoreUI server version: %s", err)
+	}
+	serverVersion, err := version.NewVersion(info.Payload.Version)
+	if err != nil {
+		t.Fatalf("could not parse SemaphoreUI server version %q: %s", info.Payload.Version, err)
+	}
+	if serverVersion.LessThan(version.Must(version.NewVersion("2.18.0"))) {
+		t.Skipf("SemaphoreUI %s lacks the runner tags/default API; requires 2.18 or newer", info.Payload.Version)
+	}
+}
 
 func testAccRunnerExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -96,7 +115,7 @@ func testAccRunnerImportID(n string) resource.ImportStateIdFunc {
 func TestAcc_RunnerResource_basic(t *testing.T) {
 	nameSuffix := acctest.RandString(8)
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { testAccPreCheckRunnerTags(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckRunnerDestroy,
 		Steps: []resource.TestStep{
@@ -146,7 +165,7 @@ func TestAcc_RunnerResource_basic(t *testing.T) {
 func TestAcc_RunnerResource_disappears(t *testing.T) {
 	nameSuffix := acctest.RandString(8)
 	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+		PreCheck:                 func() { testAccPreCheckRunnerTags(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckRunnerDestroy,
 		Steps: []resource.TestStep{
