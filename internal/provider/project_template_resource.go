@@ -73,11 +73,14 @@ func (v playbookRequiredValidator) ValidateResource(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if !data.Playbook.IsNull() && !data.Playbook.IsUnknown() && data.Playbook.ValueString() != "" {
+	if data.Playbook.IsUnknown() || data.App.IsUnknown() {
+		return
+	}
+	if !data.Playbook.IsNull() && data.Playbook.ValueString() != "" {
 		return
 	}
 	app := data.App.ValueString()
-	if data.App.IsNull() || data.App.IsUnknown() {
+	if data.App.IsNull() {
 		app = "ansible" // matches the schema default
 	}
 	if app == "terraform" || app == "tofu" {
