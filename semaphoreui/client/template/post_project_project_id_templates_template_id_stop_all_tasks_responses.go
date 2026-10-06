@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
 )
 
 // PostProjectProjectIDTemplatesTemplateIDStopAllTasksReader is a Reader for the PostProjectProjectIDTemplatesTemplateIDStopAllTasks structure.
@@ -111,13 +111,13 @@ func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksBody) MarshalBinary(
 	if o == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(o)
+	return jsonutils.WriteJSON(o)
 }
 
 // UnmarshalBinary interface implementation
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksBody) UnmarshalBinary(b []byte) error {
 	var res PostProjectProjectIDTemplatesTemplateIDStopAllTasksBody
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*o = res

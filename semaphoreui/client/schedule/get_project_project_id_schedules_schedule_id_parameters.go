@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDSchedulesScheduleIDParams creates a new GetProjectProjectIDSchedulesScheduleIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDSchedulesScheduleIDParams() *GetProjectProjectIDSchedulesScheduleIDParams {
-	return &GetProjectProjectIDSchedulesScheduleIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDSchedulesScheduleIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDSchedulesScheduleIDParamsWithTimeout creates a new GetProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDSchedulesScheduleIDParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDSchedulesScheduleIDParams {
 	return &GetProjectProjectIDSchedulesScheduleIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDSchedulesScheduleIDParamsWithContext creates a new GetProjectProjectIDSchedulesScheduleIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDSchedulesScheduleIDParams].
 func NewGetProjectProjectIDSchedulesScheduleIDParamsWithContext(ctx context.Context) *GetProjectProjectIDSchedulesScheduleIDParams {
 	return &GetProjectProjectIDSchedulesScheduleIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type GetProjectProjectIDSchedulesScheduleIDParams struct {
 	*/
 	ScheduleID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID schedules schedule ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID schedules schedule ID params
+// WithTimeout adds the timeout to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDSchedulesScheduleIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID schedules schedule ID params
+// SetTimeout adds the timeout to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID schedules schedule ID params
+// WithContext adds the context to the get project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDSchedulesScheduleIDParams].
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WithContext(ctx context.Context) *GetProjectProjectIDSchedulesScheduleIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID schedules schedule ID params
+// SetContext adds the context to the get project project ID schedules schedule ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDSchedulesScheduleIDParams].
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID schedules schedule ID params
+// WithHTTPClient adds the HTTPClient to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDSchedulesScheduleIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID schedules schedule ID params
+// SetHTTPClient adds the HTTPClient to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the get project project ID schedules schedule ID params
+// WithProjectID adds the projectID to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WithProjectID(projectID int64) *GetProjectProjectIDSchedulesScheduleIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID schedules schedule ID params
+// SetProjectID adds the projectId to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithScheduleID adds the scheduleID to the get project project ID schedules schedule ID params
+// WithScheduleID adds the scheduleID to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WithScheduleID(scheduleID int64) *GetProjectProjectIDSchedulesScheduleIDParams {
 	o.SetScheduleID(scheduleID)
 	return o
 }
 
-// SetScheduleID adds the scheduleId to the get project project ID schedules schedule ID params
+// SetScheduleID adds the scheduleId to the get project project ID schedules schedule ID params.
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) SetScheduleID(scheduleID int64) {
 	o.ScheduleID = scheduleID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDSchedulesScheduleIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param schedule_id
-	if err := r.SetPathParam("schedule_id", swag.FormatInt64(o.ScheduleID)); err != nil {
+	if err := r.SetPathParam("schedule_id", conv.FormatInteger(o.ScheduleID)); err != nil {
 		return err
 	}
 

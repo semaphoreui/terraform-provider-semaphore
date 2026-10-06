@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetUsersParams() *GetUsersParams {
-	return &GetUsersParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetUsersParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetUsersParamsWithTimeout creates a new GetUsersParams object
 // with the ability to set a timeout on a request.
 func NewGetUsersParamsWithTimeout(timeout time.Duration) *GetUsersParams {
 	return &GetUsersParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetUsersParamsWithContext creates a new GetUsersParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersParams].
 func NewGetUsersParamsWithContext(ctx context.Context) *GetUsersParams {
 	return &GetUsersParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetUsersParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetUsersParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get users params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetUsersParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get users params
+// WithTimeout adds the timeout to the get users params.
 func (o *GetUsersParams) WithTimeout(timeout time.Duration) *GetUsersParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get users params
+// SetTimeout adds the timeout to the get users params.
 func (o *GetUsersParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get users params
+// WithContext adds the context to the get users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersParams].
 func (o *GetUsersParams) WithContext(ctx context.Context) *GetUsersParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get users params
+// SetContext adds the context to the get users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUsersParams].
 func (o *GetUsersParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get users params
+// WithHTTPClient adds the HTTPClient to the get users params.
 func (o *GetUsersParams) WithHTTPClient(client *http.Client) *GetUsersParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get users params
+// SetHTTPClient adds the HTTPClient to the get users params.
 func (o *GetUsersParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

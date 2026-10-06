@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -70,7 +71,7 @@ func (m *AccessKeyRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *AccessKeyRequest) validateLoginPassword(formats strfmt.Registry) error {
-	if swag.IsZero(m.LoginPassword) { // not required
+	if typeutils.IsZero(m.LoginPassword) { // not required
 		return nil
 	}
 
@@ -93,7 +94,7 @@ func (m *AccessKeyRequest) validateLoginPassword(formats strfmt.Registry) error 
 }
 
 func (m *AccessKeyRequest) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -105,7 +106,7 @@ func (m *AccessKeyRequest) validateProjectID(formats strfmt.Registry) error {
 }
 
 func (m *AccessKeyRequest) validateSSH(formats strfmt.Registry) error {
-	if swag.IsZero(m.SSH) { // not required
+	if typeutils.IsZero(m.SSH) { // not required
 		return nil
 	}
 
@@ -160,7 +161,7 @@ func (m *AccessKeyRequest) validateTypeEnum(path, location string, value string)
 }
 
 func (m *AccessKeyRequest) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -194,7 +195,7 @@ func (m *AccessKeyRequest) contextValidateLoginPassword(ctx context.Context, for
 
 	if m.LoginPassword != nil {
 
-		if swag.IsZero(m.LoginPassword) { // not required
+		if typeutils.IsZero(m.LoginPassword) { // not required
 			return nil
 		}
 
@@ -219,7 +220,7 @@ func (m *AccessKeyRequest) contextValidateSSH(ctx context.Context, formats strfm
 
 	if m.SSH != nil {
 
-		if swag.IsZero(m.SSH) { // not required
+		if typeutils.IsZero(m.SSH) { // not required
 			return nil
 		}
 
@@ -245,13 +246,13 @@ func (m *AccessKeyRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AccessKeyRequest) UnmarshalBinary(b []byte) error {
 	var res AccessKeyRequest
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -287,13 +288,13 @@ func (m *AccessKeyRequestLoginPassword) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AccessKeyRequestLoginPassword) UnmarshalBinary(b []byte) error {
 	var res AccessKeyRequestLoginPassword
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -333,13 +334,13 @@ func (m *AccessKeyRequestSSH) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AccessKeyRequestSSH) UnmarshalBinary(b []byte) error {
 	var res AccessKeyRequestSSH
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

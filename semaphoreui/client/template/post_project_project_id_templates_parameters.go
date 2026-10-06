@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDTemplatesParams() *PostProjectProjectIDTemplatesParams {
-	return &PostProjectProjectIDTemplatesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDTemplatesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDTemplatesParamsWithTimeout creates a new PostProjectProjectIDTemplatesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDTemplatesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDTemplatesParams {
 	return &PostProjectProjectIDTemplatesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDTemplatesParamsWithContext creates a new PostProjectProjectIDTemplatesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesParams].
 func NewPostProjectProjectIDTemplatesParamsWithContext(ctx context.Context) *PostProjectProjectIDTemplatesParams {
 	return &PostProjectProjectIDTemplatesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -70,9 +73,9 @@ type PostProjectProjectIDTemplatesParams struct {
 	// Template.
 	Template *models.TemplateRequest
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID templates params (not the query body).
@@ -90,71 +93,74 @@ func (o *PostProjectProjectIDTemplatesParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID templates params
+// WithTimeout adds the timeout to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDTemplatesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID templates params
+// SetTimeout adds the timeout to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID templates params
+// WithContext adds the context to the post project project ID templates params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesParams].
 func (o *PostProjectProjectIDTemplatesParams) WithContext(ctx context.Context) *PostProjectProjectIDTemplatesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID templates params
+// SetContext adds the context to the post project project ID templates params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesParams].
 func (o *PostProjectProjectIDTemplatesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID templates params
+// WithHTTPClient adds the HTTPClient to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDTemplatesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID templates params
+// SetHTTPClient adds the HTTPClient to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the post project project ID templates params
+// WithProjectID adds the projectID to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) WithProjectID(projectID int64) *PostProjectProjectIDTemplatesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID templates params
+// SetProjectID adds the projectId to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithTemplate adds the template to the post project project ID templates params
+// WithTemplate adds the template to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) WithTemplate(template *models.TemplateRequest) *PostProjectProjectIDTemplatesParams {
 	o.SetTemplate(template)
 	return o
 }
 
-// SetTemplate adds the template to the post project project ID templates params
+// SetTemplate adds the template to the post project project ID templates params.
 func (o *PostProjectProjectIDTemplatesParams) SetTemplate(template *models.TemplateRequest) {
 	o.Template = template
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDTemplatesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 	if o.Template != nil {

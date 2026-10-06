@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -22,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectsRestoreParams() *PostProjectsRestoreParams {
-	return &PostProjectsRestoreParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectsRestoreParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectsRestoreParamsWithTimeout creates a new PostProjectsRestoreParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectsRestoreParamsWithTimeout(timeout time.Duration) *PostProjectsRestoreParams {
 	return &PostProjectsRestoreParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectsRestoreParamsWithContext creates a new PostProjectsRestoreParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsRestoreParams].
 func NewPostProjectsRestoreParamsWithContext(ctx context.Context) *PostProjectsRestoreParams {
 	return &PostProjectsRestoreParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -63,9 +66,9 @@ type PostProjectsRestoreParams struct {
 	// Backup.
 	Backup *models.ProjectBackup
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post projects restore params (not the query body).
@@ -83,54 +86,57 @@ func (o *PostProjectsRestoreParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post projects restore params
+// WithTimeout adds the timeout to the post projects restore params.
 func (o *PostProjectsRestoreParams) WithTimeout(timeout time.Duration) *PostProjectsRestoreParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post projects restore params
+// SetTimeout adds the timeout to the post projects restore params.
 func (o *PostProjectsRestoreParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post projects restore params
+// WithContext adds the context to the post projects restore params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsRestoreParams].
 func (o *PostProjectsRestoreParams) WithContext(ctx context.Context) *PostProjectsRestoreParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post projects restore params
+// SetContext adds the context to the post projects restore params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectsRestoreParams].
 func (o *PostProjectsRestoreParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post projects restore params
+// WithHTTPClient adds the HTTPClient to the post projects restore params.
 func (o *PostProjectsRestoreParams) WithHTTPClient(client *http.Client) *PostProjectsRestoreParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post projects restore params
+// SetHTTPClient adds the HTTPClient to the post projects restore params.
 func (o *PostProjectsRestoreParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBackup adds the backup to the post projects restore params
+// WithBackup adds the backup to the post projects restore params.
 func (o *PostProjectsRestoreParams) WithBackup(backup *models.ProjectBackup) *PostProjectsRestoreParams {
 	o.SetBackup(backup)
 	return o
 }
 
-// SetBackup adds the backup to the post projects restore params
+// SetBackup adds the backup to the post projects restore params.
 func (o *PostProjectsRestoreParams) SetBackup(backup *models.ProjectBackup) {
 	o.Backup = backup
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectsRestoreParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

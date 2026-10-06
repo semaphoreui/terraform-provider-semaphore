@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDKeysKeyIDParams creates a new DeleteProjectProjectIDKeysKeyIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDKeysKeyIDParams() *DeleteProjectProjectIDKeysKeyIDParams {
-	return &DeleteProjectProjectIDKeysKeyIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDKeysKeyIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDKeysKeyIDParamsWithTimeout creates a new DeleteProjectProjectIDKeysKeyIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDKeysKeyIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDKeysKeyIDParams {
 	return &DeleteProjectProjectIDKeysKeyIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDKeysKeyIDParamsWithContext creates a new DeleteProjectProjectIDKeysKeyIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDKeysKeyIDParams].
 func NewDeleteProjectProjectIDKeysKeyIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDKeysKeyIDParams {
 	return &DeleteProjectProjectIDKeysKeyIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDKeysKeyIDParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID keys key ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDKeysKeyIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID keys key ID params
+// WithTimeout adds the timeout to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDKeysKeyIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID keys key ID params
+// SetTimeout adds the timeout to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID keys key ID params
+// WithContext adds the context to the delete project project ID keys key ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDKeysKeyIDParams].
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDKeysKeyIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID keys key ID params
+// SetContext adds the context to the delete project project ID keys key ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDKeysKeyIDParams].
 func (o *DeleteProjectProjectIDKeysKeyIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID keys key ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDKeysKeyIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID keys key ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithKeyID adds the keyID to the delete project project ID keys key ID params
+// WithKeyID adds the keyID to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WithKeyID(keyID int64) *DeleteProjectProjectIDKeysKeyIDParams {
 	o.SetKeyID(keyID)
 	return o
 }
 
-// SetKeyID adds the keyId to the delete project project ID keys key ID params
+// SetKeyID adds the keyId to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) SetKeyID(keyID int64) {
 	o.KeyID = keyID
 }
 
-// WithProjectID adds the projectID to the delete project project ID keys key ID params
+// WithProjectID adds the projectID to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDKeysKeyIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID keys key ID params
+// SetProjectID adds the projectId to the delete project project ID keys key ID params.
 func (o *DeleteProjectProjectIDKeysKeyIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDKeysKeyIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param key_id
-	if err := r.SetPathParam("key_id", swag.FormatInt64(o.KeyID)); err != nil {
+	if err := r.SetPathParam("key_id", conv.FormatInteger(o.KeyID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

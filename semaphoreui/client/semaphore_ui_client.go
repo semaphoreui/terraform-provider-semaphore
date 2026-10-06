@@ -3,10 +3,11 @@
 package client
 
 import (
+	"maps"
+
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/client/authentication"
 	"terraform-provider-semaphoreui/semaphoreui/client/integration"
 	"terraform-provider-semaphoreui/semaphoreui/client/inventory"
@@ -14,6 +15,7 @@ import (
 	"terraform-provider-semaphoreui/semaphoreui/client/operations"
 	"terraform-provider-semaphoreui/semaphoreui/client/project"
 	"terraform-provider-semaphoreui/semaphoreui/client/repository"
+	"terraform-provider-semaphoreui/semaphoreui/client/runner"
 	"terraform-provider-semaphoreui/semaphoreui/client/schedule"
 	"terraform-provider-semaphoreui/semaphoreui/client/task"
 	"terraform-provider-semaphoreui/semaphoreui/client/template"
@@ -25,15 +27,13 @@ import (
 var Default = NewHTTPClient(nil)
 
 const (
-	// DefaultHost is the default Host
-	// found in Meta (info) section of spec file
+	// DefaultHost is the default Host found in Meta (info) section of spec file.
 	DefaultHost string = "localhost"
-	// DefaultBasePath is the default BasePath
-	// found in Meta (info) section of spec file
+	// DefaultBasePath is the default BasePath found in Meta (info) section of spec file.
 	DefaultBasePath string = "/api"
 )
 
-// DefaultSchemes are the default schemes found in Meta (info) section of spec file
+// DefaultSchemes are the default schemes found in Meta (info) section of spec file.
 var DefaultSchemes = []string{"http", "https", "ws", "wss"}
 
 // NewHTTPClient creates a new semaphore UI HTTP client.
@@ -49,13 +49,16 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *Sem
 		cfg = DefaultTransportConfig()
 	}
 
-	// create transport and client
+	// create transport and client.
 	transport := httptransport.New(cfg.Host, cfg.BasePath, cfg.Schemes)
+	maps.Copy(transport.Producers, cfg.Producers)
+	maps.Copy(transport.Consumers, cfg.Consumers)
+
 	return New(transport, formats)
 }
 
-// New creates a new semaphore UI client
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *SemaphoreUI {
+// New creates a new semaphore UI client.
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) *SemaphoreUI {
 	// ensure nullable parameters have default
 	if formats == nil {
 		formats = strfmt.Default
@@ -70,11 +73,13 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *SemaphoreU
 	cli.Operations = operations.New(transport, formats)
 	cli.Project = project.New(transport, formats)
 	cli.Repository = repository.New(transport, formats)
+	cli.Runner = runner.New(transport, formats)
 	cli.Schedule = schedule.New(transport, formats)
 	cli.Task = task.New(transport, formats)
 	cli.Template = template.New(transport, formats)
 	cli.User = user.New(transport, formats)
 	cli.VariableGroup = variable_group.New(transport, formats)
+
 	return cli
 }
 
@@ -91,9 +96,11 @@ func DefaultTransportConfig() *TransportConfig {
 // TransportConfig contains the transport related info,
 // found in the meta section of the spec file.
 type TransportConfig struct {
-	Host     string
-	BasePath string
-	Schemes  []string
+	Host      string
+	BasePath  string
+	Schemes   []string
+	Producers map[string]runtime.Producer
+	Consumers map[string]runtime.Consumer
 }
 
 // WithHost overrides the default host,
@@ -117,7 +124,19 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 	return cfg
 }
 
-// SemaphoreUI is a client for semaphore UI
+// WithProducers overrides the default producers registered by [httptransport.Runtime].
+func (cfg *TransportConfig) WithProducers(producers map[string]runtime.Producer) *TransportConfig {
+	cfg.Producers = producers
+	return cfg
+}
+
+// WithConsumers overrides the default consumers registered by [httptransport.Runtime].
+func (cfg *TransportConfig) WithConsumers(consumers map[string]runtime.Consumer) *TransportConfig {
+	cfg.Consumers = consumers
+	return cfg
+}
+
+// SemaphoreUI is a client for semaphore UI.
 type SemaphoreUI struct {
 	Authentication authentication.ClientService
 
@@ -133,6 +152,8 @@ type SemaphoreUI struct {
 
 	Repository repository.ClientService
 
+	Runner runner.ClientService
+
 	Schedule schedule.ClientService
 
 	Task task.ClientService
@@ -143,11 +164,11 @@ type SemaphoreUI struct {
 
 	VariableGroup variable_group.ClientService
 
-	Transport runtime.ClientTransport
+	Transport runtime.ContextualTransport
 }
 
-// SetTransport changes the transport on the client and all its subresources
-func (c *SemaphoreUI) SetTransport(transport runtime.ClientTransport) {
+// SetTransport changes the transport on the client and all its subresources.
+func (c *SemaphoreUI) SetTransport(transport runtime.ContextualTransport) {
 	c.Transport = transport
 	c.Authentication.SetTransport(transport)
 	c.Integration.SetTransport(transport)
@@ -156,6 +177,7 @@ func (c *SemaphoreUI) SetTransport(transport runtime.ClientTransport) {
 	c.Operations.SetTransport(transport)
 	c.Project.SetTransport(transport)
 	c.Repository.SetTransport(transport)
+	c.Runner.SetTransport(transport)
 	c.Schedule.SetTransport(transport)
 	c.Task.SetTransport(transport)
 	c.Template.SetTransport(transport)

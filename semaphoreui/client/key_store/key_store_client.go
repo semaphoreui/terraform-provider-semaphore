@@ -3,7 +3,9 @@
 package key_store
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new key store API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new key store API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new key store API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for key store API
+Client for key store API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,27 +79,66 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectIDKeysKeyID removes access key.
 	DeleteProjectProjectIDKeysKeyID(params *DeleteProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDKeysKeyIDNoContent, error)
 
+	// DeleteProjectProjectIDKeysKeyIDContext removes access key.
+	DeleteProjectProjectIDKeysKeyIDContext(ctx context.Context, params *DeleteProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDKeysKeyIDNoContent, error)
+
+	// GetProjectProjectIDKeys get access keys linked to project.
 	GetProjectProjectIDKeys(params *GetProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDKeysOK, error)
 
+	// GetProjectProjectIDKeysContext get access keys linked to project.
+	GetProjectProjectIDKeysContext(ctx context.Context, params *GetProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDKeysOK, error)
+
+	// PostProjectProjectIDKeys add access key.
 	PostProjectProjectIDKeys(params *PostProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDKeysCreated, error)
 
+	// PostProjectProjectIDKeysContext add access key.
+	PostProjectProjectIDKeysContext(ctx context.Context, params *PostProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDKeysCreated, error)
+
+	// PutProjectProjectIDKeysKeyID updates access key.
 	PutProjectProjectIDKeysKeyID(params *PutProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDKeysKeyIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutProjectProjectIDKeysKeyIDContext updates access key.
+	PutProjectProjectIDKeysKeyIDContext(ctx context.Context, params *PutProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDKeysKeyIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectIDKeysKeyID removes access key
+DeleteProjectProjectIDKeysKeyIDremoves access key.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDKeysKeyIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDKeysKeyID(params *DeleteProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDKeysKeyIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDKeysKeyIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDKeysKeyIDContextremoves access key.
+
+Do not use the deprecated [DeleteProjectProjectIDKeysKeyIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDKeysKeyIDContext(ctx context.Context, params *DeleteProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDKeysKeyIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDKeysKeyIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDKeysKeyID",
 		Method:             "DELETE",
@@ -106,13 +149,14 @@ func (a *Client) DeleteProjectProjectIDKeysKeyID(params *DeleteProjectProjectIDK
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDKeysKeyIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -133,13 +177,35 @@ func (a *Client) DeleteProjectProjectIDKeysKeyID(params *DeleteProjectProjectIDK
 }
 
 /*
-GetProjectProjectIDKeys gets access keys linked to project
+GetProjectProjectIDKeysgets access keys linked to project.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDKeysContext] instead.
 */
 func (a *Client) GetProjectProjectIDKeys(params *GetProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDKeysOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDKeysContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDKeysContextgets access keys linked to project.
+
+Do not use the deprecated [GetProjectProjectIDKeysParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDKeysContext(ctx context.Context, params *GetProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDKeysOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDKeysParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDKeys",
 		Method:             "GET",
@@ -150,13 +216,14 @@ func (a *Client) GetProjectProjectIDKeys(params *GetProjectProjectIDKeysParams, 
 		Params:             params,
 		Reader:             &GetProjectProjectIDKeysReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -177,13 +244,35 @@ func (a *Client) GetProjectProjectIDKeys(params *GetProjectProjectIDKeysParams, 
 }
 
 /*
-PostProjectProjectIDKeys adds access key
+PostProjectProjectIDKeysadds access key.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDKeysContext] instead.
 */
 func (a *Client) PostProjectProjectIDKeys(params *PostProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDKeysCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDKeysContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDKeysContextadds access key.
+
+Do not use the deprecated [PostProjectProjectIDKeysParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDKeysContext(ctx context.Context, params *PostProjectProjectIDKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDKeysCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDKeysParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDKeys",
 		Method:             "POST",
@@ -194,13 +283,14 @@ func (a *Client) PostProjectProjectIDKeys(params *PostProjectProjectIDKeysParams
 		Params:             params,
 		Reader:             &PostProjectProjectIDKeysReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -221,13 +311,35 @@ func (a *Client) PostProjectProjectIDKeys(params *PostProjectProjectIDKeysParams
 }
 
 /*
-PutProjectProjectIDKeysKeyID updates access key
+PutProjectProjectIDKeysKeyIDupdates access key.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDKeysKeyIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDKeysKeyID(params *PutProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDKeysKeyIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDKeysKeyIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDKeysKeyIDContextupdates access key.
+
+Do not use the deprecated [PutProjectProjectIDKeysKeyIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDKeysKeyIDContext(ctx context.Context, params *PutProjectProjectIDKeysKeyIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDKeysKeyIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDKeysKeyIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDKeysKeyID",
 		Method:             "PUT",
@@ -238,13 +350,14 @@ func (a *Client) PutProjectProjectIDKeysKeyID(params *PutProjectProjectIDKeysKey
 		Params:             params,
 		Reader:             &PutProjectProjectIDKeysKeyIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -265,6 +378,14 @@ func (a *Client) PutProjectProjectIDKeysKeyID(params *PutProjectProjectIDKeysKey
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [KeyStoreParams].
+	ctx context.Context
 }

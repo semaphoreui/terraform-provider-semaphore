@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 

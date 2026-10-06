@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParams creates a new PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParams() *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
-	return &PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParamsWithTimeout creates a new PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	return &PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParamsWithContext creates a new PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams].
 func NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParamsWithContext(ctx context.Context) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	return &PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -74,9 +78,9 @@ type PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams struct {
 	*/
 	TemplateID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID templates template ID stop all tasks params (not the query body).
@@ -94,76 +98,79 @@ func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetDefaults(
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID templates template ID stop all tasks params
+// WithTimeout adds the timeout to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID templates template ID stop all tasks params
+// SetTimeout adds the timeout to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID templates template ID stop all tasks params
+// WithContext adds the context to the post project project ID templates template ID stop all tasks params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams].
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithContext(ctx context.Context) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID templates template ID stop all tasks params
+// SetContext adds the context to the post project project ID templates template ID stop all tasks params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams].
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID templates template ID stop all tasks params
+// WithHTTPClient adds the HTTPClient to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID templates template ID stop all tasks params
+// SetHTTPClient adds the HTTPClient to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the post project project ID templates template ID stop all tasks params
+// WithBody adds the body to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithBody(body PostProjectProjectIDTemplatesTemplateIDStopAllTasksBody) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetBody(body)
 	return o
 }
 
-// SetBody adds the body to the post project project ID templates template ID stop all tasks params
+// SetBody adds the body to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetBody(body PostProjectProjectIDTemplatesTemplateIDStopAllTasksBody) {
 	o.Body = body
 }
 
-// WithProjectID adds the projectID to the post project project ID templates template ID stop all tasks params
+// WithProjectID adds the projectID to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithProjectID(projectID int64) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID templates template ID stop all tasks params
+// SetProjectID adds the projectId to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithTemplateID adds the templateID to the post project project ID templates template ID stop all tasks params
+// WithTemplateID adds the templateID to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WithTemplateID(templateID int64) *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams {
 	o.SetTemplateID(templateID)
 	return o
 }
 
-// SetTemplateID adds the templateId to the post project project ID templates template ID stop all tasks params
+// SetTemplateID adds the templateId to the post project project ID templates template ID stop all tasks params.
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) SetTemplateID(templateID int64) {
 	o.TemplateID = templateID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -172,12 +179,12 @@ func (o *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams) WriteToReque
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param template_id
-	if err := r.SetPathParam("template_id", swag.FormatInt64(o.TemplateID)); err != nil {
+	if err := r.SetPathParam("template_id", conv.FormatInteger(o.TemplateID)); err != nil {
 		return err
 	}
 

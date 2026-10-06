@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDBackupParams creates a new GetProjectProjectIDBackupParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDBackupParams() *GetProjectProjectIDBackupParams {
-	return &GetProjectProjectIDBackupParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDBackupParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDBackupParamsWithTimeout creates a new GetProjectProjectIDBackupParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDBackupParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDBackupParams {
 	return &GetProjectProjectIDBackupParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDBackupParamsWithContext creates a new GetProjectProjectIDBackupParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDBackupParams].
 func NewGetProjectProjectIDBackupParamsWithContext(ctx context.Context) *GetProjectProjectIDBackupParams {
 	return &GetProjectProjectIDBackupParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -65,9 +69,9 @@ type GetProjectProjectIDBackupParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID backup params (not the query body).
@@ -85,60 +89,63 @@ func (o *GetProjectProjectIDBackupParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID backup params
+// WithTimeout adds the timeout to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDBackupParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID backup params
+// SetTimeout adds the timeout to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID backup params
+// WithContext adds the context to the get project project ID backup params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDBackupParams].
 func (o *GetProjectProjectIDBackupParams) WithContext(ctx context.Context) *GetProjectProjectIDBackupParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID backup params
+// SetContext adds the context to the get project project ID backup params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDBackupParams].
 func (o *GetProjectProjectIDBackupParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID backup params
+// WithHTTPClient adds the HTTPClient to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDBackupParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID backup params
+// SetHTTPClient adds the HTTPClient to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the get project project ID backup params
+// WithProjectID adds the projectID to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) WithProjectID(projectID int64) *GetProjectProjectIDBackupParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID backup params
+// SetProjectID adds the projectId to the get project project ID backup params.
 func (o *GetProjectProjectIDBackupParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDBackupParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

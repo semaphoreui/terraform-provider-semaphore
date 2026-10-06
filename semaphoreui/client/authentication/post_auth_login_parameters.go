@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -22,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostAuthLoginParams() *PostAuthLoginParams {
-	return &PostAuthLoginParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostAuthLoginParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostAuthLoginParamsWithTimeout creates a new PostAuthLoginParams object
 // with the ability to set a timeout on a request.
 func NewPostAuthLoginParamsWithTimeout(timeout time.Duration) *PostAuthLoginParams {
 	return &PostAuthLoginParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostAuthLoginParamsWithContext creates a new PostAuthLoginParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostAuthLoginParams].
 func NewPostAuthLoginParamsWithContext(ctx context.Context) *PostAuthLoginParams {
 	return &PostAuthLoginParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -63,9 +66,9 @@ type PostAuthLoginParams struct {
 	// LoginBody.
 	LoginBody *models.Login
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post auth login params (not the query body).
@@ -83,54 +86,57 @@ func (o *PostAuthLoginParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post auth login params
+// WithTimeout adds the timeout to the post auth login params.
 func (o *PostAuthLoginParams) WithTimeout(timeout time.Duration) *PostAuthLoginParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post auth login params
+// SetTimeout adds the timeout to the post auth login params.
 func (o *PostAuthLoginParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post auth login params
+// WithContext adds the context to the post auth login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostAuthLoginParams].
 func (o *PostAuthLoginParams) WithContext(ctx context.Context) *PostAuthLoginParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post auth login params
+// SetContext adds the context to the post auth login params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostAuthLoginParams].
 func (o *PostAuthLoginParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post auth login params
+// WithHTTPClient adds the HTTPClient to the post auth login params.
 func (o *PostAuthLoginParams) WithHTTPClient(client *http.Client) *PostAuthLoginParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post auth login params
+// SetHTTPClient adds the HTTPClient to the post auth login params.
 func (o *PostAuthLoginParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithLoginBody adds the loginBody to the post auth login params
+// WithLoginBody adds the loginBody to the post auth login params.
 func (o *PostAuthLoginParams) WithLoginBody(loginBody *models.Login) *PostAuthLoginParams {
 	o.SetLoginBody(loginBody)
 	return o
 }
 
-// SetLoginBody adds the loginBody to the post auth login params
+// SetLoginBody adds the loginBody to the post auth login params.
 func (o *PostAuthLoginParams) SetLoginBody(loginBody *models.Login) {
 	o.LoginBody = loginBody
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostAuthLoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

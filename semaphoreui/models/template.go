@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -145,7 +146,7 @@ func (m *Template) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateEnvironmentID(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentID) { // not required
+	if typeutils.IsZero(m.EnvironmentID) { // not required
 		return nil
 	}
 
@@ -157,7 +158,7 @@ func (m *Template) validateEnvironmentID(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -169,7 +170,7 @@ func (m *Template) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateInventoryID(formats strfmt.Registry) error {
-	if swag.IsZero(m.InventoryID) { // not required
+	if typeutils.IsZero(m.InventoryID) { // not required
 		return nil
 	}
 
@@ -181,7 +182,7 @@ func (m *Template) validateInventoryID(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -193,12 +194,12 @@ func (m *Template) validateProjectID(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateSurveyVars(formats strfmt.Registry) error {
-	if swag.IsZero(m.SurveyVars) { // not required
+	if typeutils.IsZero(m.SurveyVars) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.SurveyVars); i++ {
-		if swag.IsZero(m.SurveyVars[i]) { // not required
+		if typeutils.IsZero(m.SurveyVars[i]) { // not required
 			continue
 		}
 
@@ -223,7 +224,7 @@ func (m *Template) validateSurveyVars(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateTaskParams(formats strfmt.Registry) error {
-	if swag.IsZero(m.TaskParams) { // not required
+	if typeutils.IsZero(m.TaskParams) { // not required
 		return nil
 	}
 
@@ -278,7 +279,7 @@ func (m *Template) validateTypeEnum(path, location string, value string) error {
 }
 
 func (m *Template) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -291,12 +292,12 @@ func (m *Template) validateType(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateVaults(formats strfmt.Registry) error {
-	if swag.IsZero(m.Vaults) { // not required
+	if typeutils.IsZero(m.Vaults) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Vaults); i++ {
-		if swag.IsZero(m.Vaults[i]) { // not required
+		if typeutils.IsZero(m.Vaults[i]) { // not required
 			continue
 		}
 
@@ -321,7 +322,7 @@ func (m *Template) validateVaults(formats strfmt.Registry) error {
 }
 
 func (m *Template) validateViewID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ViewID) { // not required
+	if typeutils.IsZero(m.ViewID) { // not required
 		return nil
 	}
 
@@ -360,7 +361,7 @@ func (m *Template) contextValidateSurveyVars(ctx context.Context, formats strfmt
 
 		if m.SurveyVars[i] != nil {
 
-			if swag.IsZero(m.SurveyVars[i]) { // not required
+			if typeutils.IsZero(m.SurveyVars[i]) { // not required
 				return nil
 			}
 
@@ -387,7 +388,7 @@ func (m *Template) contextValidateTaskParams(ctx context.Context, formats strfmt
 
 	if m.TaskParams != nil {
 
-		if swag.IsZero(m.TaskParams) { // not required
+		if typeutils.IsZero(m.TaskParams) { // not required
 			return nil
 		}
 
@@ -414,7 +415,7 @@ func (m *Template) contextValidateVaults(ctx context.Context, formats strfmt.Reg
 
 		if m.Vaults[i] != nil {
 
-			if swag.IsZero(m.Vaults[i]) { // not required
+			if typeutils.IsZero(m.Vaults[i]) { // not required
 				return nil
 			}
 
@@ -442,13 +443,13 @@ func (m *Template) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Template) UnmarshalBinary(b []byte) error {
 	var res Template
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

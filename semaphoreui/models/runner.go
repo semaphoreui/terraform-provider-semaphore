@@ -5,8 +5,11 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
+	"github.com/go-openapi/validate"
 )
 
 // Runner runner
@@ -14,17 +17,105 @@ import (
 // swagger:model Runner
 type Runner struct {
 
-	// token
-	Token string `json:"token,omitempty"`
+	// active
+	Active bool `json:"active,omitempty"`
+
+	// cleaning requested
+	// Format: date-time
+	CleaningRequested *strfmt.DateTime `json:"cleaning_requested,omitempty"`
+
+	// id
+	// Read Only: true
+	ID int64 `json:"id,omitempty"`
+
+	// is default
+	IsDefault bool `json:"is_default,omitempty"`
+
+	// max parallel tasks
+	MaxParallelTasks int64 `json:"max_parallel_tasks,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
+
+	// Owning project. Null for global runners.
+	ProjectID *int64 `json:"project_id,omitempty"`
+
+	// Whether the runner has been registered (has an auth token).
+	Registered bool `json:"registered,omitempty"`
+
+	// tags
+	Tags []string `json:"tags"`
+
+	// Last time the runner contacted the server.
+	// Format: date-time
+	Touched *strfmt.DateTime `json:"touched,omitempty"`
+
+	// URL called by the runner to report task events.
+	Webhook string `json:"webhook,omitempty"`
 }
 
 // Validate validates this runner
 func (m *Runner) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCleaningRequested(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTouched(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this runner based on context it is used
+func (m *Runner) validateCleaningRequested(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.CleaningRequested) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("cleaning_requested", "body", "date-time", m.CleaningRequested.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Runner) validateTouched(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.Touched) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("touched", "body", "date-time", m.Touched.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this runner based on the context it is used
 func (m *Runner) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateID(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Runner) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "id", "body", m.ID); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -33,13 +124,13 @@ func (m *Runner) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Runner) UnmarshalBinary(b []byte) error {
 	var res Runner
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDSchedulesParams() *PostProjectProjectIDSchedulesParams {
-	return &PostProjectProjectIDSchedulesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDSchedulesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDSchedulesParamsWithTimeout creates a new PostProjectProjectIDSchedulesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDSchedulesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDSchedulesParams {
 	return &PostProjectProjectIDSchedulesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDSchedulesParamsWithContext creates a new PostProjectProjectIDSchedulesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDSchedulesParams].
 func NewPostProjectProjectIDSchedulesParamsWithContext(ctx context.Context) *PostProjectProjectIDSchedulesParams {
 	return &PostProjectProjectIDSchedulesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -70,9 +73,9 @@ type PostProjectProjectIDSchedulesParams struct {
 	// Schedule.
 	Schedule *models.ScheduleRequest
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID schedules params (not the query body).
@@ -90,71 +93,74 @@ func (o *PostProjectProjectIDSchedulesParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID schedules params
+// WithTimeout adds the timeout to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDSchedulesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID schedules params
+// SetTimeout adds the timeout to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID schedules params
+// WithContext adds the context to the post project project ID schedules params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDSchedulesParams].
 func (o *PostProjectProjectIDSchedulesParams) WithContext(ctx context.Context) *PostProjectProjectIDSchedulesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID schedules params
+// SetContext adds the context to the post project project ID schedules params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDSchedulesParams].
 func (o *PostProjectProjectIDSchedulesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID schedules params
+// WithHTTPClient adds the HTTPClient to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDSchedulesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID schedules params
+// SetHTTPClient adds the HTTPClient to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the post project project ID schedules params
+// WithProjectID adds the projectID to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) WithProjectID(projectID int64) *PostProjectProjectIDSchedulesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID schedules params
+// SetProjectID adds the projectId to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithSchedule adds the schedule to the post project project ID schedules params
+// WithSchedule adds the schedule to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) WithSchedule(schedule *models.ScheduleRequest) *PostProjectProjectIDSchedulesParams {
 	o.SetSchedule(schedule)
 	return o
 }
 
-// SetSchedule adds the schedule to the post project project ID schedules params
+// SetSchedule adds the schedule to the post project project ID schedules params.
 func (o *PostProjectProjectIDSchedulesParams) SetSchedule(schedule *models.ScheduleRequest) {
 	o.Schedule = schedule
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDSchedulesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 	if o.Schedule != nil {

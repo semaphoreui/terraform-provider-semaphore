@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostProjectProjectIDIntegrationsIntegrationIDValuesParams() *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
-	return &PostProjectProjectIDIntegrationsIntegrationIDValuesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostProjectProjectIDIntegrationsIntegrationIDValuesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostProjectProjectIDIntegrationsIntegrationIDValuesParamsWithTimeout creates a new PostProjectProjectIDIntegrationsIntegrationIDValuesParams object
 // with the ability to set a timeout on a request.
 func NewPostProjectProjectIDIntegrationsIntegrationIDValuesParamsWithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	return &PostProjectProjectIDIntegrationsIntegrationIDValuesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostProjectProjectIDIntegrationsIntegrationIDValuesParamsWithContext creates a new PostProjectProjectIDIntegrationsIntegrationIDValuesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDValuesParams].
 func NewPostProjectProjectIDIntegrationsIntegrationIDValuesParamsWithContext(ctx context.Context) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	return &PostProjectProjectIDIntegrationsIntegrationIDValuesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -76,9 +79,9 @@ type PostProjectProjectIDIntegrationsIntegrationIDValuesParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post project project ID integrations integration ID values params (not the query body).
@@ -96,76 +99,79 @@ func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetDefaults(
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post project project ID integrations integration ID values params
+// WithTimeout adds the timeout to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithTimeout(timeout time.Duration) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post project project ID integrations integration ID values params
+// SetTimeout adds the timeout to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post project project ID integrations integration ID values params
+// WithContext adds the context to the post project project ID integrations integration ID values params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDValuesParams].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithContext(ctx context.Context) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post project project ID integrations integration ID values params
+// SetContext adds the context to the post project project ID integrations integration ID values params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostProjectProjectIDIntegrationsIntegrationIDValuesParams].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post project project ID integrations integration ID values params
+// WithHTTPClient adds the HTTPClient to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithHTTPClient(client *http.Client) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post project project ID integrations integration ID values params
+// SetHTTPClient adds the HTTPClient to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithIntegrationExtractedValue adds the integrationExtractedValue to the post project project ID integrations integration ID values params
+// WithIntegrationExtractedValue adds the integrationExtractedValue to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithIntegrationExtractedValue(integrationExtractedValue *models.IntegrationExtractValue) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetIntegrationExtractedValue(integrationExtractedValue)
 	return o
 }
 
-// SetIntegrationExtractedValue adds the integrationExtractedValue to the post project project ID integrations integration ID values params
+// SetIntegrationExtractedValue adds the integrationExtractedValue to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetIntegrationExtractedValue(integrationExtractedValue *models.IntegrationExtractValue) {
 	o.IntegrationExtractedValue = integrationExtractedValue
 }
 
-// WithIntegrationID adds the integrationID to the post project project ID integrations integration ID values params
+// WithIntegrationID adds the integrationID to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithIntegrationID(integrationID int64) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the post project project ID integrations integration ID values params
+// SetIntegrationID adds the integrationId to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithProjectID adds the projectID to the post project project ID integrations integration ID values params
+// WithProjectID adds the projectID to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WithProjectID(projectID int64) *PostProjectProjectIDIntegrationsIntegrationIDValuesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the post project project ID integrations integration ID values params
+// SetProjectID adds the projectId to the post project project ID integrations integration ID values params.
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -176,12 +182,12 @@ func (o *PostProjectProjectIDIntegrationsIntegrationIDValuesParams) WriteToReque
 	}
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

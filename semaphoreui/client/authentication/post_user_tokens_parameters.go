@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostUserTokensParams() *PostUserTokensParams {
-	return &PostUserTokensParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostUserTokensParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostUserTokensParamsWithTimeout creates a new PostUserTokensParams object
 // with the ability to set a timeout on a request.
 func NewPostUserTokensParamsWithTimeout(timeout time.Duration) *PostUserTokensParams {
 	return &PostUserTokensParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostUserTokensParamsWithContext creates a new PostUserTokensParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUserTokensParams].
 func NewPostUserTokensParamsWithContext(ctx context.Context) *PostUserTokensParams {
 	return &PostUserTokensParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -61,9 +65,9 @@ type PostUserTokensParams struct {
 	// Body.
 	Body PostUserTokensBody
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post user tokens params (not the query body).
@@ -81,54 +85,57 @@ func (o *PostUserTokensParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post user tokens params
+// WithTimeout adds the timeout to the post user tokens params.
 func (o *PostUserTokensParams) WithTimeout(timeout time.Duration) *PostUserTokensParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post user tokens params
+// SetTimeout adds the timeout to the post user tokens params.
 func (o *PostUserTokensParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post user tokens params
+// WithContext adds the context to the post user tokens params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUserTokensParams].
 func (o *PostUserTokensParams) WithContext(ctx context.Context) *PostUserTokensParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post user tokens params
+// SetContext adds the context to the post user tokens params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUserTokensParams].
 func (o *PostUserTokensParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post user tokens params
+// WithHTTPClient adds the HTTPClient to the post user tokens params.
 func (o *PostUserTokensParams) WithHTTPClient(client *http.Client) *PostUserTokensParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post user tokens params
+// SetHTTPClient adds the HTTPClient to the post user tokens params.
 func (o *PostUserTokensParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the post user tokens params
+// WithBody adds the body to the post user tokens params.
 func (o *PostUserTokensParams) WithBody(body PostUserTokensBody) *PostUserTokensParams {
 	o.SetBody(body)
 	return o
 }
 
-// SetBody adds the body to the post user tokens params
+// SetBody adds the body to the post user tokens params.
 func (o *PostUserTokensParams) SetBody(body PostUserTokensBody) {
 	o.Body = body
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostUserTokensParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

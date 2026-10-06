@@ -28,6 +28,9 @@ website/node_modules
 # Local working docs
 milestones.md
 
+# Local dev scratch workspaces (dev_overrides, ad-hoc terraform configs)
+local/
+
 website/vendor
 
 # Test exclusions

@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -87,7 +88,7 @@ func (m *EnvironmentSecretRequest) validateOperationEnum(path, location string, 
 }
 
 func (m *EnvironmentSecretRequest) validateOperation(formats strfmt.Registry) error {
-	if swag.IsZero(m.Operation) { // not required
+	if typeutils.IsZero(m.Operation) { // not required
 		return nil
 	}
 
@@ -129,7 +130,7 @@ func (m *EnvironmentSecretRequest) validateTypeEnum(path, location string, value
 }
 
 func (m *EnvironmentSecretRequest) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -151,13 +152,13 @@ func (m *EnvironmentSecretRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *EnvironmentSecretRequest) UnmarshalBinary(b []byte) error {
 	var res EnvironmentSecretRequest
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

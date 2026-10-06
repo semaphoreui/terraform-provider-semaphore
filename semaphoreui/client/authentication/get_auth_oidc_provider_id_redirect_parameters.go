@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetAuthOidcProviderIDRedirectParams() *GetAuthOidcProviderIDRedirectParams {
-	return &GetAuthOidcProviderIDRedirectParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetAuthOidcProviderIDRedirectParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetAuthOidcProviderIDRedirectParamsWithTimeout creates a new GetAuthOidcProviderIDRedirectParams object
 // with the ability to set a timeout on a request.
 func NewGetAuthOidcProviderIDRedirectParamsWithTimeout(timeout time.Duration) *GetAuthOidcProviderIDRedirectParams {
 	return &GetAuthOidcProviderIDRedirectParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetAuthOidcProviderIDRedirectParamsWithContext creates a new GetAuthOidcProviderIDRedirectParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDRedirectParams].
 func NewGetAuthOidcProviderIDRedirectParamsWithContext(ctx context.Context) *GetAuthOidcProviderIDRedirectParams {
 	return &GetAuthOidcProviderIDRedirectParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -61,9 +65,9 @@ type GetAuthOidcProviderIDRedirectParams struct {
 	// ProviderID.
 	ProviderID string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get auth oidc provider ID redirect params (not the query body).
@@ -81,54 +85,57 @@ func (o *GetAuthOidcProviderIDRedirectParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get auth oidc provider ID redirect params
+// WithTimeout adds the timeout to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) WithTimeout(timeout time.Duration) *GetAuthOidcProviderIDRedirectParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get auth oidc provider ID redirect params
+// SetTimeout adds the timeout to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get auth oidc provider ID redirect params
+// WithContext adds the context to the get auth oidc provider ID redirect params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDRedirectParams].
 func (o *GetAuthOidcProviderIDRedirectParams) WithContext(ctx context.Context) *GetAuthOidcProviderIDRedirectParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get auth oidc provider ID redirect params
+// SetContext adds the context to the get auth oidc provider ID redirect params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetAuthOidcProviderIDRedirectParams].
 func (o *GetAuthOidcProviderIDRedirectParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get auth oidc provider ID redirect params
+// WithHTTPClient adds the HTTPClient to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) WithHTTPClient(client *http.Client) *GetAuthOidcProviderIDRedirectParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get auth oidc provider ID redirect params
+// SetHTTPClient adds the HTTPClient to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProviderID adds the providerID to the get auth oidc provider ID redirect params
+// WithProviderID adds the providerID to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) WithProviderID(providerID string) *GetAuthOidcProviderIDRedirectParams {
 	o.SetProviderID(providerID)
 	return o
 }
 
-// SetProviderID adds the providerId to the get auth oidc provider ID redirect params
+// SetProviderID adds the providerId to the get auth oidc provider ID redirect params.
 func (o *GetAuthOidcProviderIDRedirectParams) SetProviderID(providerID string) {
 	o.ProviderID = providerID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetAuthOidcProviderIDRedirectParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

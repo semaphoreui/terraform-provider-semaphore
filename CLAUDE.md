@@ -38,7 +38,7 @@ For acceptance tests, `TF_ACC=1` plus the `SEMAPHOREUI_*` env vars must be set �
 4. `go test` runs against the live server.
 5. `task docker:stop` tears it all down (with `-v`, so all data is lost).
 
-The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.2`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.2`); see `.github/workflows/test.yml`.
+The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.6`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.6`); see `.github/workflows/test.yml`.
 
 ## Architecture
 
@@ -88,10 +88,12 @@ Several upstream API responses return `nil` for fields that should be zero/false
 
 ### Nullability patches in `api-docs.yml`
 
-The local `api-docs.yml` is a *patched* copy of the upstream spec from a tagged release (currently `v2.18.2`). Upstream tends to drop nullable annotations from fields it considers always-set, but the Semaphore API genuinely returns `null` for several optional fields. The patches re-add `x-nullable: true` for those:
+The local `api-docs.yml` is a *patched* copy of the upstream spec from a tagged release (currently `v2.18.6`). Upstream tends to drop nullable annotations from fields it considers always-set, but the Semaphore API genuinely returns `null` for several optional fields. The patches re-add `x-nullable: true` for those:
 
 - `Project.alert_chat` / `ProjectRequest.alert_chat`
 - `ViewRequest.id` — upstream omits it, but the PUT views endpoint returns 400 without it
+
+A related response-schema patch also lives in the spec: the single-runner GET responses (`/runners/{runner_id}` and `/project/{project_id}/runners/{runner_id}`) are pointed at `RunnerWithToken` instead of `Runner` so the `runner` / `project_runner` resources can surface `token` and `private_key` on read (both are empty strings for unregistered runners; the list endpoints still return bare `Runner`).
 
 When bumping `api-docs.yml`, re-import upstream verbatim first (one commit), then re-apply the nullability patches based on which tests fail (a follow-up commit). The two-commit split keeps the diff legible — reviewers can see what came from upstream versus what we patched locally.
 

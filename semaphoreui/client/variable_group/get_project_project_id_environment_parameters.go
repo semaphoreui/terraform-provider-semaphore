@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDEnvironmentParams creates a new GetProjectProjectIDEnvironmentParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDEnvironmentParams() *GetProjectProjectIDEnvironmentParams {
-	return &GetProjectProjectIDEnvironmentParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDEnvironmentParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDEnvironmentParamsWithTimeout creates a new GetProjectProjectIDEnvironmentParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDEnvironmentParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDEnvironmentParams {
 	return &GetProjectProjectIDEnvironmentParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDEnvironmentParamsWithContext creates a new GetProjectProjectIDEnvironmentParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDEnvironmentParams].
 func NewGetProjectProjectIDEnvironmentParamsWithContext(ctx context.Context) *GetProjectProjectIDEnvironmentParams {
 	return &GetProjectProjectIDEnvironmentParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -81,9 +85,9 @@ type GetProjectProjectIDEnvironmentParams struct {
 	*/
 	Sort string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID environment params (not the query body).
@@ -101,76 +105,79 @@ func (o *GetProjectProjectIDEnvironmentParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID environment params
+// WithTimeout adds the timeout to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDEnvironmentParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID environment params
+// SetTimeout adds the timeout to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID environment params
+// WithContext adds the context to the get project project ID environment params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDEnvironmentParams].
 func (o *GetProjectProjectIDEnvironmentParams) WithContext(ctx context.Context) *GetProjectProjectIDEnvironmentParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID environment params
+// SetContext adds the context to the get project project ID environment params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDEnvironmentParams].
 func (o *GetProjectProjectIDEnvironmentParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID environment params
+// WithHTTPClient adds the HTTPClient to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDEnvironmentParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID environment params
+// SetHTTPClient adds the HTTPClient to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrder adds the order to the get project project ID environment params
+// WithOrder adds the order to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) WithOrder(order string) *GetProjectProjectIDEnvironmentParams {
 	o.SetOrder(order)
 	return o
 }
 
-// SetOrder adds the order to the get project project ID environment params
+// SetOrder adds the order to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) SetOrder(order string) {
 	o.Order = order
 }
 
-// WithProjectID adds the projectID to the get project project ID environment params
+// WithProjectID adds the projectID to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) WithProjectID(projectID int64) *GetProjectProjectIDEnvironmentParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID environment params
+// SetProjectID adds the projectId to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithSort adds the sort to the get project project ID environment params
+// WithSort adds the sort to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) WithSort(sort string) *GetProjectProjectIDEnvironmentParams {
 	o.SetSort(sort)
 	return o
 }
 
-// SetSort adds the sort to the get project project ID environment params
+// SetSort adds the sort to the get project project ID environment params.
 func (o *GetProjectProjectIDEnvironmentParams) SetSort(sort string) {
 	o.Sort = sort
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDEnvironmentParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -186,7 +193,7 @@ func (o *GetProjectProjectIDEnvironmentParams) WriteToRequest(r runtime.ClientRe
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

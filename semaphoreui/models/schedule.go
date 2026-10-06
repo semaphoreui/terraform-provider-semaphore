@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -71,7 +72,7 @@ func (m *Schedule) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Schedule) validateRunAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.RunAt) { // not required
+	if typeutils.IsZero(m.RunAt) { // not required
 		return nil
 	}
 
@@ -83,7 +84,7 @@ func (m *Schedule) validateRunAt(formats strfmt.Registry) error {
 }
 
 func (m *Schedule) validateTaskParams(formats strfmt.Registry) error {
-	if swag.IsZero(m.TaskParams) { // not required
+	if typeutils.IsZero(m.TaskParams) { // not required
 		return nil
 	}
 
@@ -135,7 +136,7 @@ func (m *Schedule) validateTypeEnum(path, location string, value string) error {
 }
 
 func (m *Schedule) validateType(formats strfmt.Registry) error {
-	if swag.IsZero(m.Type) { // not required
+	if typeutils.IsZero(m.Type) { // not required
 		return nil
 	}
 
@@ -165,7 +166,7 @@ func (m *Schedule) contextValidateTaskParams(ctx context.Context, formats strfmt
 
 	if m.TaskParams != nil {
 
-		if swag.IsZero(m.TaskParams) { // not required
+		if typeutils.IsZero(m.TaskParams) { // not required
 			return nil
 		}
 
@@ -191,13 +192,13 @@ func (m *Schedule) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Schedule) UnmarshalBinary(b []byte) error {
 	var res Schedule
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

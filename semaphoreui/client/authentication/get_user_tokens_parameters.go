@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetUserTokensParams() *GetUserTokensParams {
-	return &GetUserTokensParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetUserTokensParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetUserTokensParamsWithTimeout creates a new GetUserTokensParams object
 // with the ability to set a timeout on a request.
 func NewGetUserTokensParamsWithTimeout(timeout time.Duration) *GetUserTokensParams {
 	return &GetUserTokensParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetUserTokensParamsWithContext creates a new GetUserTokensParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUserTokensParams].
 func NewGetUserTokensParamsWithContext(ctx context.Context) *GetUserTokensParams {
 	return &GetUserTokensParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetUserTokensParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetUserTokensParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get user tokens params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetUserTokensParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get user tokens params
+// WithTimeout adds the timeout to the get user tokens params.
 func (o *GetUserTokensParams) WithTimeout(timeout time.Duration) *GetUserTokensParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get user tokens params
+// SetTimeout adds the timeout to the get user tokens params.
 func (o *GetUserTokensParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get user tokens params
+// WithContext adds the context to the get user tokens params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUserTokensParams].
 func (o *GetUserTokensParams) WithContext(ctx context.Context) *GetUserTokensParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get user tokens params
+// SetContext adds the context to the get user tokens params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetUserTokensParams].
 func (o *GetUserTokensParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get user tokens params
+// WithHTTPClient adds the HTTPClient to the get user tokens params.
 func (o *GetUserTokensParams) WithHTTPClient(client *http.Client) *GetUserTokensParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get user tokens params
+// SetHTTPClient adds the HTTPClient to the get user tokens params.
 func (o *GetUserTokensParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetUserTokensParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

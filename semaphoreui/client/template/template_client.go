@@ -3,7 +3,9 @@
 package template
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new template API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new template API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new template API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for template API
+Client for template API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,31 +79,78 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteProjectProjectIDTemplatesTemplateID removes template.
 	DeleteProjectProjectIDTemplatesTemplateID(params *DeleteProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTemplatesTemplateIDNoContent, error)
 
+	// DeleteProjectProjectIDTemplatesTemplateIDContext removes template.
+	DeleteProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *DeleteProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTemplatesTemplateIDNoContent, error)
+
+	// GetProjectProjectIDTemplates get template.
 	GetProjectProjectIDTemplates(params *GetProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesOK, error)
 
+	// GetProjectProjectIDTemplatesContext get template.
+	GetProjectProjectIDTemplatesContext(ctx context.Context, params *GetProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesOK, error)
+
+	// GetProjectProjectIDTemplatesTemplateID get template.
 	GetProjectProjectIDTemplatesTemplateID(params *GetProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesTemplateIDOK, error)
 
+	// GetProjectProjectIDTemplatesTemplateIDContext get template.
+	GetProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *GetProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesTemplateIDOK, error)
+
+	// PostProjectProjectIDTemplates create template.
 	PostProjectProjectIDTemplates(params *PostProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesCreated, error)
 
+	// PostProjectProjectIDTemplatesContext create template.
+	PostProjectProjectIDTemplatesContext(ctx context.Context, params *PostProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesCreated, error)
+
+	// PostProjectProjectIDTemplatesTemplateIDStopAllTasks stop all active tasks of template.
 	PostProjectProjectIDTemplatesTemplateIDStopAllTasks(params *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesTemplateIDStopAllTasksNoContent, error)
 
+	// PostProjectProjectIDTemplatesTemplateIDStopAllTasksContext stop all active tasks of template.
+	PostProjectProjectIDTemplatesTemplateIDStopAllTasksContext(ctx context.Context, params *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesTemplateIDStopAllTasksNoContent, error)
+
+	// PutProjectProjectIDTemplatesTemplateID updates template.
 	PutProjectProjectIDTemplatesTemplateID(params *PutProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDTemplatesTemplateIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutProjectProjectIDTemplatesTemplateIDContext updates template.
+	PutProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *PutProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDTemplatesTemplateIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteProjectProjectIDTemplatesTemplateID removes template
+DeleteProjectProjectIDTemplatesTemplateIDremoves template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteProjectProjectIDTemplatesTemplateIDContext] instead.
 */
 func (a *Client) DeleteProjectProjectIDTemplatesTemplateID(params *DeleteProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTemplatesTemplateIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteProjectProjectIDTemplatesTemplateIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteProjectProjectIDTemplatesTemplateIDContextremoves template.
+
+Do not use the deprecated [DeleteProjectProjectIDTemplatesTemplateIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *DeleteProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectProjectIDTemplatesTemplateIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteProjectProjectIDTemplatesTemplateIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteProjectProjectIDTemplatesTemplateID",
 		Method:             "DELETE",
@@ -110,13 +161,14 @@ func (a *Client) DeleteProjectProjectIDTemplatesTemplateID(params *DeleteProject
 		Params:             params,
 		Reader:             &DeleteProjectProjectIDTemplatesTemplateIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -137,13 +189,35 @@ func (a *Client) DeleteProjectProjectIDTemplatesTemplateID(params *DeleteProject
 }
 
 /*
-GetProjectProjectIDTemplates gets template
+GetProjectProjectIDTemplatesgets template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTemplatesContext] instead.
 */
 func (a *Client) GetProjectProjectIDTemplates(params *GetProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTemplatesContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTemplatesContextgets template.
+
+Do not use the deprecated [GetProjectProjectIDTemplatesParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTemplatesContext(ctx context.Context, params *GetProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTemplatesParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTemplates",
 		Method:             "GET",
@@ -154,13 +228,14 @@ func (a *Client) GetProjectProjectIDTemplates(params *GetProjectProjectIDTemplat
 		Params:             params,
 		Reader:             &GetProjectProjectIDTemplatesReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -181,13 +256,35 @@ func (a *Client) GetProjectProjectIDTemplates(params *GetProjectProjectIDTemplat
 }
 
 /*
-GetProjectProjectIDTemplatesTemplateID gets template
+GetProjectProjectIDTemplatesTemplateIDgets template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetProjectProjectIDTemplatesTemplateIDContext] instead.
 */
 func (a *Client) GetProjectProjectIDTemplatesTemplateID(params *GetProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesTemplateIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetProjectProjectIDTemplatesTemplateIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetProjectProjectIDTemplatesTemplateIDContextgets template.
+
+Do not use the deprecated [GetProjectProjectIDTemplatesTemplateIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *GetProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectProjectIDTemplatesTemplateIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectProjectIDTemplatesTemplateIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetProjectProjectIDTemplatesTemplateID",
 		Method:             "GET",
@@ -198,13 +295,14 @@ func (a *Client) GetProjectProjectIDTemplatesTemplateID(params *GetProjectProjec
 		Params:             params,
 		Reader:             &GetProjectProjectIDTemplatesTemplateIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -225,13 +323,35 @@ func (a *Client) GetProjectProjectIDTemplatesTemplateID(params *GetProjectProjec
 }
 
 /*
-PostProjectProjectIDTemplates creates template
+PostProjectProjectIDTemplatescreates template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDTemplatesContext] instead.
 */
 func (a *Client) PostProjectProjectIDTemplates(params *PostProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDTemplatesContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDTemplatesContextcreates template.
+
+Do not use the deprecated [PostProjectProjectIDTemplatesParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDTemplatesContext(ctx context.Context, params *PostProjectProjectIDTemplatesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDTemplatesParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDTemplates",
 		Method:             "POST",
@@ -242,13 +362,14 @@ func (a *Client) PostProjectProjectIDTemplates(params *PostProjectProjectIDTempl
 		Params:             params,
 		Reader:             &PostProjectProjectIDTemplatesReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -269,13 +390,35 @@ func (a *Client) PostProjectProjectIDTemplates(params *PostProjectProjectIDTempl
 }
 
 /*
-PostProjectProjectIDTemplatesTemplateIDStopAllTasks stops all active tasks of template
+PostProjectProjectIDTemplatesTemplateIDStopAllTasksstops all active tasks of template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostProjectProjectIDTemplatesTemplateIDStopAllTasksContext] instead.
 */
 func (a *Client) PostProjectProjectIDTemplatesTemplateIDStopAllTasks(params *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesTemplateIDStopAllTasksNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostProjectProjectIDTemplatesTemplateIDStopAllTasksContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostProjectProjectIDTemplatesTemplateIDStopAllTasksContextstops all active tasks of template.
+
+Do not use the deprecated [PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostProjectProjectIDTemplatesTemplateIDStopAllTasksContext(ctx context.Context, params *PostProjectProjectIDTemplatesTemplateIDStopAllTasksParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostProjectProjectIDTemplatesTemplateIDStopAllTasksNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostProjectProjectIDTemplatesTemplateIDStopAllTasksParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostProjectProjectIDTemplatesTemplateIDStopAllTasks",
 		Method:             "POST",
@@ -286,13 +429,14 @@ func (a *Client) PostProjectProjectIDTemplatesTemplateIDStopAllTasks(params *Pos
 		Params:             params,
 		Reader:             &PostProjectProjectIDTemplatesTemplateIDStopAllTasksReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -313,13 +457,35 @@ func (a *Client) PostProjectProjectIDTemplatesTemplateIDStopAllTasks(params *Pos
 }
 
 /*
-PutProjectProjectIDTemplatesTemplateID updates template
+PutProjectProjectIDTemplatesTemplateIDupdates template.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutProjectProjectIDTemplatesTemplateIDContext] instead.
 */
 func (a *Client) PutProjectProjectIDTemplatesTemplateID(params *PutProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDTemplatesTemplateIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutProjectProjectIDTemplatesTemplateIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutProjectProjectIDTemplatesTemplateIDContextupdates template.
+
+Do not use the deprecated [PutProjectProjectIDTemplatesTemplateIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutProjectProjectIDTemplatesTemplateIDContext(ctx context.Context, params *PutProjectProjectIDTemplatesTemplateIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutProjectProjectIDTemplatesTemplateIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutProjectProjectIDTemplatesTemplateIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutProjectProjectIDTemplatesTemplateID",
 		Method:             "PUT",
@@ -330,13 +496,14 @@ func (a *Client) PutProjectProjectIDTemplatesTemplateID(params *PutProjectProjec
 		Params:             params,
 		Reader:             &PutProjectProjectIDTemplatesTemplateIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -357,6 +524,14 @@ func (a *Client) PutProjectProjectIDTemplatesTemplateID(params *PutProjectProjec
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [TemplateParams].
+	ctx context.Context
 }

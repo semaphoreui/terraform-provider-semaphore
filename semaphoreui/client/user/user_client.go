@@ -3,7 +3,9 @@
 package user
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -11,11 +13,12 @@ import (
 )
 
 // New creates a new user API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ContextualTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
 }
 
 // New creates a new user API client with basic auth credentials.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -29,6 +32,7 @@ func NewClientWithBasicAuth(host, basePath, scheme, user, password string) Clien
 }
 
 // New creates a new user API client with a bearer token for authentication.
+//
 // It takes the following parameters:
 // - host: http host (github.com).
 // - basePath: any base path for the API client ("/v1", "/v3").
@@ -41,10 +45,10 @@ func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) Client
 }
 
 /*
-Client for user API
+Client for user API.
 */
 type Client struct {
-	transport runtime.ClientTransport
+	transport runtime.ContextualTransport
 	formats   strfmt.Registry
 }
 
@@ -75,33 +79,96 @@ func WithAcceptTextPlainCharsetUTF8(r *runtime.ClientOperation) {
 	r.ProducesMediaTypes = []string{"text/plain; charset=utf-8"}
 }
 
-// ClientService is the interface for Client methods
+// ClientService is the interface for Client methods.
 type ClientService interface {
+
+	// DeleteUsersUserID deletes user.
 	DeleteUsersUserID(params *DeleteUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUsersUserIDNoContent, error)
 
+	// DeleteUsersUserIDContext deletes user.
+	DeleteUsersUserIDContext(ctx context.Context, params *DeleteUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUsersUserIDNoContent, error)
+
+	// GetUser fetch logged in user.
 	GetUser(params *GetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOK, error)
 
+	// GetUserContext fetch logged in user.
+	GetUserContext(ctx context.Context, params *GetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOK, error)
+
+	// GetUserOptions fetches the current user s stored options.
+	GetUserOptions(params *GetUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOptionsOK, error)
+
+	// GetUserOptionsContext fetches the current user s stored options.
+	GetUserOptionsContext(ctx context.Context, params *GetUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOptionsOK, error)
+
+	// GetUsers fetches all users.
 	GetUsers(params *GetUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersOK, error)
 
+	// GetUsersContext fetches all users.
+	GetUsersContext(ctx context.Context, params *GetUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersOK, error)
+
+	// GetUsersUserID fetches a user profile.
 	GetUsersUserID(params *GetUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersUserIDOK, error)
 
+	// GetUsersUserIDContext fetches a user profile.
+	GetUsersUserIDContext(ctx context.Context, params *GetUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersUserIDOK, error)
+
+	// PostUserOptions stores a single option for the current user.
+	PostUserOptions(params *PostUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUserOptionsOK, error)
+
+	// PostUserOptionsContext stores a single option for the current user.
+	PostUserOptionsContext(ctx context.Context, params *PostUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUserOptionsOK, error)
+
+	// PostUsers creates a user.
 	PostUsers(params *PostUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersCreated, error)
 
+	// PostUsersContext creates a user.
+	PostUsersContext(ctx context.Context, params *PostUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersCreated, error)
+
+	// PostUsersUserIDPassword updates user password.
 	PostUsersUserIDPassword(params *PostUsersUserIDPasswordParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersUserIDPasswordNoContent, error)
 
+	// PostUsersUserIDPasswordContext updates user password.
+	PostUsersUserIDPasswordContext(ctx context.Context, params *PostUsersUserIDPasswordParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersUserIDPasswordNoContent, error)
+
+	// PutUsersUserID updates user details.
 	PutUsersUserID(params *PutUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutUsersUserIDNoContent, error)
 
-	SetTransport(transport runtime.ClientTransport)
+	// PutUsersUserIDContext updates user details.
+	PutUsersUserIDContext(ctx context.Context, params *PutUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutUsersUserIDNoContent, error)
+
+	SetTransport(transport runtime.ContextualTransport)
 }
 
 /*
-DeleteUsersUserID deletes user
+DeleteUsersUserIDdeletes user.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.DeleteUsersUserIDContext] instead.
 */
 func (a *Client) DeleteUsersUserID(params *DeleteUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUsersUserIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.DeleteUsersUserIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+DeleteUsersUserIDContextdeletes user.
+
+Do not use the deprecated [DeleteUsersUserIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) DeleteUsersUserIDContext(ctx context.Context, params *DeleteUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUsersUserIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteUsersUserIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "DeleteUsersUserID",
 		Method:             "DELETE",
@@ -112,13 +179,14 @@ func (a *Client) DeleteUsersUserID(params *DeleteUsersUserIDParams, authInfo run
 		Params:             params,
 		Reader:             &DeleteUsersUserIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -139,13 +207,35 @@ func (a *Client) DeleteUsersUserID(params *DeleteUsersUserIDParams, authInfo run
 }
 
 /*
-GetUser fetches logged in user
+GetUserfetches logged in user.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetUserContext] instead.
 */
 func (a *Client) GetUser(params *GetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetUserContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetUserContextfetches logged in user.
+
+Do not use the deprecated [GetUserParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetUserContext(ctx context.Context, params *GetUserParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetUserParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetUser",
 		Method:             "GET",
@@ -156,13 +246,14 @@ func (a *Client) GetUser(params *GetUserParams, authInfo runtime.ClientAuthInfoW
 		Params:             params,
 		Reader:             &GetUserReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -183,13 +274,110 @@ func (a *Client) GetUser(params *GetUserParams, authInfo runtime.ClientAuthInfoW
 }
 
 /*
-GetUsers fetches all users
+	GetUserOptionsfetches the current user s stored options.
+
+	Returns the per-user options of the authenticated user as a key/value map. Keys are returned without the internal `user<id>.` namespace prefix. Returns an empty object when the user has no stored options.
+
+.
+
+	This method does not support injected context.
+	However, timeout and opentracing contexts are honored whenever enabled.
+
+	If you need to pass a specific context, use [Client.GetUserOptionsContext] instead.
+*/
+func (a *Client) GetUserOptions(params *GetUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOptionsOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetUserOptionsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+	GetUserOptionsContextfetches the current user s stored options.
+
+	Returns the per-user options of the authenticated user as a key/value map. Keys are returned without the internal `user<id>.` namespace prefix. Returns an empty object when the user has no stored options.
+
+.
+
+	Do not use the deprecated [GetUserOptionsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetUserOptionsContext(ctx context.Context, params *GetUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserOptionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetUserOptionsParams()
+	}
+
+	op := &runtime.ClientOperation{
+		ID:                 "GetUserOptions",
+		Method:             "GET",
+		PathPattern:        "/user/options",
+		ProducesMediaTypes: []string{"application/json", "text/plain; charset=utf-8"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetUserOptionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Client:             params.HTTPClient,
+	}
+
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.SubmitContext(ctx, op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetUserOptionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetUserOptions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetUsersfetches all users.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetUsersContext] instead.
 */
 func (a *Client) GetUsers(params *GetUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetUsersContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetUsersContextfetches all users.
+
+Do not use the deprecated [GetUsersParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetUsersContext(ctx context.Context, params *GetUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetUsersParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetUsers",
 		Method:             "GET",
@@ -200,13 +388,14 @@ func (a *Client) GetUsers(params *GetUsersParams, authInfo runtime.ClientAuthInf
 		Params:             params,
 		Reader:             &GetUsersReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -227,13 +416,35 @@ func (a *Client) GetUsers(params *GetUsersParams, authInfo runtime.ClientAuthInf
 }
 
 /*
-GetUsersUserID fetches a user profile
+GetUsersUserIDfetches a user profile.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.GetUsersUserIDContext] instead.
 */
 func (a *Client) GetUsersUserID(params *GetUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersUserIDOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.GetUsersUserIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+GetUsersUserIDContextfetches a user profile.
+
+Do not use the deprecated [GetUsersUserIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) GetUsersUserIDContext(ctx context.Context, params *GetUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUsersUserIDOK, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetUsersUserIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "GetUsersUserID",
 		Method:             "GET",
@@ -244,13 +455,14 @@ func (a *Client) GetUsersUserID(params *GetUsersUserIDParams, authInfo runtime.C
 		Params:             params,
 		Reader:             &GetUsersUserIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -271,13 +483,110 @@ func (a *Client) GetUsersUserID(params *GetUsersUserIDParams, authInfo runtime.C
 }
 
 /*
-PostUsers creates a user
+	PostUserOptionsstores a single option for the current user.
+
+	Stores one option for the authenticated user. The `key` is an allowlisted suffix (e.g. `nav.unpinnedItems`); the server prepends the user namespace, so a request can never read or write another user's options or a global option. Unknown keys are rejected with 400.
+
+.
+
+	This method does not support injected context.
+	However, timeout and opentracing contexts are honored whenever enabled.
+
+	If you need to pass a specific context, use [Client.PostUserOptionsContext] instead.
+*/
+func (a *Client) PostUserOptions(params *PostUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUserOptionsOK, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostUserOptionsContext(ctx, params, authInfo, opts...)
+}
+
+/*
+	PostUserOptionsContextstores a single option for the current user.
+
+	Stores one option for the authenticated user. The `key` is an allowlisted suffix (e.g. `nav.unpinnedItems`); the server prepends the user namespace, so a request can never read or write another user's options or a global option. Unknown keys are rejected with 400.
+
+.
+
+	Do not use the deprecated [PostUserOptionsParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostUserOptionsContext(ctx context.Context, params *PostUserOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUserOptionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewPostUserOptionsParams()
+	}
+
+	op := &runtime.ClientOperation{
+		ID:                 "PostUserOptions",
+		Method:             "POST",
+		PathPattern:        "/user/options",
+		ProducesMediaTypes: []string{"application/json", "text/plain; charset=utf-8"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &PostUserOptionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Client:             params.HTTPClient,
+	}
+
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.SubmitContext(ctx, op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*PostUserOptionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostUserOptions: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+PostUserscreates a user.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostUsersContext] instead.
 */
 func (a *Client) PostUsers(params *PostUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersCreated, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostUsersContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostUsersContextcreates a user.
+
+Do not use the deprecated [PostUsersParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostUsersContext(ctx context.Context, params *PostUsersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersCreated, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostUsersParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostUsers",
 		Method:             "POST",
@@ -288,13 +597,14 @@ func (a *Client) PostUsers(params *PostUsersParams, authInfo runtime.ClientAuthI
 		Params:             params,
 		Reader:             &PostUsersReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -315,13 +625,35 @@ func (a *Client) PostUsers(params *PostUsersParams, authInfo runtime.ClientAuthI
 }
 
 /*
-PostUsersUserIDPassword updates user password
+PostUsersUserIDPasswordupdates user password.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PostUsersUserIDPasswordContext] instead.
 */
 func (a *Client) PostUsersUserIDPassword(params *PostUsersUserIDPasswordParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersUserIDPasswordNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PostUsersUserIDPasswordContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PostUsersUserIDPasswordContextupdates user password.
+
+Do not use the deprecated [PostUsersUserIDPasswordParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PostUsersUserIDPasswordContext(ctx context.Context, params *PostUsersUserIDPasswordParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PostUsersUserIDPasswordNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPostUsersUserIDPasswordParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PostUsersUserIDPassword",
 		Method:             "POST",
@@ -332,13 +664,14 @@ func (a *Client) PostUsersUserIDPassword(params *PostUsersUserIDPasswordParams, 
 		Params:             params,
 		Reader:             &PostUsersUserIDPasswordReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -359,13 +692,35 @@ func (a *Client) PostUsersUserIDPassword(params *PostUsersUserIDPasswordParams, 
 }
 
 /*
-PutUsersUserID updates user details
+PutUsersUserIDupdates user details.
+
+This method does not support injected context.
+However, timeout and opentracing contexts are honored whenever enabled.
+
+If you need to pass a specific context, use [Client.PutUsersUserIDContext] instead.
 */
 func (a *Client) PutUsersUserID(params *PutUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutUsersUserIDNoContent, error) {
+	var ctx context.Context
+	if params.inner.ctx != nil {
+		ctx = params.inner.ctx
+	} else {
+		ctx = context.Background()
+	}
+
+	return a.PutUsersUserIDContext(ctx, params, authInfo, opts...)
+}
+
+/*
+PutUsersUserIDContextupdates user details.
+
+Do not use the deprecated [PutUsersUserIDParams.Context] with this method: it would be ignored.
+*/
+func (a *Client) PutUsersUserIDContext(ctx context.Context, params *PutUsersUserIDParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutUsersUserIDNoContent, error) {
 	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutUsersUserIDParams()
 	}
+
 	op := &runtime.ClientOperation{
 		ID:                 "PutUsersUserID",
 		Method:             "PUT",
@@ -376,13 +731,14 @@ func (a *Client) PutUsersUserID(params *PutUsersUserIDParams, authInfo runtime.C
 		Params:             params,
 		Reader:             &PutUsersUserIDReader{formats: a.formats},
 		AuthInfo:           authInfo,
-		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
+
 	for _, opt := range opts {
 		opt(op)
 	}
-	result, err := a.transport.Submit(op)
+
+	result, err := a.transport.SubmitContext(ctx, op)
 	if err != nil {
 		return nil, err
 	}
@@ -403,6 +759,14 @@ func (a *Client) PutUsersUserID(params *PutUsersUserIDParams, authInfo runtime.C
 }
 
 // SetTransport changes the transport on the client
-func (a *Client) SetTransport(transport runtime.ClientTransport) {
+func (a *Client) SetTransport(transport runtime.ContextualTransport) {
 	a.transport = transport
+}
+
+// innerParams captures internal fields so they don't conflict with user-supplied parameters.
+type innerParams struct {
+	timeout time.Duration
+
+	// Deprecated: use the operation call with context to pass the context instead of [UserParams].
+	ctx context.Context
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewDeleteProjectProjectIDInventoryInventoryIDParams creates a new DeleteProjectProjectIDInventoryInventoryIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteProjectProjectIDInventoryInventoryIDParams() *DeleteProjectProjectIDInventoryInventoryIDParams {
-	return &DeleteProjectProjectIDInventoryInventoryIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewDeleteProjectProjectIDInventoryInventoryIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewDeleteProjectProjectIDInventoryInventoryIDParamsWithTimeout creates a new DeleteProjectProjectIDInventoryInventoryIDParams object
 // with the ability to set a timeout on a request.
 func NewDeleteProjectProjectIDInventoryInventoryIDParamsWithTimeout(timeout time.Duration) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	return &DeleteProjectProjectIDInventoryInventoryIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewDeleteProjectProjectIDInventoryInventoryIDParamsWithContext creates a new DeleteProjectProjectIDInventoryInventoryIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDInventoryInventoryIDParams].
 func NewDeleteProjectProjectIDInventoryInventoryIDParamsWithContext(ctx context.Context) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	return &DeleteProjectProjectIDInventoryInventoryIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type DeleteProjectProjectIDInventoryInventoryIDParams struct {
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the delete project project ID inventory inventory ID params (not the query body).
@@ -91,76 +95,79 @@ func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the delete project project ID inventory inventory ID params
+// WithTimeout adds the timeout to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WithTimeout(timeout time.Duration) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the delete project project ID inventory inventory ID params
+// SetTimeout adds the timeout to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the delete project project ID inventory inventory ID params
+// WithContext adds the context to the delete project project ID inventory inventory ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDInventoryInventoryIDParams].
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WithContext(ctx context.Context) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the delete project project ID inventory inventory ID params
+// SetContext adds the context to the delete project project ID inventory inventory ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [DeleteProjectProjectIDInventoryInventoryIDParams].
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the delete project project ID inventory inventory ID params
+// WithHTTPClient adds the HTTPClient to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WithHTTPClient(client *http.Client) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the delete project project ID inventory inventory ID params
+// SetHTTPClient adds the HTTPClient to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithInventoryID adds the inventoryID to the delete project project ID inventory inventory ID params
+// WithInventoryID adds the inventoryID to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WithInventoryID(inventoryID int64) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	o.SetInventoryID(inventoryID)
 	return o
 }
 
-// SetInventoryID adds the inventoryId to the delete project project ID inventory inventory ID params
+// SetInventoryID adds the inventoryId to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetInventoryID(inventoryID int64) {
 	o.InventoryID = inventoryID
 }
 
-// WithProjectID adds the projectID to the delete project project ID inventory inventory ID params
+// WithProjectID adds the projectID to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WithProjectID(projectID int64) *DeleteProjectProjectIDInventoryInventoryIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the delete project project ID inventory inventory ID params
+// SetProjectID adds the projectId to the delete project project ID inventory inventory ID params.
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *DeleteProjectProjectIDInventoryInventoryIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param inventory_id
-	if err := r.SetPathParam("inventory_id", swag.FormatInt64(o.InventoryID)); err != nil {
+	if err := r.SetPathParam("inventory_id", conv.FormatInteger(o.InventoryID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

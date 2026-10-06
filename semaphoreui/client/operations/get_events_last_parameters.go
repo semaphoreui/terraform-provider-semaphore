@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetEventsLastParams() *GetEventsLastParams {
-	return &GetEventsLastParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetEventsLastParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetEventsLastParamsWithTimeout creates a new GetEventsLastParams object
 // with the ability to set a timeout on a request.
 func NewGetEventsLastParamsWithTimeout(timeout time.Duration) *GetEventsLastParams {
 	return &GetEventsLastParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetEventsLastParamsWithContext creates a new GetEventsLastParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsLastParams].
 func NewGetEventsLastParamsWithContext(ctx context.Context) *GetEventsLastParams {
 	return &GetEventsLastParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetEventsLastParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetEventsLastParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get events last params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetEventsLastParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get events last params
+// WithTimeout adds the timeout to the get events last params.
 func (o *GetEventsLastParams) WithTimeout(timeout time.Duration) *GetEventsLastParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get events last params
+// SetTimeout adds the timeout to the get events last params.
 func (o *GetEventsLastParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get events last params
+// WithContext adds the context to the get events last params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsLastParams].
 func (o *GetEventsLastParams) WithContext(ctx context.Context) *GetEventsLastParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get events last params
+// SetContext adds the context to the get events last params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetEventsLastParams].
 func (o *GetEventsLastParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get events last params
+// WithHTTPClient adds the HTTPClient to the get events last params.
 func (o *GetEventsLastParams) WithHTTPClient(client *http.Client) *GetEventsLastParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get events last params
+// SetHTTPClient adds the HTTPClient to the get events last params.
 func (o *GetEventsLastParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetEventsLastParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error

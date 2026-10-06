@@ -11,8 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
-
+	"github.com/go-openapi/swag/conv"
 	"terraform-provider-semaphoreui/semaphoreui/models"
 )
 
@@ -23,24 +22,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams() *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
-	return &PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout creates a new PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	return &PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithContext creates a new PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func NewPutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParamsWithContext(ctx context.Context) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	return &PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -82,9 +85,9 @@ type PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams stru
 	*/
 	ProjectID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID integrations integration ID values extractvalue ID params (not the query body).
@@ -102,87 +105,90 @@ func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams)
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID integrations integration ID values extractvalue ID params
+// WithTimeout adds the timeout to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID integrations integration ID values extractvalue ID params
+// SetTimeout adds the timeout to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID integrations integration ID values extractvalue ID params
+// WithContext adds the context to the put project project ID integrations integration ID values extractvalue ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithContext(ctx context.Context) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID integrations integration ID values extractvalue ID params
+// SetContext adds the context to the put project project ID integrations integration ID values extractvalue ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID integrations integration ID values extractvalue ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID integrations integration ID values extractvalue ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithIntegrationExtractValue adds the integrationExtractValue to the put project project ID integrations integration ID values extractvalue ID params
+// WithIntegrationExtractValue adds the integrationExtractValue to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithIntegrationExtractValue(integrationExtractValue *models.IntegrationExtractValueRequest) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetIntegrationExtractValue(integrationExtractValue)
 	return o
 }
 
-// SetIntegrationExtractValue adds the integrationExtractValue to the put project project ID integrations integration ID values extractvalue ID params
+// SetIntegrationExtractValue adds the integrationExtractValue to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetIntegrationExtractValue(integrationExtractValue *models.IntegrationExtractValueRequest) {
 	o.IntegrationExtractValue = integrationExtractValue
 }
 
-// WithExtractvalueID adds the extractvalueID to the put project project ID integrations integration ID values extractvalue ID params
+// WithExtractvalueID adds the extractvalueID to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithExtractvalueID(extractvalueID int64) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetExtractvalueID(extractvalueID)
 	return o
 }
 
-// SetExtractvalueID adds the extractvalueId to the put project project ID integrations integration ID values extractvalue ID params
+// SetExtractvalueID adds the extractvalueId to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetExtractvalueID(extractvalueID int64) {
 	o.ExtractvalueID = extractvalueID
 }
 
-// WithIntegrationID adds the integrationID to the put project project ID integrations integration ID values extractvalue ID params
+// WithIntegrationID adds the integrationID to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithIntegrationID(integrationID int64) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetIntegrationID(integrationID)
 	return o
 }
 
-// SetIntegrationID adds the integrationId to the put project project ID integrations integration ID values extractvalue ID params
+// SetIntegrationID adds the integrationId to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetIntegrationID(integrationID int64) {
 	o.IntegrationID = integrationID
 }
 
-// WithProjectID adds the projectID to the put project project ID integrations integration ID values extractvalue ID params
+// WithProjectID adds the projectID to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WithProjectID(projectID int64) *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID integrations integration ID values extractvalue ID params
+// SetProjectID adds the projectId to the put project project ID integrations integration ID values extractvalue ID params.
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -193,17 +199,17 @@ func (o *PutProjectProjectIDIntegrationsIntegrationIDValuesExtractvalueIDParams)
 	}
 
 	// path param extractvalue_id
-	if err := r.SetPathParam("extractvalue_id", swag.FormatInt64(o.ExtractvalueID)); err != nil {
+	if err := r.SetPathParam("extractvalue_id", conv.FormatInteger(o.ExtractvalueID)); err != nil {
 		return err
 	}
 
 	// path param integration_id
-	if err := r.SetPathParam("integration_id", swag.FormatInt64(o.IntegrationID)); err != nil {
+	if err := r.SetPathParam("integration_id", conv.FormatInteger(o.IntegrationID)); err != nil {
 		return err
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

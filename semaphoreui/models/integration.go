@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -72,7 +73,7 @@ func (m *Integration) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Integration) validateProjectID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectID) { // not required
+	if typeutils.IsZero(m.ProjectID) { // not required
 		return nil
 	}
 
@@ -84,7 +85,7 @@ func (m *Integration) validateProjectID(formats strfmt.Registry) error {
 }
 
 func (m *Integration) validateTaskParams(formats strfmt.Registry) error {
-	if swag.IsZero(m.TaskParams) { // not required
+	if typeutils.IsZero(m.TaskParams) { // not required
 		return nil
 	}
 
@@ -107,7 +108,7 @@ func (m *Integration) validateTaskParams(formats strfmt.Registry) error {
 }
 
 func (m *Integration) validateTemplateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.TemplateID) { // not required
+	if typeutils.IsZero(m.TemplateID) { // not required
 		return nil
 	}
 
@@ -136,7 +137,7 @@ func (m *Integration) contextValidateTaskParams(ctx context.Context, formats str
 
 	if m.TaskParams != nil {
 
-		if swag.IsZero(m.TaskParams) { // not required
+		if typeutils.IsZero(m.TaskParams) { // not required
 			return nil
 		}
 
@@ -162,13 +163,13 @@ func (m *Integration) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Integration) UnmarshalBinary(b []byte) error {
 	var res Integration
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

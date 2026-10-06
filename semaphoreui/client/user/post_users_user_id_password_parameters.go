@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPostUsersUserIDPasswordParams creates a new PostUsersUserIDPasswordParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostUsersUserIDPasswordParams() *PostUsersUserIDPasswordParams {
-	return &PostUsersUserIDPasswordParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPostUsersUserIDPasswordParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPostUsersUserIDPasswordParamsWithTimeout creates a new PostUsersUserIDPasswordParams object
 // with the ability to set a timeout on a request.
 func NewPostUsersUserIDPasswordParamsWithTimeout(timeout time.Duration) *PostUsersUserIDPasswordParams {
 	return &PostUsersUserIDPasswordParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPostUsersUserIDPasswordParamsWithContext creates a new PostUsersUserIDPasswordParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersUserIDPasswordParams].
 func NewPostUsersUserIDPasswordParamsWithContext(ctx context.Context) *PostUsersUserIDPasswordParams {
 	return &PostUsersUserIDPasswordParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -68,9 +72,9 @@ type PostUsersUserIDPasswordParams struct {
 	*/
 	UserID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the post users user ID password params (not the query body).
@@ -88,65 +92,68 @@ func (o *PostUsersUserIDPasswordParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the post users user ID password params
+// WithTimeout adds the timeout to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) WithTimeout(timeout time.Duration) *PostUsersUserIDPasswordParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the post users user ID password params
+// SetTimeout adds the timeout to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the post users user ID password params
+// WithContext adds the context to the post users user ID password params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersUserIDPasswordParams].
 func (o *PostUsersUserIDPasswordParams) WithContext(ctx context.Context) *PostUsersUserIDPasswordParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the post users user ID password params
+// SetContext adds the context to the post users user ID password params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PostUsersUserIDPasswordParams].
 func (o *PostUsersUserIDPasswordParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the post users user ID password params
+// WithHTTPClient adds the HTTPClient to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) WithHTTPClient(client *http.Client) *PostUsersUserIDPasswordParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the post users user ID password params
+// SetHTTPClient adds the HTTPClient to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithPassword adds the password to the post users user ID password params
+// WithPassword adds the password to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) WithPassword(password PostUsersUserIDPasswordBody) *PostUsersUserIDPasswordParams {
 	o.SetPassword(password)
 	return o
 }
 
-// SetPassword adds the password to the post users user ID password params
+// SetPassword adds the password to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) SetPassword(password PostUsersUserIDPasswordBody) {
 	o.Password = password
 }
 
-// WithUserID adds the userID to the post users user ID password params
+// WithUserID adds the userID to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) WithUserID(userID int64) *PostUsersUserIDPasswordParams {
 	o.SetUserID(userID)
 	return o
 }
 
-// SetUserID adds the userId to the post users user ID password params
+// SetUserID adds the userId to the post users user ID password params.
 func (o *PostUsersUserIDPasswordParams) SetUserID(userID int64) {
 	o.UserID = userID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PostUsersUserIDPasswordParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -155,7 +162,7 @@ func (o *PostUsersUserIDPasswordParams) WriteToRequest(r runtime.ClientRequest, 
 	}
 
 	// path param user_id
-	if err := r.SetPathParam("user_id", swag.FormatInt64(o.UserID)); err != nil {
+	if err := r.SetPathParam("user_id", conv.FormatInteger(o.UserID)); err != nil {
 		return err
 	}
 

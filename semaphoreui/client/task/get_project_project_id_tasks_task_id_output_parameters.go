@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDTasksTaskIDOutputParams creates a new GetProjectProjectIDTasksTaskIDOutputParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDTasksTaskIDOutputParams() *GetProjectProjectIDTasksTaskIDOutputParams {
-	return &GetProjectProjectIDTasksTaskIDOutputParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDTasksTaskIDOutputParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDTasksTaskIDOutputParamsWithTimeout creates a new GetProjectProjectIDTasksTaskIDOutputParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDTasksTaskIDOutputParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDTasksTaskIDOutputParams {
 	return &GetProjectProjectIDTasksTaskIDOutputParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDTasksTaskIDOutputParamsWithContext creates a new GetProjectProjectIDTasksTaskIDOutputParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTasksTaskIDOutputParams].
 func NewGetProjectProjectIDTasksTaskIDOutputParamsWithContext(ctx context.Context) *GetProjectProjectIDTasksTaskIDOutputParams {
 	return &GetProjectProjectIDTasksTaskIDOutputParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -71,9 +75,9 @@ type GetProjectProjectIDTasksTaskIDOutputParams struct {
 	*/
 	TaskID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID tasks task ID output params (not the query body).
@@ -91,76 +95,79 @@ func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID tasks task ID output params
+// WithTimeout adds the timeout to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDTasksTaskIDOutputParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID tasks task ID output params
+// SetTimeout adds the timeout to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID tasks task ID output params
+// WithContext adds the context to the get project project ID tasks task ID output params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTasksTaskIDOutputParams].
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WithContext(ctx context.Context) *GetProjectProjectIDTasksTaskIDOutputParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID tasks task ID output params
+// SetContext adds the context to the get project project ID tasks task ID output params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTasksTaskIDOutputParams].
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID tasks task ID output params
+// WithHTTPClient adds the HTTPClient to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDTasksTaskIDOutputParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID tasks task ID output params
+// SetHTTPClient adds the HTTPClient to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectID adds the projectID to the get project project ID tasks task ID output params
+// WithProjectID adds the projectID to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WithProjectID(projectID int64) *GetProjectProjectIDTasksTaskIDOutputParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID tasks task ID output params
+// SetProjectID adds the projectId to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithTaskID adds the taskID to the get project project ID tasks task ID output params
+// WithTaskID adds the taskID to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WithTaskID(taskID int64) *GetProjectProjectIDTasksTaskIDOutputParams {
 	o.SetTaskID(taskID)
 	return o
 }
 
-// SetTaskID adds the taskId to the get project project ID tasks task ID output params
+// SetTaskID adds the taskId to the get project project ID tasks task ID output params.
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) SetTaskID(taskID int64) {
 	o.TaskID = taskID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDTasksTaskIDOutputParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param task_id
-	if err := r.SetPathParam("task_id", swag.FormatInt64(o.TaskID)); err != nil {
+	if err := r.SetPathParam("task_id", conv.FormatInteger(o.TaskID)); err != nil {
 		return err
 	}
 

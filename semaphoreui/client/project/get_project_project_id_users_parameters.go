@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDUsersParams creates a new GetProjectProjectIDUsersParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDUsersParams() *GetProjectProjectIDUsersParams {
-	return &GetProjectProjectIDUsersParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDUsersParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDUsersParamsWithTimeout creates a new GetProjectProjectIDUsersParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDUsersParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDUsersParams {
 	return &GetProjectProjectIDUsersParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDUsersParamsWithContext creates a new GetProjectProjectIDUsersParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDUsersParams].
 func NewGetProjectProjectIDUsersParamsWithContext(ctx context.Context) *GetProjectProjectIDUsersParams {
 	return &GetProjectProjectIDUsersParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -77,9 +81,9 @@ type GetProjectProjectIDUsersParams struct {
 	*/
 	Sort string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID users params (not the query body).
@@ -97,76 +101,79 @@ func (o *GetProjectProjectIDUsersParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID users params
+// WithTimeout adds the timeout to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDUsersParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID users params
+// SetTimeout adds the timeout to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID users params
+// WithContext adds the context to the get project project ID users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDUsersParams].
 func (o *GetProjectProjectIDUsersParams) WithContext(ctx context.Context) *GetProjectProjectIDUsersParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID users params
+// SetContext adds the context to the get project project ID users params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDUsersParams].
 func (o *GetProjectProjectIDUsersParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID users params
+// WithHTTPClient adds the HTTPClient to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDUsersParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID users params
+// SetHTTPClient adds the HTTPClient to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrder adds the order to the get project project ID users params
+// WithOrder adds the order to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) WithOrder(order string) *GetProjectProjectIDUsersParams {
 	o.SetOrder(order)
 	return o
 }
 
-// SetOrder adds the order to the get project project ID users params
+// SetOrder adds the order to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) SetOrder(order string) {
 	o.Order = order
 }
 
-// WithProjectID adds the projectID to the get project project ID users params
+// WithProjectID adds the projectID to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) WithProjectID(projectID int64) *GetProjectProjectIDUsersParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID users params
+// SetProjectID adds the projectId to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithSort adds the sort to the get project project ID users params
+// WithSort adds the sort to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) WithSort(sort string) *GetProjectProjectIDUsersParams {
 	o.SetSort(sort)
 	return o
 }
 
-// SetSort adds the sort to the get project project ID users params
+// SetSort adds the sort to the get project project ID users params.
 func (o *GetProjectProjectIDUsersParams) SetSort(sort string) {
 	o.Sort = sort
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -182,7 +189,7 @@ func (o *GetProjectProjectIDUsersParams) WriteToRequest(r runtime.ClientRequest,
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

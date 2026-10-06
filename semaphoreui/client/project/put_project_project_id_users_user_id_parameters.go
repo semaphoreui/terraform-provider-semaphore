@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewPutProjectProjectIDUsersUserIDParams creates a new PutProjectProjectIDUsersUserIDParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPutProjectProjectIDUsersUserIDParams() *PutProjectProjectIDUsersUserIDParams {
-	return &PutProjectProjectIDUsersUserIDParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewPutProjectProjectIDUsersUserIDParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewPutProjectProjectIDUsersUserIDParamsWithTimeout creates a new PutProjectProjectIDUsersUserIDParams object
 // with the ability to set a timeout on a request.
 func NewPutProjectProjectIDUsersUserIDParamsWithTimeout(timeout time.Duration) *PutProjectProjectIDUsersUserIDParams {
 	return &PutProjectProjectIDUsersUserIDParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewPutProjectProjectIDUsersUserIDParamsWithContext creates a new PutProjectProjectIDUsersUserIDParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDUsersUserIDParams].
 func NewPutProjectProjectIDUsersUserIDParamsWithContext(ctx context.Context) *PutProjectProjectIDUsersUserIDParams {
 	return &PutProjectProjectIDUsersUserIDParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -74,9 +78,9 @@ type PutProjectProjectIDUsersUserIDParams struct {
 	*/
 	UserID int64
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the put project project ID users user ID params (not the query body).
@@ -94,76 +98,79 @@ func (o *PutProjectProjectIDUsersUserIDParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the put project project ID users user ID params
+// WithTimeout adds the timeout to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) WithTimeout(timeout time.Duration) *PutProjectProjectIDUsersUserIDParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the put project project ID users user ID params
+// SetTimeout adds the timeout to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the put project project ID users user ID params
+// WithContext adds the context to the put project project ID users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDUsersUserIDParams].
 func (o *PutProjectProjectIDUsersUserIDParams) WithContext(ctx context.Context) *PutProjectProjectIDUsersUserIDParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the put project project ID users user ID params
+// SetContext adds the context to the put project project ID users user ID params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [PutProjectProjectIDUsersUserIDParams].
 func (o *PutProjectProjectIDUsersUserIDParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the put project project ID users user ID params
+// WithHTTPClient adds the HTTPClient to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) WithHTTPClient(client *http.Client) *PutProjectProjectIDUsersUserIDParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the put project project ID users user ID params
+// SetHTTPClient adds the HTTPClient to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProjectUser adds the projectUser to the put project project ID users user ID params
+// WithProjectUser adds the projectUser to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) WithProjectUser(projectUser PutProjectProjectIDUsersUserIDBody) *PutProjectProjectIDUsersUserIDParams {
 	o.SetProjectUser(projectUser)
 	return o
 }
 
-// SetProjectUser adds the projectUser to the put project project ID users user ID params
+// SetProjectUser adds the projectUser to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) SetProjectUser(projectUser PutProjectProjectIDUsersUserIDBody) {
 	o.ProjectUser = projectUser
 }
 
-// WithProjectID adds the projectID to the put project project ID users user ID params
+// WithProjectID adds the projectID to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) WithProjectID(projectID int64) *PutProjectProjectIDUsersUserIDParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the put project project ID users user ID params
+// SetProjectID adds the projectId to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithUserID adds the userID to the put project project ID users user ID params
+// WithUserID adds the userID to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) WithUserID(userID int64) *PutProjectProjectIDUsersUserIDParams {
 	o.SetUserID(userID)
 	return o
 }
 
-// SetUserID adds the userId to the put project project ID users user ID params
+// SetUserID adds the userId to the put project project ID users user ID params.
 func (o *PutProjectProjectIDUsersUserIDParams) SetUserID(userID int64) {
 	o.UserID = userID
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *PutProjectProjectIDUsersUserIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -172,12 +179,12 @@ func (o *PutProjectProjectIDUsersUserIDParams) WriteToRequest(r runtime.ClientRe
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 
 	// path param user_id
-	if err := r.SetPathParam("user_id", swag.FormatInt64(o.UserID)); err != nil {
+	if err := r.SetPathParam("user_id", conv.FormatInteger(o.UserID)); err != nil {
 		return err
 	}
 

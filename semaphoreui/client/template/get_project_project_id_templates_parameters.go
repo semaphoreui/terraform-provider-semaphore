@@ -11,7 +11,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/conv"
 )
 
 // NewGetProjectProjectIDTemplatesParams creates a new GetProjectProjectIDTemplatesParams object,
@@ -21,24 +21,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetProjectProjectIDTemplatesParams() *GetProjectProjectIDTemplatesParams {
-	return &GetProjectProjectIDTemplatesParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetProjectProjectIDTemplatesParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetProjectProjectIDTemplatesParamsWithTimeout creates a new GetProjectProjectIDTemplatesParams object
 // with the ability to set a timeout on a request.
 func NewGetProjectProjectIDTemplatesParamsWithTimeout(timeout time.Duration) *GetProjectProjectIDTemplatesParams {
 	return &GetProjectProjectIDTemplatesParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetProjectProjectIDTemplatesParamsWithContext creates a new GetProjectProjectIDTemplatesParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTemplatesParams].
 func NewGetProjectProjectIDTemplatesParamsWithContext(ctx context.Context) *GetProjectProjectIDTemplatesParams {
 	return &GetProjectProjectIDTemplatesParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -77,9 +81,9 @@ type GetProjectProjectIDTemplatesParams struct {
 	*/
 	Sort string
 
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get project project ID templates params (not the query body).
@@ -97,76 +101,79 @@ func (o *GetProjectProjectIDTemplatesParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get project project ID templates params
+// WithTimeout adds the timeout to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) WithTimeout(timeout time.Duration) *GetProjectProjectIDTemplatesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get project project ID templates params
+// SetTimeout adds the timeout to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get project project ID templates params
+// WithContext adds the context to the get project project ID templates params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTemplatesParams].
 func (o *GetProjectProjectIDTemplatesParams) WithContext(ctx context.Context) *GetProjectProjectIDTemplatesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get project project ID templates params
+// SetContext adds the context to the get project project ID templates params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetProjectProjectIDTemplatesParams].
 func (o *GetProjectProjectIDTemplatesParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get project project ID templates params
+// WithHTTPClient adds the HTTPClient to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) WithHTTPClient(client *http.Client) *GetProjectProjectIDTemplatesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get project project ID templates params
+// SetHTTPClient adds the HTTPClient to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrder adds the order to the get project project ID templates params
+// WithOrder adds the order to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) WithOrder(order string) *GetProjectProjectIDTemplatesParams {
 	o.SetOrder(order)
 	return o
 }
 
-// SetOrder adds the order to the get project project ID templates params
+// SetOrder adds the order to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) SetOrder(order string) {
 	o.Order = order
 }
 
-// WithProjectID adds the projectID to the get project project ID templates params
+// WithProjectID adds the projectID to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) WithProjectID(projectID int64) *GetProjectProjectIDTemplatesParams {
 	o.SetProjectID(projectID)
 	return o
 }
 
-// SetProjectID adds the projectId to the get project project ID templates params
+// SetProjectID adds the projectId to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) SetProjectID(projectID int64) {
 	o.ProjectID = projectID
 }
 
-// WithSort adds the sort to the get project project ID templates params
+// WithSort adds the sort to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) WithSort(sort string) *GetProjectProjectIDTemplatesParams {
 	o.SetSort(sort)
 	return o
 }
 
-// SetSort adds the sort to the get project project ID templates params
+// SetSort adds the sort to the get project project ID templates params.
 func (o *GetProjectProjectIDTemplatesParams) SetSort(sort string) {
 	o.Sort = sort
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetProjectProjectIDTemplatesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
@@ -182,7 +189,7 @@ func (o *GetProjectProjectIDTemplatesParams) WriteToRequest(r runtime.ClientRequ
 	}
 
 	// path param project_id
-	if err := r.SetPathParam("project_id", swag.FormatInt64(o.ProjectID)); err != nil {
+	if err := r.SetPathParam("project_id", conv.FormatInteger(o.ProjectID)); err != nil {
 		return err
 	}
 

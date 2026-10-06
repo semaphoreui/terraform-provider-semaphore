@@ -57,6 +57,12 @@ func (r *projectTemplateResource) Schema(ctx context.Context, _ resource.SchemaR
 // require it. SemaphoreUI accepts an empty playbook only for `terraform` and
 // `tofu` apps; for everything else (ansible, bash, powershell, python, …) the
 // API returns 400 "template playbook can not be empty". See issue #26.
+//
+// The validator runs during ValidateConfig, which executes once per resource
+// block before for_each/count expansion. When `app` and/or `playbook` depend
+// on `each.value`/`count.index` they appear as Unknown here; in that case the
+// check is deferred to per-instance plan-time validation, where the values
+// will be known.
 type playbookRequiredValidator struct{}
 
 func (v playbookRequiredValidator) Description(_ context.Context) string {
@@ -73,6 +79,8 @@ func (v playbookRequiredValidator) ValidateResource(ctx context.Context, req res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Defer to per-instance validation when either value isn't known yet
+	// (e.g. the resource uses for_each/count referencing dynamic data).
 	if data.Playbook.IsUnknown() || data.App.IsUnknown() {
 		return
 	}

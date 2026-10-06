@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // LoginMetadata login metadata
@@ -36,12 +37,12 @@ func (m *LoginMetadata) Validate(formats strfmt.Registry) error {
 }
 
 func (m *LoginMetadata) validateOidcProviders(formats strfmt.Registry) error {
-	if swag.IsZero(m.OidcProviders) { // not required
+	if typeutils.IsZero(m.OidcProviders) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.OidcProviders); i++ {
-		if swag.IsZero(m.OidcProviders[i]) { // not required
+		if typeutils.IsZero(m.OidcProviders[i]) { // not required
 			continue
 		}
 
@@ -85,7 +86,7 @@ func (m *LoginMetadata) contextValidateOidcProviders(ctx context.Context, format
 
 		if m.OidcProviders[i] != nil {
 
-			if swag.IsZero(m.OidcProviders[i]) { // not required
+			if typeutils.IsZero(m.OidcProviders[i]) { // not required
 				return nil
 			}
 
@@ -113,13 +114,13 @@ func (m *LoginMetadata) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *LoginMetadata) UnmarshalBinary(b []byte) error {
 	var res LoginMetadata
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -153,13 +154,13 @@ func (m *LoginMetadataOidcProvidersItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *LoginMetadataOidcProvidersItems0) UnmarshalBinary(b []byte) error {
 	var res LoginMetadataOidcProvidersItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

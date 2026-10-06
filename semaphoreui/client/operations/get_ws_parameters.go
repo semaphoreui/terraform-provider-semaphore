@@ -20,24 +20,28 @@ import (
 //
 // To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetWsParams() *GetWsParams {
-	return &GetWsParams{
-		timeout: cr.DefaultTimeout,
-	}
+	return NewGetWsParamsWithTimeout(cr.DefaultTimeout)
 }
 
 // NewGetWsParamsWithTimeout creates a new GetWsParams object
 // with the ability to set a timeout on a request.
 func NewGetWsParamsWithTimeout(timeout time.Duration) *GetWsParams {
 	return &GetWsParams{
-		timeout: timeout,
+		inner: innerParams{
+			timeout: timeout,
+		},
 	}
 }
 
 // NewGetWsParamsWithContext creates a new GetWsParams object
 // with the ability to set a context for a request.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetWsParams].
 func NewGetWsParamsWithContext(ctx context.Context) *GetWsParams {
 	return &GetWsParams{
-		Context: ctx,
+		inner: innerParams{
+			ctx: ctx,
+		},
 	}
 }
 
@@ -57,9 +61,9 @@ GetWsParams contains all the parameters to send to the API endpoint
 	Typically these are written to a http.Request.
 */
 type GetWsParams struct {
-	timeout    time.Duration
-	Context    context.Context
 	HTTPClient *http.Client
+
+	inner innerParams
 }
 
 // WithDefaults hydrates default values in the get ws params (not the query body).
@@ -77,43 +81,46 @@ func (o *GetWsParams) SetDefaults() {
 	// no default values defined for this parameter
 }
 
-// WithTimeout adds the timeout to the get ws params
+// WithTimeout adds the timeout to the get ws params.
 func (o *GetWsParams) WithTimeout(timeout time.Duration) *GetWsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get ws params
+// SetTimeout adds the timeout to the get ws params.
 func (o *GetWsParams) SetTimeout(timeout time.Duration) {
-	o.timeout = timeout
+	o.inner.timeout = timeout
 }
 
-// WithContext adds the context to the get ws params
+// WithContext adds the context to the get ws params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetWsParams].
 func (o *GetWsParams) WithContext(ctx context.Context) *GetWsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get ws params
+// SetContext adds the context to the get ws params.
+//
+// Deprecated: use the operation call with context to pass the context instead of [GetWsParams].
 func (o *GetWsParams) SetContext(ctx context.Context) {
-	o.Context = ctx
+	o.inner.ctx = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get ws params
+// WithHTTPClient adds the HTTPClient to the get ws params.
 func (o *GetWsParams) WithHTTPClient(client *http.Client) *GetWsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get ws params
+// SetHTTPClient adds the HTTPClient to the get ws params.
 func (o *GetWsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WriteToRequest writes these params to a swagger request
+// WriteToRequest writes these params to a [runtime.ClientRequest].
 func (o *GetWsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
-
-	if err := r.SetTimeout(o.timeout); err != nil {
+	if err := r.SetTimeout(o.inner.timeout); err != nil {
 		return err
 	}
 	var res []error
