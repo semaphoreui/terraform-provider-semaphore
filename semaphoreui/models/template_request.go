@@ -24,6 +24,10 @@ type TemplateRequest struct {
 	// Example: false
 	AllowOverrideArgsInTask bool `json:"allow_override_args_in_task,omitempty"`
 
+	// allow parallel tasks
+	// Example: false
+	AllowParallelTasks bool `json:"allow_parallel_tasks,omitempty"`
+
 	// app
 	// Example: ansible
 	App string `json:"app,omitempty"`

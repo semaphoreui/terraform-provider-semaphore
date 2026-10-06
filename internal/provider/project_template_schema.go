@@ -32,6 +32,7 @@ type (
 		Description             types.String `tfsdk:"description"`
 		App                     types.String `tfsdk:"app"`
 		AllowOverrideArgsInTask types.Bool   `tfsdk:"allow_override_args_in_task"`
+		AllowParallelTasks      types.Bool   `tfsdk:"allow_parallel_tasks"`
 		Arguments               types.List   `tfsdk:"arguments"`
 		GitBranch               types.String `tfsdk:"git_branch"`
 		Playbook                types.String `tfsdk:"playbook"`
@@ -261,6 +262,19 @@ func ProjectTemplateSchema() superschema.Schema {
 			"allow_override_args_in_task": superschema.BoolAttribute{
 				Common: &schemaR.BoolAttribute{
 					MarkdownDescription: "Allow overriding arguments in the task.",
+				},
+				Resource: &schemaR.BoolAttribute{
+					Optional: true,
+					Computed: true,
+					Default:  booldefault.StaticBool(false),
+				},
+				DataSource: &schemaD.BoolAttribute{
+					Computed: true,
+				},
+			},
+			"allow_parallel_tasks": superschema.BoolAttribute{
+				Common: &schemaR.BoolAttribute{
+					MarkdownDescription: "Allow tasks of this template to run in parallel.",
 				},
 				Resource: &schemaR.BoolAttribute{
 					Optional: true,

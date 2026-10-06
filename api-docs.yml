@@ -943,6 +943,9 @@ definitions:
       allow_override_args_in_task:
         type: boolean
         example: false
+      allow_parallel_tasks:
+        type: boolean
+        example: false
       limit:
         type: string
         example: ''
@@ -1007,6 +1010,9 @@ definitions:
         type: string
         example: Hello, World!
       allow_override_args_in_task:
+        type: boolean
+        example: false
+      allow_parallel_tasks:
         type: boolean
         example: false
       suppress_success_alerts:

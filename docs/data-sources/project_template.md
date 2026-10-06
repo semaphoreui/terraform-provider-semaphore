@@ -41,6 +41,7 @@ data "semaphoreui_project_template" "build" {
 ### Read-Only
 
 - `allow_override_args_in_task` (Boolean) Allow overriding arguments in the task.
+- `allow_parallel_tasks` (Boolean) Allow tasks of this template to run in parallel.
 - `app` (String) The application name.
 - `arguments` (List of String) Commandline arguments passed to the application.
 - `build` (Attributes) Specifies a build type template used to create artifacts. (see [below for nested schema](#nestedatt--build))
