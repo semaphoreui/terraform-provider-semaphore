@@ -40,16 +40,19 @@ resource "semaphoreui_project_key" "ssh" {
 variable "password" {
   type      = string
   sensitive = true
+  ephemeral = true
 }
 
 variable "ssh_passphrase" {
   type      = string
   sensitive = true
+  ephemeral = true
 }
 
 variable "ssh_private_key" {
   type      = string
   sensitive = true
+  ephemeral = true
 }
 
 resource "semaphoreui_project_key" "login_password_write_only" {

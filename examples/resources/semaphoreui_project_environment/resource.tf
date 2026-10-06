@@ -39,6 +39,7 @@ resource "semaphoreui_project_environment" "environment" {
 variable "api_token" {
   type      = string
   sensitive = true
+  ephemeral = true
 }
 
 resource "semaphoreui_project_environment" "environment_write_only" {

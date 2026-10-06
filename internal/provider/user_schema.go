@@ -164,7 +164,7 @@ func userSchema() superschema.Schema {
 			},
 			"password_wo_version": superschema.Int64Attribute{
 				Common: &schemaR.Int64Attribute{
-					Description: "Version tracker to trigger updates for the write-only password attribute.",
+					MarkdownDescription: "Version marker for the write-only password. In a resource, changing this marker resends the configured password to SemaphoreUI.",
 				},
 				Resource: &schemaR.Int64Attribute{
 					Optional: true,

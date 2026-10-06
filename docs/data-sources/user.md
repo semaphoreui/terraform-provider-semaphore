@@ -48,4 +48,4 @@ data "semaphoreui_user" "superman" {
 - `name` (String) Display name.
 - `password` (String, Sensitive) This value is never returned by the API and will be an empty string.
 - `password_wo` (String, Sensitive) This value is never returned by the API and will be an empty string.
-- `password_wo_version` (Number) .
+- `password_wo_version` (Number) Version marker for the write-only password. In a resource, changing this marker resends the configured password to SemaphoreUI.

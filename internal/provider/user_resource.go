@@ -195,8 +195,9 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 
 	// Update password if it's changed
+	passwordConfigured := !config.PasswordWO.IsNull() || !config.Password.IsNull()
 	passwordVersionChanged := !plan.PasswordWOVersion.Equal(state.PasswordWOVersion)
-	if plan.Password != state.Password || passwordVersionChanged {
+	if passwordConfigured && (plan.Password != state.Password || passwordVersionChanged) {
 		_, err := r.client.User.PostUsersUserIDPassword(&user.PostUsersUserIDPasswordParams{UserID: plan.ID.ValueInt64(), Password: user.PostUsersUserIDPasswordBody{Password: strfmt.Password(password)}}, nil)
 		if err != nil {
 			resp.Diagnostics.AddError(

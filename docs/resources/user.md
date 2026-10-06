@@ -43,7 +43,7 @@ resource "semaphoreui_user" "example" {
 - `external` (Boolean) <i style="color:red;font-weight: bold">(ForceNew)</i> Indicates if the user is linked to an external identity provider. Value defaults to `false`.
 - `password` (String, Sensitive) Login Password. This value is never returned by the API and will be an empty string after import. Ensure that if an attribute is set, these are not set: "[password_wo]".
 - `password_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Login Password. Write-only version for ephemeral compatibility. Ensure that if an attribute is set, these are not set: "[password]". Ensure that if an attribute is set, also these are set: "[password_wo_version]".
-- `password_wo_version` (Number) . Ensure that if an attribute is set, also these are set: "[password_wo]".
+- `password_wo_version` (Number) Version marker for the write-only password. In a resource, changing this marker resends the configured password to SemaphoreUI. Ensure that if an attribute is set, also these are set: "[password_wo]".
 
 ### Read-Only
 

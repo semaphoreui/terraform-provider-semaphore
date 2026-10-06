@@ -222,6 +222,18 @@ func TestAcc_UserResource_passwordWo(t *testing.T) {
 					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
 				),
 			},
+			// Removing both write-only inputs stops managing the password and
+			// must leave the existing credential usable.
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = false`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserPasswordWorks("semaphoreui_user.test", "something"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo_version"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "admin", "false"),
+				),
+			},
 		},
 	})
 }
