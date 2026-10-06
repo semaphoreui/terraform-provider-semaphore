@@ -37,6 +37,7 @@ resource "semaphoreui_project_key" "ssh" {
 
 # Write-only secrets — the value is sent to SemaphoreUI on create/update but is
 # never stored in Terraform state. Bump `*_wo_version` to push a new value.
+# Write-only arguments require Terraform 1.11 or later.
 variable "password" {
   type      = string
   sensitive = true
