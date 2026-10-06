@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"net/url"
 	"os"
 	"terraform-provider-semaphoreui/semaphoreui/client"
 	"testing"
@@ -34,7 +35,11 @@ var tc *client.SemaphoreUI
 func testClient() *client.SemaphoreUI {
 	if tc == nil {
 
-		r := httptransport.New("localhost:13000", "/api", []string{"http"})
+		endpoint, err := url.Parse(os.Getenv("SEMAPHOREUI_API_BASE_URL"))
+		if err != nil || endpoint.Host == "" {
+			panic("SEMAPHOREUI_API_BASE_URL must be a valid absolute URL")
+		}
+		r := httptransport.New(endpoint.Host, endpoint.Path, []string{endpoint.Scheme})
 		r.DefaultAuthentication = httptransport.BearerToken(testApiToken())
 
 		tc = client.New(r, strfmt.Default)

@@ -38,7 +38,7 @@ For acceptance tests, `TF_ACC=1` plus the `SEMAPHOREUI_*` env vars must be set â
 4. `go test` runs against the live server.
 5. `task docker:stop` tears it all down (with `-v`, so all data is lost).
 
-The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.6`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.6`); see `.github/workflows/test.yml`.
+The SemaphoreUI version under test comes from the `SEMAPHORE_VERSION` env var (default `v2.18.30`). CI runs the matrix across the latest 3 minor lines (currently `v2.16.51 / v2.17.39 / v2.18.30`); see `.github/workflows/test.yml`.
 
 ## Architecture
 

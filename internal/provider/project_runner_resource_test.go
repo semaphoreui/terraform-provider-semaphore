@@ -17,7 +17,8 @@ import (
 // testAccPreCheckProjectRunner skips the test when the SemaphoreUI server under
 // test does not allow project-scoped runners. They are a paid-plan feature: the
 // community edition (used by CI) answers project runner creation with a 403
-// "Your plan does not allow adding more runners." Global runners are unaffected.
+// "Your plan does not allow adding more runners." Older servers lack the
+// project-runner endpoint entirely and return 404. Global runners are unaffected.
 func testAccPreCheckProjectRunner(t *testing.T) {
 	testAccPreCheck(t)
 
@@ -41,6 +42,9 @@ func testAccPreCheckProjectRunner(t *testing.T) {
 		Runner:    &models.RunnerRequest{ProjectID: projectID, Name: "precheck"},
 	}, nil)
 	if err != nil {
+		if isRunnerNotFound(err) {
+			t.Skip("skipping: SemaphoreUI server does not expose the project-runner endpoint")
+		}
 		if strings.Contains(err.Error(), "403") {
 			t.Skip("skipping: SemaphoreUI plan does not allow project runners")
 		}

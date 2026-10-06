@@ -47,3 +47,5 @@ data "semaphoreui_user" "superman" {
 - `external` (Boolean) Indicates if the user is linked to an external identity provider.
 - `name` (String) Display name.
 - `password` (String, Sensitive) This value is never returned by the API and will be an empty string.
+- `password_wo` (String, Sensitive) This value is never returned by the API and will be an empty string.
+- `password_wo_version` (Number) Version marker for the write-only password. In a resource, changing this marker resends the configured password to SemaphoreUI.

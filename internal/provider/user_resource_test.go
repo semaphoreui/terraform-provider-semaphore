@@ -1,16 +1,46 @@
 package provider
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"terraform-provider-semaphoreui/semaphoreui/client/user"
 	"testing"
+	"time"
 
+	"github.com/hashicorp/go-version"
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
+
+func testAccUserPasswordWorks(resourceName, password string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		user, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("user %s not found", resourceName)
+		}
+		body, err := json.Marshal(map[string]string{"auth": user.Primary.Attributes["username"], "password": password})
+		if err != nil {
+			return err
+		}
+		client := &http.Client{Timeout: 10 * time.Second}
+		response, err := client.Post(os.Getenv("SEMAPHOREUI_API_BASE_URL")+"/auth/login", "application/json", bytes.NewReader(body))
+		if err != nil {
+			return err
+		}
+		defer response.Body.Close()
+		if response.StatusCode != http.StatusNoContent {
+			return fmt.Errorf("user password authentication failed: HTTP %d", response.StatusCode)
+		}
+		return nil
+	}
+}
 
 func testAccUserExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -134,6 +164,75 @@ func TestAcc_UserResource_errorOnExists(t *testing.T) {
 			{
 				Config:      testAccUserConfig_Exists(userNameSuffix),
 				ExpectError: regexp.MustCompile("Could not create user, unexpected error"),
+			},
+		},
+	})
+}
+
+func TestAcc_UserResource_passwordWo(t *testing.T) {
+	userNameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.11.0"))),
+		},
+		Steps: []resource.TestStep{
+			// Create and Read testing
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = true
+  password_wo = "password!"
+  password_wo_version = 1`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserExists("semaphoreui_user.test"),
+					testAccUserPasswordWorks("semaphoreui_user.test", "password!"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "username", fmt.Sprintf("test-%s", userNameSuffix)),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "password_wo_version", "1"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttrSet("semaphoreui_user.test", "id"),
+					resource.TestCheckResourceAttrSet("semaphoreui_user.test", "created"),
+				),
+			},
+			// Update and Read testing
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = false
+  password_wo = "something"
+  password_wo_version = 2`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserExists("semaphoreui_user.test"),
+					testAccUserPasswordWorks("semaphoreui_user.test", "something"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "username", fmt.Sprintf("test-%s", userNameSuffix)),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "password_wo_version", "2"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "admin", "false"),
+				),
+			},
+			// A different write-only value without a version bump must not rotate
+			// the password when another attribute causes an update.
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = true
+  password_wo = "unversioned-change"
+  password_wo_version = 2`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserPasswordWorks("semaphoreui_user.test", "something"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "password_wo_version", "2"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+				),
+			},
+			// Removing both write-only inputs stops managing the password and
+			// must leave the existing credential usable.
+			{
+				Config: testAccUserConfig(userNameSuffix, `  admin = false`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccUserPasswordWorks("semaphoreui_user.test", "something"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo_version"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password_wo"),
+					resource.TestCheckNoResourceAttr("semaphoreui_user.test", "password"),
+					resource.TestCheckResourceAttr("semaphoreui_user.test", "admin", "false"),
+				),
 			},
 		},
 	})

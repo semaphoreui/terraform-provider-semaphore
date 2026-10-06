@@ -35,6 +35,48 @@ resource "semaphoreui_project_key" "ssh" {
   }
 }
 
+# Write-only secrets — the value is sent to SemaphoreUI on create/update but is
+# never stored in Terraform state. Bump `*_wo_version` to push a new value.
+# Write-only arguments require Terraform 1.11 or later.
+variable "password" {
+  type      = string
+  sensitive = true
+  ephemeral = true
+}
+
+variable "ssh_passphrase" {
+  type      = string
+  sensitive = true
+  ephemeral = true
+}
+
+variable "ssh_private_key" {
+  type      = string
+  sensitive = true
+  ephemeral = true
+}
+
+resource "semaphoreui_project_key" "login_password_write_only" {
+  project_id = semaphoreui_project.project.id
+  name       = "Example Login (write-only)"
+  login_password = {
+    login               = "username"
+    password_wo         = var.password # e.g. data.infisical_secret.api.value
+    password_wo_version = 1
+  }
+}
+
+resource "semaphoreui_project_key" "ssh_write_only" {
+  project_id = semaphoreui_project.project.id
+  name       = "Example SSH (write-only)"
+  ssh = {
+    passphrase_wo          = var.ssh_passphrase
+    passphrase_wo_version  = 1
+    private_key_wo         = var.ssh_private_key
+    private_key_wo_version = 1
+  }
+}
+
 resource "semaphoreui_project_key" "none" {
   project_id = semaphoreui_project.project.id
   name       = "Example None"

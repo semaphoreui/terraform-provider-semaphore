@@ -65,7 +65,7 @@ func (d *projectEnvironmentDataSource) Read(ctx context.Context, req datasource.
 		)
 		return
 	}
-	model := convertEnvironmentResponseToProjectEnvironmentModel(ctx, response.Payload, &config)
+	model := convertEnvironmentResponseToProjectEnvironmentDataSourceModel(ctx, response.Payload, &config)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
 	if resp.Diagnostics.HasError() {
