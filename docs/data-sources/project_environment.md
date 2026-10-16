@@ -13,9 +13,16 @@ The project environment (variable group) data source allows you to read project 
 ## Example Usage
 
 ```terraform
+# Lookup by environment ID
 data "semaphoreui_project_environment" "environment" {
   project_id = 1
   id         = 4
+}
+
+# Lookup by environment name
+data "semaphoreui_project_environment" "by_name" {
+  project_id = 1
+  name       = "Production"
 }
 ```
 
@@ -24,13 +31,16 @@ data "semaphoreui_project_environment" "environment" {
 
 ### Required
 
-- `id` (Number) The environment ID.
 - `project_id` (Number) The project ID that the environment belongs to.
+
+### Optional
+
+- `id` (Number) The environment ID. Ensure that one and only one attribute from this collection is set : `id`, `name`.
+- `name` (String) The display name of the environment. Ensure that one and only one attribute from this collection is set : `id`, `name`.
 
 ### Read-Only
 
 - `environment` (Map of String) Environment variables.
-- `name` (String) The display name of the environment.
 - `secrets` (Attributes List) Secret variables of either `"var"` or `"env"` type. The `value` is encrypted and will be empty if imported. (see [below for nested schema](#nestedatt--secrets))
 - `variables` (Map of String) Extra variables. Passed to Ansible as extra variables (`--extra-vars`) and Terraform/OpenTofu as variables (`-var`).
 

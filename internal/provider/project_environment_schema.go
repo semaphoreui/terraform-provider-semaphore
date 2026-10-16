@@ -54,7 +54,14 @@ func ProjectEnvironmentSchema() superschema.Schema {
 					PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 				},
 				DataSource: &schemaD.Int64Attribute{
-					Required: true,
+					Optional: true,
+					Computed: true,
+					Validators: []validator.Int64{
+						int64validator.ExactlyOneOf(
+							path.MatchRoot("id"),
+							path.MatchRoot("name"),
+						),
+					},
 				},
 			},
 			"project_id": superschema.Int64Attribute{
@@ -74,7 +81,14 @@ func ProjectEnvironmentSchema() superschema.Schema {
 					Required: true,
 				},
 				DataSource: &schemaD.StringAttribute{
+					Optional: true,
 					Computed: true,
+					Validators: []validator.String{
+						stringvalidator.ExactlyOneOf(
+							path.MatchRoot("id"),
+							path.MatchRoot("name"),
+						),
+					},
 				},
 			},
 			"variables": superschema.MapAttribute{
