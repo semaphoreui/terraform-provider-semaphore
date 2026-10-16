@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"regexp"
 	"strconv"
 	"terraform-provider-semaphoreui/semaphoreui/client/template"
 	"testing"
@@ -88,6 +89,11 @@ resource "semaphoreui_project_environment" "test" {
   name       = "Env-%[1]s"
 }
 
+resource "semaphoreui_project_environment" "test2" {
+  project_id = semaphoreui_project.test.id
+  name       = "Env2-%[1]s"
+}
+
 resource "semaphoreui_project_view" "test" {
   project_id = semaphoreui_project.test.id
   title      = "Test View"
@@ -151,6 +157,36 @@ resource "semaphoreui_project_template" "test" {
   %[3]s
 }
 `, testAccProjectTemplateDependencyConfig(nameSuffix), nameSuffix, extras)
+}
+
+func testAccProjectTemplateEnvironmentIDsConfig(nameSuffix string, extras string) string {
+	return fmt.Sprintf(`
+%[1]s
+resource "semaphoreui_project_template" "test" {
+  project_id      = semaphoreui_project.test.id
+  environment_ids = [
+    semaphoreui_project_environment.test2.id,
+    semaphoreui_project_environment.test.id,
+  ]
+  inventory_id  = semaphoreui_project_inventory.test.id
+  repository_id = semaphoreui_project_repository.test.id
+  name          = "Test %[2]s"
+  playbook      = "playbook.yml"
+  %[3]s
+}`, testAccProjectTemplateDependencyConfig(nameSuffix), nameSuffix, extras)
+}
+
+func testAccProjectTemplateSingleEnvironmentIDsConfig(nameSuffix string) string {
+	return fmt.Sprintf(`
+%[1]s
+resource "semaphoreui_project_template" "test" {
+  project_id      = semaphoreui_project.test.id
+  environment_ids = [semaphoreui_project_environment.test.id]
+  inventory_id    = semaphoreui_project_inventory.test.id
+  repository_id   = semaphoreui_project_repository.test.id
+  name            = "Test %[2]s"
+  playbook        = "playbook.yml"
+}`, testAccProjectTemplateDependencyConfig(nameSuffix), nameSuffix)
 }
 
 func testAccProjectTemplateImportID(n string) resource.ImportStateIdFunc {
@@ -245,6 +281,91 @@ view_id = semaphoreui_project_view.test.id
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccResourceNotExists("semaphoreui_project_template.test"),
 				),
+			},
+		},
+	})
+}
+
+func TestAcc_ProjectTemplateResource_environmentIDs(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Create with environment_ids specified out-of-order; the set is
+			// order-independent so this must not produce a plan inconsistency.
+			{
+				Config: testAccProjectTemplateEnvironmentIDsConfig(nameSuffix, ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectTemplateExists("semaphoreui_project_template.test", ""),
+					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "environment_ids.#", "2"),
+					resource.TestCheckTypeSetElemAttrPair("semaphoreui_project_template.test", "environment_ids.*",
+						"semaphoreui_project_environment.test", "id"),
+					resource.TestCheckTypeSetElemAttrPair("semaphoreui_project_template.test", "environment_ids.*",
+						"semaphoreui_project_environment.test2", "id"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_template.test", "environment_id"),
+					resource.TestCheckResourceAttrSet("semaphoreui_project_template.test", "id"),
+					resource.TestCheckResourceAttrSet("semaphoreui_project_template.test", "project_id"),
+				),
+			},
+			// ImportState testing
+			{
+				ResourceName:      "semaphoreui_project_template.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: testAccProjectTemplateImportID("semaphoreui_project_template.test"),
+			},
+			// Update to a one-element environment_ids. The API can't tell this
+			// apart from environment_id, so state must mirror the config shape.
+			{
+				Config: testAccProjectTemplateSingleEnvironmentIDsConfig(nameSuffix),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectTemplateExists("semaphoreui_project_template.test", ""),
+					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "environment_ids.#", "1"),
+					resource.TestCheckTypeSetElemAttrPair("semaphoreui_project_template.test", "environment_ids.*",
+						"semaphoreui_project_environment.test", "id"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_template.test", "environment_id"),
+				),
+			},
+			// Update to single environment_id
+			{
+				Config: testAccProjectTemplateConfig(nameSuffix, ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectTemplateExists("semaphoreui_project_template.test", ""),
+					resource.TestCheckResourceAttrSet("semaphoreui_project_template.test", "environment_id"),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_template.test", "environment_ids"),
+				),
+			},
+			// Delete testing
+			{
+				Config: testAccProjectTemplateDependencyConfig(nameSuffix),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccResourceNotExists("semaphoreui_project_template.test"),
+				),
+			},
+		},
+	})
+}
+
+func TestAcc_ProjectTemplateResource_emptyEnvironmentIDs(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+%[1]s
+resource "semaphoreui_project_template" "test" {
+  project_id      = semaphoreui_project.test.id
+  environment_ids = []
+  inventory_id    = semaphoreui_project_inventory.test.id
+  repository_id   = semaphoreui_project_repository.test.id
+  name            = "Test %[2]s"
+  playbook        = "playbook.yml"
+}`, testAccProjectTemplateDependencyConfig(nameSuffix), nameSuffix),
+				PlanOnly:    true,
+				ExpectError: regexp.MustCompile(`(?s)environment_ids.*at least 1`),
 			},
 		},
 	})

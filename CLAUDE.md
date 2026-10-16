@@ -99,7 +99,11 @@ When bumping `api-docs.yml`, re-import upstream verbatim first (one commit), the
 
 ### Template `environment_id` quirk
 
-SemaphoreUI v2.16+ introduced `environment_ids` (array) and stopped returning the singular `environment_id` on GET (always 0). The `convertProjectTemplateModelToTemplateRequest` converter writes to both fields on requests; `convertTemplateResponseToProjectTemplateModel` reads from `environment_ids[0]` with a fallback to `environment_id`. The Terraform schema's `environment_id` attribute is unchanged — the translation is invisible to users.
+SemaphoreUI v2.16+ introduced `environment_ids` (array), allowing a template to have multiple environments, and stopped returning the singular `environment_id` on GET (always 0). The resource exposes both `environment_id` and `environment_ids` (a set), and exactly one of them must be set:
+
+- `convertProjectTemplateModelToTemplateRequest` sends a singular `environment_id` in both the legacy field and a one-element `environment_ids`; a configured set is sent as `environment_ids` only.
+- `convertTemplateResponseToProjectTemplateModel` reads `environment_ids` (falling back to `environment_id` via `templateResponseEnvironmentIDs`). Because the API can't distinguish `environment_id = X` from `environment_ids = [X]`, it mirrors whichever attribute the prior plan/state used. Import has no prior state, so it maps one ID to `environment_id` and several IDs to `environment_ids`.
+- The data source always fills `environment_ids`, and fills `environment_id` only when there is exactly one environment.
 
 ### Environment secret update gotcha
 

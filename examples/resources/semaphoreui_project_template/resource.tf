@@ -36,6 +36,11 @@ resource "semaphoreui_project_environment" "environment" {
   }]
 }
 
+resource "semaphoreui_project_environment" "shared" {
+  project_id = semaphoreui_project.project.id
+  name       = "Shared"
+}
+
 # Task Template
 resource "semaphoreui_project_template" "task" {
   project_id     = semaphoreui_project.project.id
@@ -104,4 +109,18 @@ resource "semaphoreui_project_template" "deploy" {
     build_template_id = semaphoreui_project_template.build.id
     autorun           = false
   }
+}
+
+# Template with multiple environments (SemaphoreUI v2.16+).
+# Set either environment_id or environment_ids, not both.
+resource "semaphoreui_project_template" "multi_environment" {
+  project_id = semaphoreui_project.project.id
+  environment_ids = [
+    semaphoreui_project_environment.environment.id,
+    semaphoreui_project_environment.shared.id,
+  ]
+  inventory_id  = semaphoreui_project_inventory.inventory.id
+  repository_id = semaphoreui_project_repository.repo.id
+  name          = "Multi-Environment"
+  playbook      = "playbook.yml"
 }

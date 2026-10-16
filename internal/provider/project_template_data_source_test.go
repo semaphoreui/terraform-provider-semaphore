@@ -3,6 +3,8 @@ package provider
 import (
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
+
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -183,6 +185,9 @@ func TestAcc_ProjectTemplateDataSource_basicID(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "project_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "environment_id"),
+					resource.TestCheckResourceAttr("data.semaphoreui_project_template.test", "environment_ids.#", "1"),
+					resource.TestCheckTypeSetElemAttrPair("data.semaphoreui_project_template.test", "environment_ids.*",
+						"data.semaphoreui_project_template.test", "environment_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "repository_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "inventory_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "view_id"),
@@ -213,9 +218,37 @@ func TestAcc_ProjectTemplateDataSource_basicName(t *testing.T) {
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "project_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "environment_id"),
+					resource.TestCheckResourceAttr("data.semaphoreui_project_template.test", "environment_ids.#", "1"),
+					resource.TestCheckTypeSetElemAttrPair("data.semaphoreui_project_template.test", "environment_ids.*",
+						"data.semaphoreui_project_template.test", "environment_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "repository_id"),
 					resource.TestCheckResourceAttrSet("data.semaphoreui_project_template.test", "inventory_id"),
 					resource.TestCheckNoResourceAttr("data.semaphoreui_project_template.test", "view_id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAcc_ProjectTemplateDataSource_environmentIDs(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTemplateEnvironmentIDsConfig(nameSuffix, "") + `
+data "semaphoreui_project_template" "test" {
+  project_id = semaphoreui_project.test.id
+  id         = semaphoreui_project_template.test.id
+}`,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.semaphoreui_project_template.test", "environment_ids.#", "2"),
+					resource.TestCheckTypeSetElemAttrPair("data.semaphoreui_project_template.test", "environment_ids.*",
+						"semaphoreui_project_environment.test", "id"),
+					resource.TestCheckTypeSetElemAttrPair("data.semaphoreui_project_template.test", "environment_ids.*",
+						"semaphoreui_project_environment.test2", "id"),
+					resource.TestCheckNoResourceAttr("data.semaphoreui_project_template.test", "environment_id"),
 				),
 			},
 		},

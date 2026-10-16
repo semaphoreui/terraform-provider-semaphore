@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	schemaD "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -21,12 +22,13 @@ import (
 
 type (
 	ProjectTemplateModel struct {
-		ID            types.Int64 `tfsdk:"id"`
-		ProjectID     types.Int64 `tfsdk:"project_id"`
-		EnvironmentID types.Int64 `tfsdk:"environment_id"`
-		InventoryID   types.Int64 `tfsdk:"inventory_id"`
-		RepositoryID  types.Int64 `tfsdk:"repository_id"`
-		ViewID        types.Int64 `tfsdk:"view_id"`
+		ID             types.Int64 `tfsdk:"id"`
+		ProjectID      types.Int64 `tfsdk:"project_id"`
+		EnvironmentID  types.Int64 `tfsdk:"environment_id"`
+		EnvironmentIDs types.Set   `tfsdk:"environment_ids"`
+		InventoryID    types.Int64 `tfsdk:"inventory_id"`
+		RepositoryID   types.Int64 `tfsdk:"repository_id"`
+		ViewID         types.Int64 `tfsdk:"view_id"`
 
 		Name                    types.String `tfsdk:"name"`
 		Description             types.String `tfsdk:"description"`
@@ -156,10 +158,32 @@ func ProjectTemplateSchema() superschema.Schema {
 					MarkdownDescription: "The environment (variable group) ID that the template uses.",
 				},
 				Resource: &schemaR.Int64Attribute{
-					Required: true,
+					MarkdownDescription: "Exactly one of `environment_id` or `environment_ids` must be set.",
+					Optional:            true,
 				},
 				DataSource: &schemaD.Int64Attribute{
-					Computed: true,
+					MarkdownDescription: "Null when the template has more than one environment; use `environment_ids` instead.",
+					Computed:            true,
+				},
+			},
+			"environment_ids": superschema.SetAttribute{
+				Common: &schemaR.SetAttribute{
+					MarkdownDescription: "The set of environment (variable group) IDs that the template uses.",
+					ElementType:         types.Int64Type,
+				},
+				Resource: &schemaR.SetAttribute{
+					Optional: true,
+					Validators: []validator.Set{
+						setvalidator.ExactlyOneOf(
+							path.MatchRoot("environment_id"),
+							path.MatchRoot("environment_ids"),
+						),
+						setvalidator.SizeAtLeast(1),
+					},
+				},
+				DataSource: &schemaD.SetAttribute{
+					MarkdownDescription: "Always populated, even when the template has a single environment.",
+					Computed:            true,
 				},
 			},
 			"inventory_id": superschema.Int64Attribute{

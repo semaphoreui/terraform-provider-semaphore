@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -105,15 +106,24 @@ func (r *projectTemplateResource) ConfigValidators(_ context.Context) []resource
 	return []resource.ConfigValidator{playbookRequiredValidator{}}
 }
 
-func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template ProjectTemplateModel) *models.TemplateRequest {
+func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template ProjectTemplateModel) (*models.TemplateRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	// SemaphoreUI v2.16+ replaced the singular environment_id with an
 	// environment_ids array. The legacy environment_id is still accepted on
-	// create but is read back as 0; only environment_ids round-trips on GET.
-	envID := template.EnvironmentID.ValueInt64()
+	// create but is read back as 0; only environment_ids round-trips on GET,
+	// so a singular environment_id is sent in both fields.
+	var envID int64
+	var envIDs []int64
+	if !template.EnvironmentIDs.IsNull() && !template.EnvironmentIDs.IsUnknown() {
+		diags.Append(template.EnvironmentIDs.ElementsAs(ctx, &envIDs, false)...)
+	} else {
+		envID = template.EnvironmentID.ValueInt64()
+		envIDs = []int64{envID}
+	}
 	model := models.TemplateRequest{
 		ProjectID:               template.ProjectID.ValueInt64(),
 		EnvironmentID:           envID,
-		EnvironmentIds:          []int64{envID},
+		EnvironmentIds:          envIDs,
 		InventoryID:             template.InventoryID.ValueInt64(),
 		RepositoryID:            template.RepositoryID.ValueInt64(),
 		App:                     template.App.ValueString(),
@@ -209,7 +219,7 @@ func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template 
 
 	model.TaskParams = convertTaskParamsModelToTaskPrams(ctx, template.TaskParams)
 
-	return &model
+	return &model, diags
 }
 
 var _ sort.Interface = ByVaultID{}
@@ -220,17 +230,24 @@ func (a ByVaultID) Len() int           { return len(a) }
 func (a ByVaultID) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByVaultID) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
-func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request *models.Template, prev *ProjectTemplateModel) ProjectTemplateModel {
-	// v2.16+ stores environment in environment_ids[]; legacy environment_id
-	// reads back as 0 even when set. Prefer the array when present.
-	envID := request.EnvironmentID
+// templateResponseEnvironmentIDs returns the template's environment IDs.
+// v2.16+ stores them in environment_ids[]; legacy environment_id reads back as
+// 0 even when set, so it is only a fallback for older servers.
+func templateResponseEnvironmentIDs(request *models.Template) []int64 {
 	if len(request.EnvironmentIds) > 0 {
-		envID = request.EnvironmentIds[0]
+		return request.EnvironmentIds
 	}
+	if request.EnvironmentID != 0 {
+		return []int64{request.EnvironmentID}
+	}
+	return nil
+}
+
+func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request *models.Template, prev *ProjectTemplateModel) (ProjectTemplateModel, diag.Diagnostics) {
+	var diags diag.Diagnostics
 	model := ProjectTemplateModel{
 		ID:                      types.Int64Value(request.ID),
 		ProjectID:               types.Int64Value(request.ProjectID),
-		EnvironmentID:           types.Int64Value(envID),
 		InventoryID:             types.Int64Value(request.InventoryID),
 		RepositoryID:            types.Int64Value(request.RepositoryID),
 		App:                     types.StringValue(request.App),
@@ -256,6 +273,25 @@ func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request 
 		model.ViewID = types.Int64Value(request.ViewID)
 	} else {
 		model.ViewID = prev.ViewID
+	}
+
+	// The API doesn't distinguish environment_id from a one-element
+	// environment_ids, so mirror whichever attribute the prior plan/state used.
+	// Without one (import), a single ID maps to environment_id. environment_ids
+	// is a set, so the API sorting the list before persisting doesn't matter.
+	envIDs := templateResponseEnvironmentIDs(request)
+	if !prev.EnvironmentIDs.IsNull() || len(envIDs) > 1 {
+		model.EnvironmentID = types.Int64Null()
+		environmentIDs, d := types.SetValueFrom(ctx, types.Int64Type, envIDs)
+		diags.Append(d...)
+		model.EnvironmentIDs = environmentIDs
+	} else {
+		var envID int64
+		if len(envIDs) == 1 {
+			envID = envIDs[0]
+		}
+		model.EnvironmentID = types.Int64Value(envID)
+		model.EnvironmentIDs = types.SetNull(types.Int64Type)
 	}
 
 	var arguments []string
@@ -347,7 +383,7 @@ func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request 
 
 	model.TaskParams = convertTaskPramsToTaskParamsModel(ctx, request.TaskParams)
 
-	return model
+	return model, diags
 }
 
 func (r *projectTemplateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -358,9 +394,15 @@ func (r *projectTemplateResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
+	request, diags := convertProjectTemplateModelToTemplateRequest(ctx, plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	create, err := r.client.Template.PostProjectProjectIDTemplates(&template.PostProjectProjectIDTemplatesParams{
 		ProjectID: plan.ProjectID.ValueInt64(),
-		Template:  convertProjectTemplateModelToTemplateRequest(ctx, plan),
+		Template:  request,
 	}, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -382,7 +424,8 @@ func (r *projectTemplateResource) Create(ctx context.Context, req resource.Creat
 		)
 		return
 	}
-	model := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &plan)
+	model, diags := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &plan)
+	resp.Diagnostics.Append(diags...)
 
 	// Set state to fully populated data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
@@ -411,7 +454,8 @@ func (r *projectTemplateResource) Read(ctx context.Context, req resource.ReadReq
 		)
 		return
 	}
-	model := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &state)
+	model, diags := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &state)
+	resp.Diagnostics.Append(diags...)
 
 	// Set refreshed state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
@@ -429,10 +473,16 @@ func (r *projectTemplateResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
+	request, diags := convertProjectTemplateModelToTemplateRequest(ctx, plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	_, err := r.client.Template.PutProjectProjectIDTemplatesTemplateID(&template.PutProjectProjectIDTemplatesTemplateIDParams{
 		ProjectID:  plan.ProjectID.ValueInt64(),
 		TemplateID: plan.ID.ValueInt64(),
-		Template:   convertProjectTemplateModelToTemplateRequest(ctx, plan),
+		Template:   request,
 	}, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -453,7 +503,8 @@ func (r *projectTemplateResource) Update(ctx context.Context, req resource.Updat
 		)
 		return
 	}
-	model := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &plan)
+	model, diags := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &plan)
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, model)...)
 	if resp.Diagnostics.HasError() {
@@ -503,10 +554,12 @@ func (r *projectTemplateResource) ImportState(ctx context.Context, req resource.
 		)
 		return
 	}
-	model := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &ProjectTemplateModel{
-		SurveyVars: types.ListNull(ProjectTemplateSurveyVarType),
-		Vaults:     types.ListNull(ProjectTemplateVaultType),
+	model, diags := convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &ProjectTemplateModel{
+		EnvironmentIDs: types.SetNull(types.Int64Type),
+		SurveyVars:     types.ListNull(ProjectTemplateSurveyVarType),
+		Vaults:         types.ListNull(ProjectTemplateVaultType),
 	})
+	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, model)...)
 	if resp.Diagnostics.HasError() {

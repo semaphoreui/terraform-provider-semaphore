@@ -8,6 +8,8 @@ import (
 	"terraform-provider-semaphoreui/semaphoreui/models"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -71,7 +73,7 @@ func (d *projectTemplateDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	var model ProjectTemplateModel
+	var payload *models.Template
 	if !config.ID.IsUnknown() && !config.ID.IsNull() {
 		response, err := d.client.Template.GetProjectProjectIDTemplatesTemplateID(&template.GetProjectProjectIDTemplatesTemplateIDParams{
 			ProjectID:  config.ProjectID.ValueInt64(),
@@ -84,7 +86,7 @@ func (d *projectTemplateDataSource) Read(ctx context.Context, req datasource.Rea
 			)
 			return
 		}
-		model = convertTemplateResponseToProjectTemplateModel(ctx, response.Payload, &config)
+		payload = response.Payload
 	} else if !config.Name.IsUnknown() && !config.Name.IsNull() {
 		template, err := d.GetTemplateByName(config.ProjectID.ValueInt64(), config.Name.ValueString())
 		if err != nil {
@@ -94,7 +96,25 @@ func (d *projectTemplateDataSource) Read(ctx context.Context, req datasource.Rea
 			)
 			return
 		}
-		model = convertTemplateResponseToProjectTemplateModel(ctx, template, &config)
+		payload = template
+	}
+
+	var model ProjectTemplateModel
+	if payload != nil {
+		var diags diag.Diagnostics
+		model, diags = convertTemplateResponseToProjectTemplateModel(ctx, payload, &config)
+		resp.Diagnostics.Append(diags...)
+
+		// Unlike the resource, there's no user config to mirror: always expose
+		// the full set, and environment_id only when it is unambiguous.
+		envIDs := templateResponseEnvironmentIDs(payload)
+		model.EnvironmentIDs, diags = types.SetValueFrom(ctx, types.Int64Type, envIDs)
+		resp.Diagnostics.Append(diags...)
+		if len(envIDs) == 1 {
+			model.EnvironmentID = types.Int64Value(envIDs[0])
+		} else {
+			model.EnvironmentID = types.Int64Null()
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &model)...)
