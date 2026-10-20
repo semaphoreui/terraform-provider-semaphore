@@ -6,6 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"maps"
+	"slices"
 	"sort"
 	apiclient "terraform-provider-semaphoreui/semaphoreui/client"
 	"terraform-provider-semaphoreui/semaphoreui/client/template"
@@ -105,6 +107,9 @@ func (r *projectTemplateResource) ConfigValidators(_ context.Context) []resource
 	return []resource.ConfigValidator{playbookRequiredValidator{}}
 }
 
+// convertProjectTemplateModelToTemplateRequest maps Terraform template configuration
+// to a SemaphoreUI API request, ordering enum survey values lexicographically by name
+// while preserving each name's associated value.
 func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template ProjectTemplateModel) *models.TemplateRequest {
 	// SemaphoreUI v2.16+ replaced the singular environment_id with an
 	// environment_ids array. The legacy environment_id is still accepted on
@@ -173,10 +178,11 @@ func convertProjectTemplateModelToTemplateRequest(ctx context.Context, template 
 				surveyVarModel.Description = surveyVar.Description.ValueString()
 			}
 			if surveyVar.Type.ValueString() == "enum" {
-				for name, value := range surveyVar.EnumValues {
+				enumValueNames := slices.Sorted(maps.Keys(surveyVar.EnumValues))
+				for _, name := range enumValueNames {
 					surveyVarModel.Values = append(surveyVarModel.Values, &models.TemplateSurveyVarValue{
 						Name:  name,
-						Value: value,
+						Value: surveyVar.EnumValues[name],
 					})
 				}
 			}

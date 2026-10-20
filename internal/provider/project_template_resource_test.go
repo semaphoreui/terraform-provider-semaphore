@@ -1,15 +1,93 @@
 package provider
 
 import (
+	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-testing/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"reflect"
 	"strconv"
 	"terraform-provider-semaphoreui/semaphoreui/client/template"
+	"terraform-provider-semaphoreui/semaphoreui/models"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+// TestConvertProjectTemplateModelToTemplateRequest_EnumValuesAlphabetical verifies
+// stable enum ordering by name, preserved name/value associations, and unchanged
+// survey field order for nil, empty, single-entry, and multi-entry enum maps.
+func TestConvertProjectTemplateModelToTemplateRequest_EnumValuesAlphabetical(t *testing.T) {
+	tests := []struct {
+		name       string
+		enumValues map[string]string
+		wantValues []*models.TemplateSurveyVarValue
+	}{
+		{name: "nil values"},
+		{name: "empty values", enumValues: map[string]string{}},
+		{
+			name:       "single value",
+			enumValues: map[string]string{"Host A": "host-z"},
+			wantValues: []*models.TemplateSurveyVarValue{{Name: "Host A", Value: "host-z"}},
+		},
+		{
+			name: "sort by name and preserve associated values",
+			enumValues: map[string]string{
+				"Host D": "host-a",
+				"Host B": "host-c",
+				"Host A": "host-d",
+				"Host C": "host-b",
+			},
+			wantValues: []*models.TemplateSurveyVarValue{
+				{Name: "Host A", Value: "host-d"},
+				{Name: "Host B", Value: "host-c"},
+				{Name: "Host C", Value: "host-b"},
+				{Name: "Host D", Value: "host-a"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		// Each subtest builds Terraform survey data and compares repeated conversions
+		// with the expected API survey values to detect nondeterministic map ordering.
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			surveyVars, diagnostics := types.ListValueFrom(ctx, ProjectTemplateSurveyVarType, []ProjectTemplateSurveyVarModel{
+				{
+					Name:       types.StringValue("target_host"),
+					Title:      types.StringValue("Host"),
+					Required:   types.BoolValue(true),
+					Type:       types.StringValue("enum"),
+					EnumValues: tt.enumValues,
+				},
+				{
+					Name:     types.StringValue("ansible_ssh_pass"),
+					Title:    types.StringValue("OTP"),
+					Required: types.BoolValue(true),
+					Type:     types.StringValue("string"),
+				},
+			})
+			if diagnostics.HasError() {
+				t.Fatalf("building survey variables: %v", diagnostics)
+			}
+			model := ProjectTemplateModel{
+				SurveyVars: surveyVars,
+				Vaults:     types.ListNull(ProjectTemplateVaultType),
+			}
+			want := []*models.TemplateSurveyVar{
+				{Name: "target_host", Title: "Host", Required: true, Type: "enum", Values: tt.wantValues},
+				{Name: "ansible_ssh_pass", Title: "OTP", Required: true, Type: "string"},
+			}
+			// Exercise repeated map iteration to catch nondeterministic ordering.
+			for attempt := 0; attempt < 32; attempt++ {
+				request := convertProjectTemplateModelToTemplateRequest(ctx, model)
+				if !reflect.DeepEqual(request.SurveyVars, want) {
+					t.Fatalf("attempt %d: unexpected survey variables: got %+v, want %+v", attempt, request.SurveyVars, want)
+				}
+			}
+		})
+	}
+}
 
 func testAccProjectTemplateExists(resourceName string, templateType string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
