@@ -250,6 +250,36 @@ view_id = semaphoreui_project_view.test.id
 	})
 }
 
+// An empty argument list in the configuration must read back as an empty
+// list, not null: otherwise the apply fails with "Provider produced
+// inconsistent result after apply".
+func TestAcc_ProjectTemplateResource_emptyArguments(t *testing.T) {
+	nameSuffix := acctest.RandString(8)
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTemplateConfig(nameSuffix, `
+arguments = []
+`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectTemplateExists("semaphoreui_project_template.test", ""),
+					resource.TestCheckResourceAttr("semaphoreui_project_template.test", "arguments.#", "0"),
+				),
+			},
+			// Without arguments, the attribute stays null
+			{
+				Config: testAccProjectTemplateConfig(nameSuffix, ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					testAccProjectTemplateExists("semaphoreui_project_template.test", ""),
+					resource.TestCheckNoResourceAttr("semaphoreui_project_template.test", "arguments"),
+				),
+			},
+		},
+	})
+}
+
 func TestAcc_ProjectTemplateResource_basicBuild(t *testing.T) {
 	nameSuffix := acctest.RandString(8)
 	resource.Test(t, resource.TestCase{
