@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -263,7 +264,14 @@ func convertTemplateResponseToProjectTemplateModel(ctx context.Context, request 
 		model.Arguments = types.ListNull(types.StringType)
 	} else {
 		if len(arguments) == 0 {
-			model.Arguments = types.ListNull(types.StringType)
+			// SemaphoreUI stores no arguments as "[]" whether they were omitted or
+			// set to an empty list: keep what the configuration had, or the empty
+			// list reads back as null and the apply fails as inconsistent.
+			if !prev.Arguments.IsNull() && !prev.Arguments.IsUnknown() {
+				model.Arguments = types.ListValueMust(types.StringType, []attr.Value{})
+			} else {
+				model.Arguments = types.ListNull(types.StringType)
+			}
 		} else {
 			args, _ := types.ListValueFrom(ctx, types.StringType, arguments)
 			model.Arguments = args
